@@ -4,6 +4,7 @@ import "./globals.css";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { BRAND, CONTACT } from "@/lib/brand";
+import { SITE_URL } from "@/lib/site";
 
 const inter = Inter({
   variable: "--font-inter",
@@ -18,10 +19,8 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
-// Production hostname. Confirm the domain before launch and update this value,
-// src/app/sitemap.ts and src/app/robots.ts together.
 export const metadata: Metadata = {
-  metadataBase: new URL("https://bloomcoretechnologies.com"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: `${BRAND.name} — ${BRAND.tagline}`,
     template: `%s — ${BRAND.name}`,
@@ -64,7 +63,7 @@ const organisationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: BRAND.name,
-  url: "https://bloomcoretechnologies.com",
+  url: SITE_URL,
   description: BRAND.description,
   slogan: BRAND.tagline,
   email: CONTACT.email,

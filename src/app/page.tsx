@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import portrait from "@/assets/founder-portrait.jpg";
 import { BrandMark } from "@/components/BrandMark";
 import { ArrowLink, Container, Eyebrow, StatusBadge } from "@/components/Page";
 import { Reveal } from "@/components/Reveal";
@@ -377,10 +379,14 @@ export default function HomePage() {
           <Reveal>
             <div className="grid gap-8 rounded-lg border border-border bg-background p-6 sm:p-10 lg:grid-cols-12 lg:items-center lg:gap-12">
               <div className="lg:col-span-3">
-                <div className="flex h-24 w-24 items-center justify-center rounded-lg border border-border bg-muted">
-                  <span className="font-mono text-2xl font-medium tracking-tight text-foreground">
-                    SA
-                  </span>
+                <div className="relative h-24 w-24 overflow-hidden rounded-lg border border-border bg-muted">
+                  <Image
+                    src={portrait}
+                    alt="Saviour Amegayie, founder of BloomCore Technologies"
+                    fill
+                    sizes="96px"
+                    className="object-cover object-top grayscale"
+                  />
                 </div>
               </div>
               <div className="lg:col-span-6">
