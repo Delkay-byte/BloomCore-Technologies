@@ -1,11 +1,11 @@
 import { cn } from "@/lib/utils";
 
 /**
- * The BloomCore Technologies monogram.
+ * The BloomCore Technologies symbol: "Core & Frame".
  *
- * A block-built B and an open C share one 6-unit stroke weight inside a
- * deep-green field. The geometry is deliberately simple so the mark holds at
- * 16px and still reads as BC, not as a single abstract glyph.
+ * A solid core square emerges through the open corner of a geometric frame.
+ * The frame is the expanding structure; the opening gives it direction. The
+ * mark deliberately uses no letterforms, arrows, leaves or circuit motifs.
  */
 export function BrandMark({ size = 32, className }: { size?: number; className?: string }) {
   return (
@@ -20,16 +20,13 @@ export function BrandMark({ size = 32, className }: { size?: number; className?:
     >
       <rect width="64" height="64" rx="14" fill="#0B5D4B" />
       <path
-        fillRule="evenodd"
-        fill="#FFFFFF"
-        d="M7 14h18a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H7zM13 19h10v10H13zM13 35h10v10H13z"
-      />
-      <path
-        d="M57 17H42a3 3 0 0 0-3 3v22a3 3 0 0 0 3 3h15"
+        d="M20 10h30v30"
         fill="none"
         stroke="#FFFFFF"
-        strokeWidth="6"
+        strokeWidth="7"
+        strokeLinecap="square"
       />
+      <rect x="24" y="32" width="18" height="18" rx="3" fill="#FFFFFF" />
     </svg>
   );
 }

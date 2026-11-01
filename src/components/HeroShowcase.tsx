@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useReducedMotion } from "motion/react";
 import { ROUTES } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -243,11 +244,54 @@ const positions = [
   },
 ];
 
+const ROTATION_MS = 5000;
+
 export function HeroShowcase() {
   const [active, setActive] = useState(0);
+  const [autoPaused, setAutoPaused] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const [focusWithin, setFocusWithin] = useState(false);
+  const [restartToken, setRestartToken] = useState(0);
+  const reduceMotion = useReducedMotion();
+
+  const rotationEnabled = !reduceMotion && !autoPaused && !hovered && !focusWithin;
+
+  useEffect(() => {
+    if (!rotationEnabled) return;
+    const timer = window.setInterval(() => {
+      setActive((current) => (current + 1) % products.length);
+    }, ROTATION_MS);
+    return () => window.clearInterval(timer);
+  }, [rotationEnabled, restartToken]);
+
+  const selectProduct = (index: number) => {
+    setActive(index);
+    setRestartToken((token) => token + 1);
+    // Manual selection restarts the interval through the effect dependency,
+    // and keeps any manual pause choice intact.
+  };
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      onPointerEnter={(event) => {
+        if (event.pointerType === "mouse") setHovered(true);
+      }}
+      onPointerLeave={(event) => {
+        if (event.pointerType === "mouse") setHovered(false);
+      }}
+      onFocusCapture={(event) => {
+        // Only keyboard focus pauses rotation; a mouse click that happens to
+        // focus a tab should not halt playback indefinitely.
+        const target = event.target as HTMLElement;
+        if (target.matches?.(":focus-visible")) setFocusWithin(true);
+      }}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+          setFocusWithin(false);
+        }
+      }}
+    >
       <div
         aria-hidden="true"
         className="absolute -inset-x-6 -top-8 bottom-14 rounded-[2rem] bg-accent-soft opacity-80 blur-2xl"
@@ -327,7 +371,7 @@ export function HeroShowcase() {
               key={product.slug}
               type="button"
               aria-pressed={isActive}
-              onClick={() => setActive(index)}
+              onClick={() => selectProduct(index)}
               className={cn(
                 "rounded-full border px-3 py-1.5 font-mono text-[10px] tracking-[0.08em] uppercase transition-colors",
                 "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground",
@@ -340,6 +384,33 @@ export function HeroShowcase() {
             </button>
           );
         })}
+
+        {reduceMotion ? (
+          <span className="ml-auto font-mono text-[10px] tracking-[0.06em] text-foreground-faint uppercase">
+            Auto-rotation off
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setAutoPaused((paused) => !paused)}
+            aria-pressed={autoPaused}
+            aria-label={
+              autoPaused ? "Play automatic product rotation" : "Pause automatic product rotation"
+            }
+            className="ml-auto flex h-8 w-8 items-center justify-center rounded-full border border-border text-foreground-subtle transition-colors hover:border-foreground/30 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+          >
+            {autoPaused ? (
+              <svg width="10" height="12" viewBox="0 0 10 12" aria-hidden="true" fill="currentColor">
+                <path d="M0 0l10 6-10 6z" />
+              </svg>
+            ) : (
+              <svg width="10" height="12" viewBox="0 0 10 12" aria-hidden="true" fill="currentColor">
+                <rect x="0" y="0" width="3.5" height="12" />
+                <rect x="6.5" y="0" width="3.5" height="12" />
+              </svg>
+            )}
+          </button>
+        )}
       </div>
 
       <p className="relative mt-3 font-mono text-[10px] leading-5 tracking-[0.04em] text-foreground-faint">

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import portrait from "@/assets/founder-portrait.jpg";
-import { BrandMark } from "@/components/BrandMark";
 import { ArrowLink, Container, Eyebrow, PageHero, Prose } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, ROUTES, SOCIAL } from "@/lib/brand";
@@ -145,9 +144,6 @@ export default function FounderPage() {
                     sizes="(min-width: 1024px) 40vw, 100vw"
                     className="object-cover object-top"
                   />
-                  <div className="absolute bottom-0 left-0 border-t border-r border-border bg-background p-3">
-                    <BrandMark size={30} />
-                  </div>
                 </div>
                 <figcaption className="flex items-baseline justify-between gap-4 border-t border-border px-5 py-4">
                   <div>

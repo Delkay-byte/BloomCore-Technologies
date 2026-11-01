@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 420 64" width="420" height="64" role="img" aria-label="BloomCore Technologies logo">
   <title>BloomCore Technologies logo</title>
-  <desc>Horizontal lockup: geometric BC monogram and the full company wordmark.</desc>
+  <desc>Horizontal lockup: the Core &amp; Frame symbol and the full company wordmark.</desc>
 
-  <path fill-rule="evenodd" fill="#FFFFFF" d="M7 14h18a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H7zM13 19h10v10H13zM13 35h10v10H13z"/>
-  <path d="M57 17H42a3 3 0 0 0-3 3v22a3 3 0 0 0 3 3h15" fill="none" stroke="#FFFFFF" stroke-width="6"/>
+
+  <path d="M20 10h30v30" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="square"/>
+  <rect x="24" y="32" width="18" height="18" rx="3" fill="#FFFFFF"/>
   <text x="84" y="41" font-family="Inter, Helvetica, Arial, sans-serif" font-size="26" font-weight="700" letter-spacing="-0.4" fill="#FFFFFF">BloomCore Technologies</text>
 </svg>
