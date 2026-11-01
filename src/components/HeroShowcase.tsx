@@ -242,18 +242,20 @@ const positions = [
   },
 ];
 
-const ROTATION_MS = 5000;
+const ROTATION_MS = 8000;
+const TRANSITION_MS = 1500;
+// The incoming card takes the front layer once it is most of the way forward.
+const Z_HANDOFF_MS = Math.round(TRANSITION_MS * 0.6);
 
 export function HeroShowcase() {
   const [active, setActive] = useState(0);
   const [autoPaused, setAutoPaused] = useState(false);
   const [hovered, setHovered] = useState(false);
-  const [focusWithin, setFocusWithin] = useState(false);
   const [restartToken, setRestartToken] = useState(0);
   const [frontIndex, setFrontIndex] = useState(0);
   const reduceMotion = useReducedMotion();
 
-  const rotationEnabled = !reduceMotion && !autoPaused && !hovered && !focusWithin;
+  const rotationEnabled = !reduceMotion && !autoPaused && !hovered;
 
   useEffect(() => {
     if (!rotationEnabled) return;
@@ -268,7 +270,7 @@ export function HeroShowcase() {
   // lands on the first frame and the transition looks abrupt.
   useEffect(() => {
     if (frontIndex === active) return;
-    const timer = window.setTimeout(() => setFrontIndex(active), 260);
+    const timer = window.setTimeout(() => setFrontIndex(active), Z_HANDOFF_MS);
     return () => window.clearTimeout(timer);
   }, [active, frontIndex]);
 
@@ -289,15 +291,13 @@ export function HeroShowcase() {
         if (event.pointerType === "mouse") setHovered(false);
       }}
       onFocusCapture={(event) => {
-        // Only keyboard focus pauses rotation; a mouse click that happens to
-        // focus a tab should not halt playback indefinitely.
+        // Keyboard focus pauses playback persistently: it stays paused when
+        // focus leaves, and only the Play control starts it again. Focus moving
+        // between controls inside the showcase is not a new entry.
         const target = event.target as HTMLElement;
-        if (target.matches?.(":focus-visible")) setFocusWithin(true);
-      }}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-          setFocusWithin(false);
-        }
+        const previous = event.relatedTarget as Node | null;
+        if (event.currentTarget.contains(previous)) return;
+        if (target.matches?.(":focus-visible")) setAutoPaused(true);
       }}
     >
       <div
@@ -322,7 +322,7 @@ export function HeroShowcase() {
             >
               <div
                 aria-hidden={!isActive}
-                className="transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transition-none"
+                className="transition-[transform,opacity] duration-[1500ms] ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transition-none"
                 style={{ transform: layout.transform, opacity: layout.opacity }}
               >
                 <article
@@ -346,7 +346,7 @@ export function HeroShowcase() {
                   </div>
 
                   <div className="min-h-[270px] p-4 sm:min-h-[305px] sm:p-5">
-                    {isActive ? product.preview : <SkeletonPreview />}
+                    {isActive || index === frontIndex ? product.preview : <SkeletonPreview />}
                   </div>
 
                   <div className="flex items-center justify-between gap-3 border-t border-border px-4 py-2.5">

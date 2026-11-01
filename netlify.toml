@@ -1,0 +1,14 @@
+# Netlify build settings for the static export.
+# The site is fully static, so no functions, redirects or runtime are required.
+
+[build]
+  command = "npm run build"
+  publish = "out"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Set NEXT_PUBLIC_SITE_URL in the Netlify UI once the production domain is
+# confirmed, for example https://bloomcoretechnologies.com. It is read at build
+# time by src/lib/site.ts and drives canonical URLs, Open Graph, the sitemap and
+# robots.txt. Without it the build falls back to http://localhost:3000.

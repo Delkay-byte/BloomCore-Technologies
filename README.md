@@ -18,11 +18,58 @@ metrics or deployments.
 
 ```bash
 npm run dev     # development server on http://localhost:3000
-npm run build   # production build (static routes)
-npm run start   # serve the production build
+npm run build   # production build, writes the static site to out/
+npm run start   # serve out/ locally (static preview)
+npm run preview # same as start
 npm run lint    # ESLint
 npx tsc --noEmit
 ```
+
+The project uses `output: "export"`, so every page is emitted as static files in `out/`.
+`next start` is not used; `npm run start` serves the exported directory instead.
+
+## Deploying to Netlify
+
+The site has no backend, no API routes, no server actions and no runtime data. It builds to a
+static directory, so Netlify free hosting is sufficient.
+
+**Build settings** (also committed in `netlify.toml`):
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npm run build` |
+| Publish directory | `out` |
+| Node version | `22` |
+| Functions | none |
+| Database | none |
+
+**Environment variables:**
+
+| Variable | When to set | Example |
+| --- | --- | --- |
+| `NEXT_PUBLIC_SITE_URL` | Production, after the domain is confirmed | `https://your-domain.example` |
+
+It is read at build time by `src/lib/site.ts` and controls canonical URLs, Open Graph URLs,
+`metadataBase`, the sitemap and `robots.txt`. For Deploy Previews you can either leave it unset
+(preview builds then reference `http://localhost:3000`) or set a preview-specific value.
+
+Setup steps:
+
+1. Push this repository to GitHub (not done by the project tooling).
+2. In Netlify, choose **Add new site -> Import an existing project** and select the repository.
+3. Netlify reads `netlify.toml`; confirm build command `npm run build` and publish directory `out`.
+4. Add `NEXT_PUBLIC_SITE_URL` for the production context once the domain exists.
+5. Deploy. Production deploys follow the production branch; other branches and pull requests get
+   Deploy Previews automatically.
+
+Static-export notes:
+
+- `next/image` runs with `unoptimized: true`; image files are served from the export as-is.
+- `/about`, `/products` and every other route is emitted as `about.html`, `products.html`, etc.
+  Netlify's default pretty URLs serve them at the extensionless paths used by the site.
+- `404.html` is generated and used automatically.
+- No server-only Next.js features are used, so no functions bundle is needed.
+- Contact enquiries use the visitor's email application (`mailto:`), not a server endpoint.
 
 ## Site URL configuration
 

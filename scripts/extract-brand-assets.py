@@ -12,7 +12,7 @@ Outputs:
 
 from pathlib import Path
 
-from PIL import Image
+from PIL import Image, ImageDraw
 import numpy as np
 from scipy import ndimage
 
@@ -62,12 +62,33 @@ def square(canvas: int, scale: float, background=None) -> Image.Image:
 c512 = square(512, 0.82)
 c512.save(OUT_BRAND / "bloomcore-c-symbol.png", optimize=True)
 
-c32 = square(32, 0.84, (8, 8, 8, 255)).convert("RGB")
+def rounded_icon(size: int, scale: float, radius_ratio: float) -> Image.Image:
+    """Rounded near-black tile with the C centred; transparent outside the tile."""
+    supersample = 4
+    canvas_size = size * supersample
+    canvas = Image.new("RGBA", (canvas_size, canvas_size), (0, 0, 0, 0))
+    draw = ImageDraw.Draw(canvas)
+    radius = int(round(canvas_size * radius_ratio))
+    draw.rounded_rectangle(
+        (0, 0, canvas_size - 1, canvas_size - 1), radius=radius, fill=(8, 8, 8, 255)
+    )
+
+    w, h = c_crop.size
+    target_h = int(canvas_size * scale)
+    target_w = round(w * target_h / h)
+    resized = c_crop.resize((target_w, target_h), Image.LANCZOS)
+    canvas.alpha_composite(resized, ((canvas_size - target_w) // 2, (canvas_size - target_h) // 2))
+    return canvas.resize((size, size), Image.LANCZOS)
+
+
+c32 = rounded_icon(32, 0.82, 0.22)
 c32.save(OUT_PUBLIC / "favicon-32.png", optimize=True)
 
-c16 = square(16, 0.82, (8, 8, 8, 255)).convert("RGB")
+c16 = rounded_icon(16, 0.78, 0.22)
 c16.save(OUT_PUBLIC / "favicon-16.png", optimize=True)
 
+# Apple touch icon: full-bleed square. iOS applies its own rounded mask, so
+# pre-rounding here would create a double-rounded edge.
 apple = square(180, 0.58, (8, 8, 8, 255))
 apple.convert("RGB").save(OUT_PUBLIC / "apple-touch-icon.png", optimize=True)
 
