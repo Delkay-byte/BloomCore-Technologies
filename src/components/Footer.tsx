@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { BrandMark } from "@/components/BrandMark";
+import Image from "next/image";
+import logo from "@/assets/brand/bloomcore-logo-white.png";
 import { CurrentYear } from "@/components/CurrentYear";
 import { BRAND, CONTACT, PRODUCTS, ROUTES, SOCIAL } from "@/lib/brand";
 
@@ -36,11 +37,12 @@ export function Footer() {
       <div className="mx-auto w-full max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
-            <Link href="/" className="flex items-center gap-2.5" aria-label={BRAND.name}>
-              <BrandMark size={28} />
-              <span className="text-sm font-semibold tracking-tight text-foreground">
-                {BRAND.name}
-              </span>
+            <Link
+              href="/"
+              className="inline-flex items-center rounded-md bg-[#080808] px-2.5 py-1.5"
+              aria-label={BRAND.name}
+            >
+              <Image src={logo} alt={BRAND.name} sizes="140px" className="h-10 w-auto" />
             </Link>
             <p className="mt-5 max-w-sm text-sm leading-6 text-foreground-subtle">
               {BRAND.description}

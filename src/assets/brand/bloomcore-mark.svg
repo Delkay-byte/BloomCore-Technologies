@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="BloomCore Technologies symbol">
-  <title>BloomCore Technologies symbol</title>
-  <desc>An open geometric frame with a solid core emerging through the opening.</desc>
-  <rect width="64" height="64" rx="14" fill="#0B5D4B"/>
-
-  <path d="M20 10h30v30" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="square"/>
-  <rect x="24" y="32" width="18" height="18" rx="3" fill="#FFFFFF"/>
-</svg>

@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
+import logo from "@/assets/brand/bloomcore-logo-white.png";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
-import { BrandMark } from "@/components/BrandMark";
 import { BRAND, NAVIGATION } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -12,11 +13,16 @@ function BrandLockup() {
   return (
     <Link
       href="/"
-      className="flex items-center gap-2.5 text-foreground"
+      className="inline-flex items-center rounded-md bg-[#080808] px-2.5 py-1.5"
       aria-label={`${BRAND.name} — home`}
     >
-      <BrandMark size={30} />
-      <span className="hidden text-sm font-semibold tracking-tight lg:inline">{BRAND.name}</span>
+      <Image
+        src={logo}
+        alt={BRAND.name}
+        priority
+        sizes="140px"
+        className="h-9 w-auto sm:h-10"
+      />
     </Link>
   );
 }
