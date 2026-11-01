@@ -1,6 +1,7 @@
 @import "tailwindcss";
 
 :root {
+  color-scheme: light;
   --background: #ffffff;
   --foreground: #080808;
   --foreground-subtle: #525252;
@@ -17,8 +18,26 @@
   --tracking-tight: -0.02em;
 }
 
+/* Explicit dark choice. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --background: #080808;
+  --foreground: #F5F5F5;
+  --foreground-subtle: #A1A1A1;
+  --foreground-faint: #8F8F8F;
+  --muted: #161616;
+  --muted-border: #262626;
+  --border: #262626;
+  --ink: #080808;
+  --accent: #5AC9A9;
+  --accent-soft: #10231E;
+  --accent-contrast: #080808;
+}
+
+/* System preference applies only while the visitor has not chosen a theme. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
     --background: #080808;
     --foreground: #F5F5F5;
     --foreground-subtle: #A1A1A1;
@@ -50,6 +69,29 @@
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
     "Liberation Mono", "Courier New", monospace;
+}
+
+/* Theme toggle icon follows the active scheme. */
+.theme-icon-sun {
+  display: none;
+}
+
+:root[data-theme="dark"] .theme-icon-sun {
+  display: block;
+}
+
+:root[data-theme="dark"] .theme-icon-moon {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .theme-icon-sun {
+    display: block;
+  }
+
+  :root:not([data-theme="light"]) .theme-icon-moon {
+    display: none;
+  }
 }
 
 body {

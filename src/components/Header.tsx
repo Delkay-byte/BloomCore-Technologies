@@ -6,6 +6,7 @@ import Link from "next/link";
 import logo from "@/assets/brand/bloomcore-logo-white.png";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { BRAND, NAVIGATION } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -315,8 +316,11 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
         <BrandLockup />
-        <DesktopNav />
-        <MobileNav />
+        <div className="flex items-center gap-2 md:gap-5">
+          <DesktopNav />
+          <ThemeToggle />
+          <MobileNav />
+        </div>
       </div>
     </header>
   );
