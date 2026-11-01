@@ -78,9 +78,16 @@ function DesktopNav() {
                   type="button"
                   aria-expanded={isOpen}
                   aria-haspopup="true"
-                  onClick={() =>
-                    setOpenMenu(isOpen ? null : { label: item.label, path: pathname })
-                  }
+                  onClick={(event) => {
+                    // Mouse clicks always open: hover may already have opened it,
+                    // and a click should not immediately close the menu again.
+                    const opened = { label: item.label, path: pathname };
+                    if (event.detail === 0) {
+                      setOpenMenu(isOpen ? null : opened);
+                    } else {
+                      setOpenMenu(opened);
+                    }
+                  }}
                   onFocus={() => setOpenMenu({ label: item.label, path: pathname })}
                   className={cn(
                     "flex items-center gap-1.5 py-2 text-sm font-medium tracking-tight transition-colors",
@@ -305,7 +312,7 @@ function MobileNav() {
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-30 w-full border-b border-border bg-background/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-md">
       <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
         <BrandLockup />
         <DesktopNav />

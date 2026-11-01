@@ -95,5 +95,6 @@ The site stays monochrome apart from one restrained accent, defined as `--accent
 favicons are extracted from the untouched source PNG by `python scripts/extract-brand-assets.py`:
 `src/assets/brand/bloomcore-logo-white.png`, `src/assets/brand/bloomcore-c-symbol.png`,
 `public/favicon-16.png`, `public/favicon-32.png` and `public/apple-touch-icon.png`. The favicon uses
-only the C element, with no wordmark. The founder portrait is served in its original colour, with
+only the C element on a solid `#080808` tile, with no wordmark, so it stays visible on light and
+dark browser chrome. The founder portrait is served in its original colour, with
 no logo overlay.

@@ -231,16 +231,14 @@ const products: ShowcaseProduct[] = [
 ];
 
 const positions = [
-  { transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)", opacity: 1, zIndex: 30 },
+  { transform: "translate3d(0, 0, 0) rotate(0deg) scale(1)", opacity: 1 },
   {
     transform: "translate3d(10%, -26px, 0) rotate(2.5deg) scale(0.93)",
     opacity: 0.9,
-    zIndex: 20,
   },
   {
     transform: "translate3d(-10%, 26px, 0) rotate(-2.5deg) scale(0.93)",
     opacity: 0.9,
-    zIndex: 10,
   },
 ];
 
@@ -252,6 +250,7 @@ export function HeroShowcase() {
   const [hovered, setHovered] = useState(false);
   const [focusWithin, setFocusWithin] = useState(false);
   const [restartToken, setRestartToken] = useState(0);
+  const [frontIndex, setFrontIndex] = useState(0);
   const reduceMotion = useReducedMotion();
 
   const rotationEnabled = !reduceMotion && !autoPaused && !hovered && !focusWithin;
@@ -263,6 +262,15 @@ export function HeroShowcase() {
     }, ROTATION_MS);
     return () => window.clearInterval(timer);
   }, [rotationEnabled, restartToken]);
+
+  // Hold the outgoing card in front briefly so a newly selected card slides
+  // forward before it takes the top layer. Without this the z-index change
+  // lands on the first frame and the transition looks abrupt.
+  useEffect(() => {
+    if (frontIndex === active) return;
+    const timer = window.setTimeout(() => setFrontIndex(active), 260);
+    return () => window.clearTimeout(timer);
+  }, [active, frontIndex]);
 
   const selectProduct = (index: number) => {
     setActive(index);
@@ -307,11 +315,14 @@ export function HeroShowcase() {
             <div
               key={product.slug}
               className={cn("hero-card-in absolute inset-x-0 top-5 mx-auto w-[90%] sm:w-[86%]", !isActive && "hidden sm:block")}
-              style={{ animationDelay: `${index * 90}ms`, zIndex: layout.zIndex }}
+              style={{
+                animationDelay: `${index * 90}ms`,
+                zIndex: index === frontIndex ? 30 : position === 1 ? 20 : 10,
+              }}
             >
               <div
                 aria-hidden={!isActive}
-                className="transition-[transform,opacity] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none"
+                className="transition-[transform,opacity] duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] will-change-transform motion-reduce:transition-none"
                 style={{ transform: layout.transform, opacity: layout.opacity }}
               >
                 <article

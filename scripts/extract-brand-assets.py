@@ -62,13 +62,13 @@ def square(canvas: int, scale: float, background=None) -> Image.Image:
 c512 = square(512, 0.82)
 c512.save(OUT_BRAND / "bloomcore-c-symbol.png", optimize=True)
 
-c32 = square(32, 0.9)
+c32 = square(32, 0.84, (8, 8, 8, 255)).convert("RGB")
 c32.save(OUT_PUBLIC / "favicon-32.png", optimize=True)
 
-c16 = square(16, 0.94)
+c16 = square(16, 0.82, (8, 8, 8, 255)).convert("RGB")
 c16.save(OUT_PUBLIC / "favicon-16.png", optimize=True)
 
-apple = square(180, 0.62, (8, 8, 8, 255))
+apple = square(180, 0.58, (8, 8, 8, 255))
 apple.convert("RGB").save(OUT_PUBLIC / "apple-touch-icon.png", optimize=True)
 
 print("favicons written")
