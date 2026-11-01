@@ -130,9 +130,6 @@ export function Footer() {
                 </a>{" "}
                 <span className="text-foreground-faint">— calls only</span>
               </li>
-              <li className="pt-1 text-sm leading-6 text-foreground-subtle">
-                {CONTACT.address}
-              </li>
             </Column>
           </div>
         </div>

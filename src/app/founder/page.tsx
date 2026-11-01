@@ -10,7 +10,7 @@ import { BRAND, CONTACT, ROUTES, SOCIAL } from "@/lib/brand";
 export const metadata: Metadata = {
   title: "Founder",
   description:
-    "Saviour Amegayie is the founder of BloomCore Technologies: data scientist, IT educator, software developer and AI enthusiast based in Akatsi, Ghana.",
+    "Saviour Amegayie is the founder of BloomCore Technologies: data scientist, IT educator, software developer and AI enthusiast.",
   alternates: { canonical: "/founder" },
   openGraph: {
     title: `Founder — ${BRAND.name}`,
@@ -25,7 +25,6 @@ const disciplines = ["Founder", "Data Scientist", "IT Educator", "Software Devel
 
 const facts = [
   { term: "Role", detail: "Founder, BloomCore Technologies" },
-  { term: "Based in", detail: "Akatsi, Volta Region, Ghana" },
   { term: "Teaching", detail: "Seven years with the Ghana Education Service" },
   { term: "Data science", detail: "Two years of applied practice" },
   { term: "Development", detail: "Three years of full-stack work" },
@@ -121,12 +120,6 @@ const personSchema = {
   email: CONTACT.email,
   sameAs: SOCIAL.map((item) => item.href),
   knowsAbout: ["Data Science", "Software Development", "IT Education", "Artificial Intelligence"],
-  address: {
-    "@type": "PostalAddress",
-    addressLocality: "Akatsi",
-    addressRegion: "Volta Region",
-    addressCountry: "GH",
-  },
 };
 
 export default function FounderPage() {
@@ -135,7 +128,7 @@ export default function FounderPage() {
       <PageHero
         eyebrow="Founder"
         title="Saviour Amegayie"
-        lead="Founder of BloomCore Technologies. Data scientist, IT educator, software developer and AI enthusiast, working from Akatsi in the Volta Region of Ghana."
+        lead="Founder of BloomCore Technologies. Data scientist, IT educator, software developer and AI enthusiast."
       />
 
       <section className="border-b border-border bg-background py-16 sm:py-20">
@@ -150,7 +143,7 @@ export default function FounderPage() {
                     fill
                     priority
                     sizes="(min-width: 1024px) 40vw, 100vw"
-                    className="object-cover object-top grayscale"
+                    className="object-cover object-top"
                   />
                   <div className="absolute bottom-0 left-0 border-t border-r border-border bg-background p-3">
                     <BrandMark size={30} />
@@ -163,9 +156,6 @@ export default function FounderPage() {
                       Founder · BloomCore Technologies
                     </p>
                   </div>
-                  <span className="font-mono text-[10px] tracking-[0.12em] text-foreground-faint uppercase">
-                    Akatsi
-                  </span>
                 </figcaption>
               </figure>
             </div>

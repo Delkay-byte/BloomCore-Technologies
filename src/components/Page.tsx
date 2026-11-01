@@ -25,7 +25,8 @@ export function Container({
 
 export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-foreground-faint uppercase">
+    <p className="flex items-center gap-2 font-mono text-[11px] font-medium tracking-[0.16em] text-foreground-faint uppercase">
+      <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 bg-accent" />
       {children}
     </p>
   );
@@ -129,7 +130,7 @@ export function ArrowLink({
       {children}
       <span
         aria-hidden="true"
-        className="transition-transform duration-200 group-hover:translate-x-0.5"
+        className="text-accent transition-transform duration-200 group-hover:translate-x-0.5"
       >
         &rarr;
       </span>
@@ -145,7 +146,7 @@ export function StatusBadge({
   tone?: "default" | "invert" | "muted";
 }) {
   const tones = {
-    default: "border-foreground/25 text-foreground",
+    default: "border-accent/35 text-accent",
     invert: "border-neutral-700 bg-neutral-900 text-neutral-100",
     muted: "border-border text-foreground-subtle",
   };

@@ -1,18 +1,13 @@
 import { cn } from "@/lib/utils";
 
 /**
- * The BloomCore Technologies monogram: two interlocking C-shapes around a B.
- * Rendered inline so it inherits colour and stays sharp at any size. The tile
- * uses `currentColor` and the glyph uses the page background, which makes the
- * same geometry work on light and dark surfaces.
+ * The BloomCore Technologies monogram.
+ *
+ * A block-built B and an open C share one 6-unit stroke weight inside a
+ * deep-green field. The geometry is deliberately simple so the mark holds at
+ * 16px and still reads as BC, not as a single abstract glyph.
  */
-export function BrandMark({
-  size = 32,
-  className,
-}: {
-  size?: number;
-  className?: string;
-}) {
+export function BrandMark({ size = 32, className }: { size?: number; className?: string }) {
   return (
     <svg
       viewBox="0 0 64 64"
@@ -20,33 +15,21 @@ export function BrandMark({
       height={size}
       aria-hidden="true"
       focusable="false"
-      fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      className={cn("shrink-0 text-foreground", className)}
+      className={cn("shrink-0", className)}
     >
-      <rect width="64" height="64" rx="12" fill="currentColor" />
-      <rect
-        x="2"
-        y="2"
-        width="60"
-        height="60"
-        rx="10"
-        fill="none"
-        stroke="var(--background)"
-        strokeOpacity="0.28"
-        strokeWidth="1.5"
-      />
-      <path d="M16 12h10a8 8 0 0 1 0 16H16v12h-6V12z" fill="var(--background)" />
+      <rect width="64" height="64" rx="14" fill="#0B5D4B" />
       <path
-        d="M30 12h14a10 10 0 0 1 10 10v6a10 10 0 0 1-10 10H34"
-        stroke="var(--background)"
-        strokeWidth="3"
-        strokeLinecap="round"
+        fillRule="evenodd"
+        fill="#FFFFFF"
+        d="M7 14h18a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H7zM13 19h10v10H13zM13 35h10v10H13z"
       />
-      <circle cx="46" cy="24" r="3" fill="var(--background)" />
-      <circle cx="46" cy="40" r="3" fill="var(--background)" />
-      <circle cx="36" cy="24" r="3" fill="currentColor" />
-      <circle cx="36" cy="40" r="3" fill="currentColor" />
+      <path
+        d="M57 17H42a3 3 0 0 0-3 3v22a3 3 0 0 0 3 3h15"
+        fill="none"
+        stroke="#FFFFFF"
+        strokeWidth="6"
+      />
     </svg>
   );
 }

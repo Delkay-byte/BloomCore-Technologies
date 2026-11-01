@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import portrait from "@/assets/founder-portrait.jpg";
-import { BrandMark } from "@/components/BrandMark";
+import { HeroShowcase } from "@/components/HeroShowcase";
 import { ArrowLink, Container, Eyebrow, StatusBadge } from "@/components/Page";
 import { Reveal } from "@/components/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
@@ -86,55 +86,6 @@ const work = [
   },
 ];
 
-function BrandComposition() {
-  return (
-    <div className="relative overflow-hidden rounded-lg border border-border bg-muted">
-      <div
-        aria-hidden="true"
-        className="absolute inset-0 opacity-[0.55]"
-        style={{
-          backgroundImage:
-            "linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)",
-          backgroundSize: "48px 48px",
-        }}
-      />
-      <div className="relative flex flex-col gap-8 p-6 sm:p-8">
-        <div className="flex items-start justify-between gap-4">
-          <BrandMark size={76} />
-          <div className="text-right">
-            <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
-              Based in
-            </p>
-            <p className="mt-1 font-mono text-xs text-foreground">Akatsi, Ghana</p>
-          </div>
-        </div>
-
-        <div className="flex flex-col divide-y divide-border border-y border-border">
-          {PRODUCTS.map((product, index) => (
-            <div key={product.slug} className="flex items-center justify-between gap-3 py-3">
-              <div className="flex min-w-0 items-center gap-3">
-                <span className="font-mono text-[10px] text-foreground-faint">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="truncate text-sm font-medium text-foreground">
-                  {product.name}
-                </span>
-              </div>
-              <span className="shrink-0 font-mono text-[10px] tracking-[0.08em] text-foreground-faint uppercase">
-                {product.status === "live" ? "Live" : "Build"}
-              </span>
-            </div>
-          ))}
-        </div>
-
-        <p className="font-mono text-[10px] leading-5 tracking-[0.06em] text-foreground-faint uppercase">
-          Software products · Engineering · Data
-        </p>
-      </div>
-    </div>
-  );
-}
-
 function SectionHeading({
   index,
   eyebrow,
@@ -164,26 +115,46 @@ function SectionHeading({
 export default function HomePage() {
   return (
     <>
-      <section className="border-b border-border bg-background">
+      <section className="relative overflow-hidden border-b border-border bg-background">
+        <div
+          aria-hidden="true"
+          className="absolute inset-0 opacity-[0.45]"
+          style={{
+            backgroundImage:
+              "linear-gradient(to right, var(--border) 1px, transparent 1px), linear-gradient(to bottom, var(--border) 1px, transparent 1px)",
+            backgroundSize: "64px 64px",
+            maskImage: "radial-gradient(ellipse at 70% 40%, black 20%, transparent 75%)",
+          }}
+        />
+        <div
+          aria-hidden="true"
+          className="absolute -top-32 right-0 h-[32rem] w-[32rem] rounded-full bg-accent-soft opacity-80 blur-3xl"
+        />
+
         <Container width="wide">
-          <div className="grid items-center gap-12 py-16 sm:py-20 lg:grid-cols-12 lg:gap-16 lg:py-24">
-            <div className="lg:col-span-7">
+          <div className="relative grid gap-14 py-14 sm:py-16 lg:grid-cols-12 lg:items-center lg:gap-10 lg:py-24">
+            <div className="lg:col-span-6">
               <Reveal>
                 <div className="flex items-center gap-3">
-                  <span className="relative flex h-2 w-2">
-                    <span className="absolute inline-flex h-full w-full rounded-full bg-foreground/20" />
-                    <span className="relative inline-flex h-2 w-2 rounded-full bg-foreground" />
+                  <span className="relative flex h-2 w-2" aria-hidden="true">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent/50" />
+                    <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
                   </span>
-                  <Eyebrow>BloomCore Technologies · Ghana</Eyebrow>
+                  <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-foreground-faint uppercase">
+                    Software products and engineering
+                  </p>
                 </div>
-                <h1 className="mt-6 text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl xl:text-[4.25rem] xl:leading-[1.05]">
+
+                <h1 className="mt-6 text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-[3.5rem] lg:leading-[1.05]">
                   {BRAND.tagline}
                 </h1>
+
                 <p className="mt-6 max-w-xl text-base leading-7 text-foreground-subtle sm:text-lg">
-                  We build software products and deliver technology solutions for Ghanaian
-                  businesses and institutions. Our work targets the operating problems that
-                  paperwork, spreadsheets and disconnected tools leave behind.
+                  We build software products and deliver digital systems for Ghanaian businesses and
+                  institutions — designed for the way work is actually done, not the way a template
+                  assumes it is.
                 </p>
+
                 <div className="mt-9 flex flex-col gap-3 sm:flex-row">
                   <ButtonLink href={ROUTES.work} size="lg">
                     Explore our work
@@ -192,11 +163,27 @@ export default function HomePage() {
                     View our products
                   </ButtonLink>
                 </div>
+
+                <dl className="mt-10 grid max-w-lg grid-cols-3 gap-4 border-t border-border pt-6">
+                  {[
+                    { term: "Products", detail: "3 in the portfolio" },
+                    { term: "Available", detail: "2 shipped products" },
+                    { term: "In build", detail: "TillProof" },
+                  ].map((item) => (
+                    <div key={item.term}>
+                      <dt className="font-mono text-[10px] tracking-[0.12em] text-foreground-faint uppercase">
+                        {item.term}
+                      </dt>
+                      <dd className="mt-1 text-sm font-medium text-foreground">{item.detail}</dd>
+                    </div>
+                  ))}
+                </dl>
               </Reveal>
             </div>
-            <div className="lg:col-span-5">
-              <Reveal delay={0.1}>
-                <BrandComposition />
+
+            <div className="lg:col-span-6">
+              <Reveal delay={0.12} y={24}>
+                <HeroShowcase />
               </Reveal>
             </div>
           </div>
@@ -385,7 +372,7 @@ export default function HomePage() {
                     alt="Saviour Amegayie, founder of BloomCore Technologies"
                     fill
                     sizes="96px"
-                    className="object-cover object-top grayscale"
+                    className="object-cover object-top"
                   />
                 </div>
               </div>

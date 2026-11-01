@@ -16,7 +16,7 @@ function BrandLockup() {
       aria-label={`${BRAND.name} — home`}
     >
       <BrandMark size={30} />
-      <span className="hidden text-sm font-semibold tracking-tight sm:inline">{BRAND.name}</span>
+      <span className="hidden text-sm font-semibold tracking-tight lg:inline">{BRAND.name}</span>
     </Link>
   );
 }
@@ -52,7 +52,7 @@ function DesktopNav() {
 
   return (
     <nav aria-label="Primary" className="hidden md:block">
-      <ul className="flex items-center gap-7">
+      <ul className="flex items-center gap-5 lg:gap-7">
         {NAVIGATION.map((item) => {
           const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
