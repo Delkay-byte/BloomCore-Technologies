@@ -76,10 +76,10 @@ const products = [
     href: ROUTES.productsSchemeKnit,
   },
   {
-    name: "BIK Prestige Enterprise",
+    name: "BloomCore One",
     status: "Available",
     detail: "Multi-location administration, roles, mobile money and susu workflows.",
-    href: ROUTES.productsBik,
+    href: ROUTES.productsBloomcoreOne,
   },
   {
     name: "TillProof",

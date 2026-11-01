@@ -122,10 +122,10 @@ const products: ShowcaseProduct[] = [
     ),
   },
   {
-    slug: "bik-prestige",
-    name: "BIK Prestige Enterprise",
+    slug: "bloomcore-one",
+    name: "BloomCore One",
     status: "Available",
-    href: ROUTES.productsBik,
+    href: ROUTES.productsBloomcoreOne,
     app: "Administration",
     preview: (
       <PreviewShell>

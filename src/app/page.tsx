@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 const productHrefs: Record<string, string> = {
   schemeknit: ROUTES.productsSchemeKnit,
-  "bik-prestige": ROUTES.productsBik,
+  "bloomcore-one": ROUTES.productsBloomcoreOne,
   tillproof: ROUTES.productsTillProof,
 };
 
@@ -69,12 +69,12 @@ const work = [
     href: ROUTES.productsSchemeKnit,
   },
   {
-    name: "BIK Prestige Enterprise",
+    name: "BloomCore One",
     industry: "Business operations",
     summary:
       "Multi-location administration, staff and role management, mobile-money operations and susu collection workflows.",
     status: "Available",
-    href: ROUTES.productsBik,
+    href: ROUTES.productsBloomcoreOne,
   },
   {
     name: "TillProof",

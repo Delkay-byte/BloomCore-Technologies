@@ -14,7 +14,7 @@ export const ROUTES = {
   about: "/about",
   products: "/products",
   productsSchemeKnit: "/products/schemeknit",
-  productsBik: "/products/bik-prestige",
+  productsBloomcoreOne: "/products/bloomcore-one",
   productsTillProof: "/products/tillproof",
   services: "/services",
   work: "/work",
@@ -47,7 +47,7 @@ export const NAVIGATION: ReadonlyArray<NavItem> = [
     href: ROUTES.products,
     children: [
       { label: "SchemeKnit", href: ROUTES.productsSchemeKnit },
-      { label: "BIK Prestige Enterprise", href: ROUTES.productsBik },
+      { label: "BloomCore One", href: ROUTES.productsBloomcoreOne },
       { label: "TillProof", href: ROUTES.productsTillProof },
     ],
   },
@@ -82,8 +82,8 @@ export const PRODUCTS = [
       "A teacher-focused lesson-planning platform that transforms curriculum schemes of learning into structured, indicator-focused lesson plans.",
   },
   {
-    slug: "bik-prestige",
-    name: "BIK Prestige Enterprise",
+    slug: "bloomcore-one",
+    name: "BloomCore One",
     category: "Business Operations and Management Software",
     status: "live",
     statusLabel: "Available",
@@ -166,3 +166,9 @@ export const SERVICES = [
       "Decisions documented in writing, capacity checked against the team that will carry the work.",
   },
 ] as const;
+
+/** Live product applications. TillProof has no public application yet. */
+export const PRODUCT_LINKS = {
+  schemeknit: "https://schemeknit-frontend.onrender.com/",
+  bloomcoreOne: "https://bloomcore-one.onrender.com/",
+} as const;

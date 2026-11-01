@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { ProductPageShell, type ProductDetail } from "@/components/ProductPageShell";
-import { BRAND } from "@/lib/brand";
+import { BRAND, PRODUCT_LINKS } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "SchemeKnit",
@@ -20,6 +20,10 @@ const detail: ProductDetail = {
   category: "Education Technology",
   statusLabel: "Available",
   statusTone: "default",
+  launch: {
+    label: "Visit SchemeKnit",
+    url: PRODUCT_LINKS.schemeknit,
+  },
   lead: "Teachers already know what to teach. SchemeKnit removes the repetition between the curriculum scheme and the lesson plan, so the planning time goes into teaching instead.",
   overview: [
     "A scheme of learning sets out what a class should cover across a term. Turning that scheme into individual lesson plans is careful, repetitive work. Done under time pressure, the plan drifts away from the indicators it is supposed to serve.",

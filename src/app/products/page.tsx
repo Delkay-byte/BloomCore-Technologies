@@ -8,14 +8,14 @@ import { BRAND, PRODUCTS, ROUTES } from "@/lib/brand";
 export const metadata: Metadata = {
   title: "Products",
   description:
-    "Software products built by BloomCore Technologies: SchemeKnit for lesson planning, BIK Prestige Enterprise for business operations, and TillProof for retail.",
+    "Software products built by BloomCore Technologies: SchemeKnit for lesson planning, BloomCore One for business operations, and TillProof for retail.",
   alternates: { canonical: "/products" },
   openGraph: { title: `Products — ${BRAND.name}`, url: "/products" },
 };
 
 const hrefs: Record<string, string> = {
   schemeknit: ROUTES.productsSchemeKnit,
-  "bik-prestige": ROUTES.productsBik,
+  "bloomcore-one": ROUTES.productsBloomcoreOne,
   tillproof: ROUTES.productsTillProof,
 };
 
@@ -33,9 +33,9 @@ const summaries: Record<string, { detail: string; capabilities: string[]; users:
     ],
     users: "Teachers and subject leads working from national curriculum schemes.",
   },
-  "bik-prestige": {
+  "bloomcore-one": {
     detail:
-      "BIK Prestige Enterprise supports organisations operating across several locations, combining staff administration, role-based access and financial operations in one platform.",
+      "BloomCore One supports organisations operating across several locations, combining staff administration, role-based access and financial operations in one platform.",
     capabilities: [
       "Multi-location business administration",
       "User and staff management",

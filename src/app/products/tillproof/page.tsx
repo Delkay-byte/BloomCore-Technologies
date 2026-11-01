@@ -1,11 +1,16 @@
 import type { Metadata } from "next";
-import { ProductPageShell, type ProductDetail } from "@/components/ProductPageShell";
-import { BRAND } from "@/lib/brand";
+import Image from "next/image";
+import tillproofLogo from "@/assets/products/tillproof-logo.png";
+import tillproofMark from "@/assets/products/tillproof-mark.png";
+import { ArrowLink, Container, Eyebrow } from "@/components/Page";
+import { Reveal } from "@/components/Reveal";
+import { ButtonLink } from "@/components/ui/Button";
+import { BRAND, ROUTES } from "@/lib/brand";
 
 export const metadata: Metadata = {
   title: "TillProof",
   description:
-    "TillProof is in development: retail management for electrical shops, covering stock traceability, controlled pricing and owner oversight across locations.",
+    "TillProof is currently in development: retail management for electrical shops, covering stock traceability, controlled pricing and owner oversight across locations.",
   alternates: { canonical: "/products/tillproof" },
   openGraph: {
     title: `TillProof — ${BRAND.name}`,
@@ -16,80 +21,156 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-const detail: ProductDetail = {
-  slug: "tillproof",
-  category: "Retail Technology",
-  statusLabel: "In development",
-  statusTone: "muted",
-  lead: "An owner who is not standing in the shop cannot see what left the shelf, at what price, or who handled the cash. TillProof is being built to close that gap for electrical retailers.",
-  overview: [
-    "Electrical retail carries a particular risk. Stock is high in value, individually identifiable and easy to move between a store, a store room and another branch. When records live in a notebook, a discrepancy is discovered late and cannot be reconstructed.",
-    "TillProof is being developed around three questions an owner needs answered: what stock exists, where it is, and what happened to it. Alongside that, price changes and cash handling are recorded against the person who made them.",
-    "The product is in active development. Nothing on this page describes a live deployment. The interface shown is a representation prepared for this website, not a screenshot of a running shop.",
-  ],
-  capabilities: [
-    {
-      title: "Inventory and stock tracking",
-      detail:
-        "Products are recorded once and tracked through receiving, transfer and sale, with quantity changes attributed to a person and a time.",
-    },
-    {
-      title: "Multi-shop visibility",
-      detail:
-        "An owner can see stock position across locations without travelling to each shop or waiting for a compiled report.",
-    },
-    {
-      title: "Product identification",
-      detail:
-        "Electrical goods are often distinguished by small specification differences. Records carry the attributes needed to identify the right item.",
-    },
-    {
-      title: "Controlled pricing",
-      detail:
-        "Price changes are recorded rather than improvised at the till, so the owner can see who changed what and when.",
-    },
-    {
-      title: "Cash accountability",
-      detail:
-        "Cash handling is recorded against the person responsible, giving a reconcilable trail at the end of a shift.",
-    },
-    {
-      title: "Audit records",
-      detail:
-        "Recorded actions carry an actor and a timestamp, so a discrepancy can be investigated rather than guessed at.",
-    },
-  ],
-  limits: [
-    "TillProof is in development and is not available for use. Capabilities described here are the intended direction of the build.",
-    "We do not claim a launched deployment, a customer, or a completed rollout for TillProof.",
-    "The product name has not been presented here as legally cleared or registered as a trademark.",
-    "We do not publish performance figures, accuracy claims or benchmarks for a product that is not yet released.",
-  ],
-  audience: [
-    {
-      role: "Owner-operators",
-      detail:
-        "Owners of electrical and electronics shops who carry responsibility for stock and cash but cannot be present at every location.",
-    },
-    {
-      role: "Shop managers",
-      detail:
-        "Managers who need a stock record that matches the shelf and a clear process for receiving, transferring and selling goods.",
-    },
-    {
-      role: "Shop attendants",
-      detail:
-        "Staff recording sales and handing cash, who need a fast, clear process rather than a form that invites workarounds.",
-    },
-  ],
-  meta: [
-    { term: "Status", detail: "In development" },
-    { term: "Category", detail: "Retail technology" },
-    { term: "Primary users", detail: "Owners and shop staff" },
-    { term: "Availability", detail: "Not released" },
-  ],
-};
+const intentions = [
+  {
+    title: "See the stock that is actually there",
+    detail:
+      "Products recorded once and tracked through receiving, transfer and sale, with quantity changes attributed to a person and a time.",
+  },
+  {
+    title: "Control prices from one place",
+    detail:
+      "Price changes recorded rather than improvised at the till, so an owner can see who changed what and when.",
+  },
+  {
+    title: "Make cash accountable",
+    detail:
+      "Cash handling recorded against the person responsible, giving a reconcilable trail at the end of a shift.",
+  },
+];
 
 export default function TillProofPage() {
-  return <ProductPageShell detail={detail} />;
+  return (
+    <>
+      <section className="border-b border-border bg-background py-14 sm:py-16 lg:py-20">
+        <Container>
+          <div className="grid gap-12 lg:grid-cols-12 lg:items-start lg:gap-16">
+            <div className="lg:col-span-7">
+              <Reveal>
+                <div className="inline-flex rounded-lg border border-border bg-[#F8F7F4] p-5">
+                  <Image
+                    src={tillproofLogo}
+                    alt="TillProof"
+                    priority
+                    sizes="(min-width: 640px) 340px, 260px"
+                    className="h-auto w-[260px] rounded-sm sm:w-[340px]"
+                  />
+                </div>
+
+                <div className="mt-8">
+                  <Eyebrow>Product · Retail technology</Eyebrow>
+                </div>
+
+                <h1 className="mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
+                  TillProof
+                </h1>
+
+                <p className="mt-5 max-w-xl text-base leading-7 text-foreground-subtle sm:text-lg">
+                  Retail management for electrical shops. TillProof is being built to give owners
+                  visibility of stock, prices and cash across locations they cannot stand in every
+                  day.
+                </p>
+
+                <div className="mt-8 flex flex-wrap items-center gap-4">
+                  <ButtonLink href={ROUTES.products} size="lg">
+                    Back to Products
+                  </ButtonLink>
+                  <ArrowLink href={ROUTES.contact}>Ask about TillProof</ArrowLink>
+                </div>
+              </Reveal>
+            </div>
+
+            <div className="lg:col-span-5">
+              <Reveal delay={0.08}>
+                <div className="rounded-lg border border-border bg-muted p-6 sm:p-8">
+                  <div className="flex items-start justify-between gap-4">
+                    <div className="inline-flex rounded-md border border-border bg-[#F8F7F4] p-3">
+                      <Image
+                        src={tillproofMark}
+                        alt="TillProof symbol"
+                        sizes="64px"
+                        className="h-12 w-auto"
+                      />
+                    </div>
+                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] font-medium tracking-[0.1em] text-foreground-subtle uppercase">
+                      <span aria-hidden="true" className="h-1 w-1 rounded-full bg-accent" />
+                      In development
+                    </span>
+                  </div>
+
+                  <h2 className="mt-6 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
+                    TillProof is currently in development.
+                  </h2>
+                  <p className="mt-3 text-sm leading-6 text-foreground-subtle">
+                    We&apos;re working on bringing TillProof to life. Please check back later for
+                    updates.
+                  </p>
+
+                  <div className="mt-6 border-t border-border pt-4">
+                    <p className="font-mono text-[10px] tracking-[0.12em] text-foreground-faint uppercase">
+                      Availability
+                    </p>
+                    <p className="mt-1.5 text-sm text-foreground">
+                      Not released. There is no public TillProof application to open yet.
+                    </p>
+                  </div>
+                </div>
+              </Reveal>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-b border-border bg-muted py-14 sm:py-16">
+        <Container>
+          <div className="max-w-3xl">
+            <Eyebrow>What we are building</Eyebrow>
+            <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
+              The problems TillProof is intended to solve
+            </h2>
+            <p className="mt-4 text-base leading-7 text-foreground-subtle">
+              These are the intended capabilities of the product, not a description of a live
+              deployment. No release date has been announced.
+            </p>
+          </div>
+
+          <div className="mt-10 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
+            {intentions.map((item, index) => (
+              <div key={item.title} className="bg-background p-6">
+                <span className="font-mono text-[10px] text-foreground-faint">
+                  {String(index + 1).padStart(2, "0")}
+                </span>
+                <h3 className="mt-3 text-base font-semibold text-foreground">{item.title}</h3>
+                <p className="mt-2 text-sm leading-6 text-foreground-subtle">{item.detail}</p>
+              </div>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-b border-border bg-background py-14 sm:py-16">
+        <Container>
+          <div className="grid gap-8 rounded-lg border border-border p-6 sm:p-8 lg:grid-cols-12 lg:items-center lg:gap-12">
+            <div className="lg:col-span-8">
+              <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
+                Development status
+              </p>
+              <h2 className="mt-3 text-xl font-semibold tracking-tight sm:text-2xl">
+                Built carefully, released when it is ready
+              </h2>
+              <p className="mt-3 max-w-2xl text-sm leading-6 text-foreground-subtle">
+                TillProof is not available for public use. We will publish the application here
+                when it is ready, and we are not announcing a date before the work is complete.
+              </p>
+            </div>
+            <div className="lg:col-span-4 lg:text-right">
+              <ButtonLink href={ROUTES.products} variant="outline" size="lg">
+                Back to Products
+              </ButtonLink>
+            </div>
+          </div>
+        </Container>
+      </section>
+    </>
+  );
 }

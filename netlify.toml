@@ -1,5 +1,5 @@
 # Netlify build settings for the static export.
-# The site is fully static, so no functions, redirects or runtime are required.
+# The site is fully static, so no functions or runtime are required.
 
 [build]
   command = "npm run build"
@@ -7,6 +7,15 @@
 
 [build.environment]
   NODE_VERSION = "22"
+
+# Previously shared links to the old product URL keep working. Netlify applies
+# this before serving the static files, so no duplicate canonical page is
+# generated and nothing depends on a Next.js server.
+[[redirects]]
+  from = "/products/bik-prestige"
+  to = "/products/bloomcore-one"
+  status = 301
+  force = true
 
 # Set NEXT_PUBLIC_SITE_URL in the Netlify UI once the production domain is
 # confirmed, for example https://bloomcoretechnologies.com. It is read at build

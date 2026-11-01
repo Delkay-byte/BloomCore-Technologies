@@ -64,6 +64,9 @@ Setup steps:
 
 Static-export notes:
 
+- The old product URL `/products/bik-prestige` is not generated. Netlify applies a
+  permanent redirect from it to `/products/bloomcore-one` (see `netlify.toml`).
+
 - `next/image` runs with `unoptimized: true`; image files are served from the export as-is.
 - `/about`, `/products` and every other route is emitted as `about.html`, `products.html`, etc.
   Netlify's default pretty URLs serve them at the extensionless paths used by the site.
@@ -115,8 +118,8 @@ Send.
 
 ## Content rules
 
-The published pages describe products at their actual stage. SchemeKnit and BIK Prestige
-Enterprise are labelled available; TillProof is labelled in development. Interface previews are
+The published pages describe products at their actual stage. SchemeKnit and BloomCore One are
+labelled available; TillProof is labelled in development. Interface previews are
 identified as representations, not screenshots.
 
 Do not add client names, testimonials, revenue or usage figures, certifications or awards without

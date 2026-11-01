@@ -6,7 +6,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
 
 export type ProductDetail = {
-  slug: "schemeknit" | "bik-prestige" | "tillproof";
+  slug: "schemeknit" | "bloomcore-one" | "tillproof";
   category: string;
   statusLabel: string;
   statusTone: "default" | "muted";
@@ -16,11 +16,12 @@ export type ProductDetail = {
   limits: string[];
   audience: ReadonlyArray<{ role: string; detail: string }>;
   meta: ReadonlyArray<{ term: string; detail: string }>;
+  launch?: { label: string; url: string };
 };
 
 const hrefs: Record<string, string> = {
   schemeknit: ROUTES.productsSchemeKnit,
-  "bik-prestige": ROUTES.productsBik,
+  "bloomcore-one": ROUTES.productsBloomcoreOne,
   tillproof: ROUTES.productsTillProof,
 };
 
@@ -155,6 +156,39 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
           </div>
         </Container>
       </section>
+
+      {detail.launch && (
+        <section className="border-b border-border bg-surface py-14 text-[#F5F5F5] sm:py-16">
+          <Container>
+            <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between sm:gap-10">
+              <div className="max-w-2xl">
+                <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-neutral-400 uppercase">
+                  Open the application
+                </p>
+                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-balance text-neutral-50 sm:text-3xl">
+                  {PRODUCTS.find((product) => product.slug === detail.slug)!.name} runs as a
+                  separate web application
+                </h2>
+                <p className="mt-3 text-sm leading-6 text-neutral-400">
+                  Continue to the live product in a new tab. This page stays open in your current
+                  tab, so you can return to the product information at any time.
+                </p>
+              </div>
+              <ButtonLink
+                href={detail.launch.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                size="lg"
+                aria-label={`${detail.launch.label} (opens in a new tab)`}
+                className="shrink-0 !bg-white !text-neutral-900 hover:!bg-neutral-200"
+              >
+                {detail.launch.label}
+                <span aria-hidden="true">&rarr;</span>
+              </ButtonLink>
+            </div>
+          </Container>
+        </section>
+      )}
 
       <section className="border-b border-border bg-background py-14 sm:py-16">
         <Container>
