@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="BloomCore Technologies mark monochrome">
+  <title>BloomCore Technologies mark monochrome</title>
+  <rect width="64" height="64" rx="12" fill="#080808"/>
+  <path d="M16 12h10a8 8 0 0 1 0 16h-10v12h-6v-28z" fill="#E5E5E5"/>
+  <path d="M30 12h14a10 10 0 0 1 10 10v6a10 10 0 0 1-10 10H34" fill="none" stroke="#E5E5E5" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="46" cy="24" r="3" fill="#E5E5E5"/>
+  <circle cx="46" cy="40" r="3" fill="#E5E5E5"/>
+  <circle cx="36" cy="24" r="3" fill="#080808"/>
+  <circle cx="36" cy="40" r="3" fill="#080808"/>
+</svg>

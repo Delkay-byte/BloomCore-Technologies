@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="BloomCore Technologies mark">
+  <title>BloomCore Technologies mark</title>
+  <desc>Geometric monogram formed from two interlocking C-shapes around a B, suggesting structure and connection.</desc>
+  <rect width="64" height="64" rx="12" fill="#080808"/>
+  <rect x="2" y="2" width="60" height="60" rx="12" fill="none" stroke="#E5E5E5" stroke-width="1.5"/>
+  <path d="M16 12h10a8 8 0 0 1 0 16h-10v12h-6v-28z" fill="#FFFFFF"/>
+  <path d="M30 12h14a10 10 0 0 1 10 10v6a10 10 0 0 1-10 10H34" fill="none" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="46" cy="24" r="3" fill="#FFFFFF"/>
+  <circle cx="46" cy="40" r="3" fill="#FFFFFF"/>
+  <circle cx="36" cy="24" r="3" fill="#080808"/>
+  <circle cx="36" cy="40" r="3" fill="#080808"/>
+</svg>
