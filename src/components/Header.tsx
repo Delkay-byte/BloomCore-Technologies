@@ -177,6 +177,17 @@ function MobileNav() {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
 
+  // Close the panel when the layout switches to the desktop navigation, so the
+  // body scroll lock cannot outlive the button that opened the panel.
+  useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const onChange = (event: MediaQueryListEvent) => {
+      if (event.matches) setOpenPath(null);
+    };
+    desktop.addEventListener("change", onChange);
+    return () => desktop.removeEventListener("change", onChange);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
 
@@ -252,7 +263,7 @@ function MobileNav() {
           initial={reduceMotion ? false : { opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="fixed inset-x-0 top-16 bottom-0 z-40 border-t border-border bg-background"
+          className="absolute inset-x-0 top-16 h-[calc(100dvh-4rem)] border-t border-border bg-background"
         >
           <div
             id="mobile-navigation"

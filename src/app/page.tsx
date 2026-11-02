@@ -133,7 +133,7 @@ export default function HomePage() {
 
         <Container width="wide">
           <div className="relative grid gap-14 py-14 sm:py-16 lg:grid-cols-12 lg:items-center lg:gap-10 lg:py-24">
-            <div className="lg:col-span-6">
+            <div className="min-w-0 lg:col-span-6">
               <Reveal>
                 <div className="flex items-center gap-3">
                   <span className="relative flex h-2 w-2" aria-hidden="true">
@@ -181,7 +181,7 @@ export default function HomePage() {
               </Reveal>
             </div>
 
-            <div className="lg:col-span-6">
+            <div className="min-w-0 lg:col-span-6">
               <Reveal delay={0.12} y={24}>
                 <HeroShowcase />
               </Reveal>

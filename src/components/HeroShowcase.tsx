@@ -305,7 +305,7 @@ export function HeroShowcase() {
         className="absolute -inset-x-6 -top-8 bottom-14 rounded-[2rem] bg-accent-soft opacity-80 blur-2xl"
       />
 
-      <div className="relative h-[440px] sm:h-[450px]">
+      <div className="relative sm:h-[450px]">
         {products.map((product, index) => {
           const position = (index - active + products.length) % products.length;
           const layout = positions[position];
@@ -314,7 +314,10 @@ export function HeroShowcase() {
           return (
             <div
               key={product.slug}
-              className={cn("hero-card-in absolute inset-x-0 top-5 mx-auto w-[90%] sm:w-[86%]", !isActive && "hidden sm:block")}
+              className={cn(
+                "hero-card-in relative mx-auto w-[90%] sm:absolute sm:inset-x-0 sm:top-5 sm:w-[86%]",
+                !isActive && "hidden sm:block",
+              )}
               style={{
                 animationDelay: `${index * 90}ms`,
                 zIndex: index === frontIndex ? 30 : position === 1 ? 20 : 10,
