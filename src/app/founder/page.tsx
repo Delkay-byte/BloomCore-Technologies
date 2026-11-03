@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import portrait from "@/assets/founder-portrait.jpg";
 import { ArrowLink, Container, Eyebrow, PageHero, Prose } from "@/components/Page";
-import { ButtonLink } from "@/components/ui/Button";
+import { ButtonLink, buttonClasses } from "@/components/ui/Button";
 import { BRAND, CONTACT, ROUTES, SOCIAL } from "@/lib/brand";
 
 export const metadata: Metadata = {
@@ -311,6 +311,34 @@ export default function FounderPage() {
               Independent project work, not client engagements. No performance figures are claimed
               here.
             </p>
+
+            <div className="mt-6 flex flex-col items-start gap-2">
+              <a
+                href="https://saviour-amegayie-portfolio.streamlit.app/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonClasses({
+                  variant: "ghost",
+                  size: "lg",
+                  className: "bc-projects-button bc-attention gap-2.5 px-7 text-base",
+                })}
+              >
+                Click to view projects
+                <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path
+                    d="M6 3h7v7M13 3L3.5 12.5"
+                    stroke="currentColor"
+                    strokeWidth="1.8"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="sr-only"> (opens the Streamlit portfolio in a new tab)</span>
+              </a>
+              <p className="font-mono text-[11px] tracking-wide text-foreground-faint">
+                Interactive portfolio · opens in a new tab
+              </p>
+            </div>
           </div>
         </Container>
       </section>

@@ -4,6 +4,7 @@ import "./globals.css";
 import { BackToTop } from "@/components/BackToTop";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
+import { HelpChat } from "@/components/HelpChat";
 import { BRAND, CONTACT } from "@/lib/brand";
 import { SITE_URL } from "@/lib/site";
 
@@ -113,6 +114,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </main>
         <Footer />
         <BackToTop />
+        <HelpChat />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organisationSchema) }}
