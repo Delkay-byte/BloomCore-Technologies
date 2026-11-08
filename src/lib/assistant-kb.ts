@@ -45,9 +45,9 @@ const SCHEMEKNIT_APP: AssistantLink = {
   external: true,
 };
 
-const BLOOMCORE_ONE_APP: AssistantLink = {
-  label: "Open BloomCore One",
-  href: PRODUCT_LINKS.bloomcoreOne,
+const MAACASH_APP: AssistantLink = {
+  label: "Open MaaCash",
+  href: PRODUCT_LINKS.maacash,
   external: true,
 };
 
@@ -66,7 +66,7 @@ export const kbEntries: KBEntry[] = [
     hints: ["about", "business", "technologies", "who", "what", "do", "build", "based"],
     chip: "What is BloomCore Technologies?",
     answer:
-      `${BRAND.name} is a Ghanaian technology business based in Akatsi, Volta Region. It builds and operates its own software products — SchemeKnit and BloomCore One are available, TillProof is in development — and takes on custom software, data, AI and consulting work for businesses and institutions. The company is deliberately small and describes its products by what they actually do.`,
+      `${BRAND.name} is a Ghanaian technology business based in Akatsi, Volta Region. It builds and operates its own software products — SchemeKnit and MaaCash are available, TillProof is in development — and takes on custom software, data, AI and consulting work for businesses and institutions. The company is deliberately small and describes its products by what they actually do.`,
     link: { label: "About the company", href: ROUTES.about },
     followUps: ["products-overview", "page-about", "services-overview"],
   },
@@ -86,7 +86,7 @@ export const kbEntries: KBEntry[] = [
     hints: ["pages", "site", "website", "section", "go", "look", "located", "link", "url"],
     chip: "Where do I find things on this site?",
     answer:
-      "The top menu holds Home, About, Products (with SchemeKnit, BloomCore One and TillProof), Services, Work, Founder and Contact. Direct addresses: /about, /products, /products/schemeknit, /products/bloomcore-one, /products/tillproof, /services, /work, /founder and /contact. The footer repeats the main links and holds the privacy notice at /privacy. Both live product applications open in a new tab from their product pages.",
+      "The top menu holds Home, About, Products (with SchemeKnit, MaaCash and TillProof), Services, Work, Founder and Contact. Direct addresses: /about, /products, /products/schemeknit, /products/maacash, /products/tillproof, /services, /work, /founder and /contact. The footer repeats the main links and holds the privacy notice at /privacy. Both live product applications open in a new tab from their product pages.",
     link: { label: "Start at the home page", href: ROUTES.home },
     followUps: ["products-overview", "contact-details", "site-experience"],
   },
@@ -147,9 +147,9 @@ export const kbEntries: KBEntry[] = [
     hints: ["mobile", "phone", "tablet", "desktop", "work", "run", "application", "install", "download", "works"],
     chip: "Does BloomCore have a mobile app?",
     answer:
-      "BloomCore's products are web applications that run in a browser — there is no native iOS or Android app to install, and nothing is downloaded from this site. SchemeKnit and BloomCore One each live at their own address and open in a new tab from their product pages; TillProof is not released. The website itself is responsive and works on phones, tablets and desktops.",
+      "BloomCore's products are web applications that run in a browser — there is no native iOS or Android app to install, and nothing is downloaded from this site. SchemeKnit and MaaCash each live at their own address and open in a new tab from their product pages; TillProof is not released. The website itself is responsive and works on phones, tablets and desktops.",
     link: { label: "See all products", href: ROUTES.products },
-    followUps: ["schemeknit-access", "bloomcore-one-access", "site-experience"],
+    followUps: ["schemeknit-access", "maacash-access", "site-experience"],
   },
   {
     id: "accounts-login",
@@ -157,9 +157,9 @@ export const kbEntries: KBEntry[] = [
     hints: ["create", "open", "product", "app", "site", "website", "credentials", "reset", "account"],
     chip: "Is there a login for this site?",
     answer:
-      "No — this website has no accounts and no login. It only describes the company and its products. Accounts are created inside each product application: SchemeKnit and BloomCore One have their own sign-up at their addresses, and TillProof has no public application yet. Nothing on this site collects or stores a password.",
+      "No — this website has no accounts and no login. It only describes the company and its products. Accounts are created inside each product application: SchemeKnit and MaaCash have their own sign-up at their addresses, and TillProof has no public application yet. Nothing on this site collects or stores a password.",
     link: { label: "See all products", href: ROUTES.products },
-    followUps: ["web-platform", "schemeknit-access", "bloomcore-one-access"],
+    followUps: ["web-platform", "schemeknit-access", "maacash-access"],
   },
   {
     id: "products-overview",
@@ -167,9 +167,9 @@ export const kbEntries: KBEntry[] = [
     hints: ["what", "have", "build", "list", "show", "available", "three", "compare", "difference"],
     chip: "What products do you have?",
     answer:
-      "There are three products. SchemeKnit (available) turns curriculum schemes of learning into structured, indicator-focused lesson plans for teachers. BloomCore One (available) is an administration platform for organisations running across several locations, covering staff, roles, mobile money and susu collection workflows. TillProof (in development) is retail management for electrical shops, aimed at stock traceability, controlled pricing and cash accountability. The Products page lists all three with status and links to each detail page.",
+      "There are three products. SchemeKnit (available) turns curriculum schemes of learning into structured, indicator-focused lesson plans for teachers. MaaCash (available) is an administration platform for organisations running across several locations, covering staff, roles, mobile money and susu collection workflows. TillProof (in development) is retail management for electrical shops, aimed at stock traceability, controlled pricing and cash accountability. The Products page lists all three with status and links to each detail page.",
     link: { label: "See all products", href: ROUTES.products },
-    followUps: ["schemeknit-overview", "bloomcore-one-overview", "tillproof-overview"],
+    followUps: ["schemeknit-overview", "maacash-overview", "tillproof-overview"],
   },
 
   // ── SchemeKnit ──────────────────────────────────────────────────────────
@@ -253,76 +253,76 @@ export const kbEntries: KBEntry[] = [
     followUps: ["schemeknit-credits", "schemeknit-features"],
   },
 
-  // ── BloomCore One ───────────────────────────────────────────────────────
+  // ── MaaCash ───────────────────────────────────────────────────────
   {
-    id: "bloomcore-one-overview",
-    topic: ["bloomcore one", "bloomcore1"],
+    id: "maacash-overview",
+    topic: ["maacash", "maa cash"],
     hints: [
       "multi-location", "multilocation", "location", "locations", "branch", "branches",
       "susu", "collector", "collectors", "staff", "organisation", "organization", "business",
       "administer", "administration", "platform", "what", "tell", "about", "available",
     ],
-    chip: "Tell me about BloomCore One",
+    chip: "Tell me about MaaCash",
     answer:
-      "BloomCore One is an administration platform for organisations that operate across more than one location, listed as available and in use. Locations are configured as distinct units under one organisation, staff accounts are assigned to a location, and access follows the role rather than the request. It also records mobile-money transactions and susu collection rounds so a collector's day can be reconciled. It is a web application opened from its product page.",
-    link: { label: "BloomCore One product page", href: ROUTES.productsBloomcoreOne },
-    followUps: ["bloomcore-one-features", "bloomcore-one-audience", "bloomcore-one-limits", "bloomcore-one-access"],
+      "MaaCash is an administration platform for organisations that operate across more than one location, listed as available and in use. Locations are configured as distinct units under one organisation, staff accounts are assigned to a location, and access follows the role rather than the request. It also records mobile-money transactions and susu collection rounds so a collector's day can be reconciled. It is a web application opened from its product page.",
+    link: { label: "MaaCash product page", href: ROUTES.productsMaacash },
+    followUps: ["maacash-features", "maacash-audience", "maacash-limits", "maacash-access"],
   },
   {
-    id: "bloomcore-one-features",
-    topic: ["bloomcore one", "bloomcore1", "susu"],
+    id: "maacash-features",
+    topic: ["maacash", "maa cash", "susu"],
     hints: [
       "feature", "features", "capability", "capabilities", "role", "roles", "access", "momo",
       "mobile money", "collection", "collections", "oversight", "reconcile", "reconciliation",
       "report", "reports", "does", "work", "how", "susu",
     ],
-    chip: "What can BloomCore One do?",
+    chip: "What can MaaCash do?",
     answer:
       "Its capability set: multi-location administration with each location kept as its own operational unit; staff and user management, with accounts assigned to a location and kept current; role-based access control for administrative, manager, collector and staff scopes; administrative oversight across locations without exported files; mobile-money transactions recorded against the customer, collector and location; and susu collection workflows tracking rounds, customer balances and payments for end-of-day reconciliation.",
-    link: { label: "BloomCore One product page", href: ROUTES.productsBloomcoreOne },
-    followUps: ["bloomcore-one-overview", "bloomcore-one-audience", "bloomcore-one-limits"],
+    link: { label: "MaaCash product page", href: ROUTES.productsMaacash },
+    followUps: ["maacash-overview", "maacash-audience", "maacash-limits"],
   },
   {
-    id: "bloomcore-one-audience",
-    topic: ["bloomcore one", "bloomcore1"],
+    id: "maacash-audience",
+    topic: ["maacash", "maa cash"],
     hints: [
       "who", "for", "audience", "users", "owner", "owners", "administrator", "administrators",
       "manager", "managers", "collector", "collectors", "operations", "staff", "roles", "used by",
     ],
-    chip: "Who is BloomCore One for?",
+    chip: "Who is MaaCash for?",
     answer:
       "Four roles. Owners and administrators need a consistent view across locations and control over who sees what. Location managers are accountable for one branch, its staff and daily records, without access to unrelated locations. Collectors need their assigned customers and collection records in a form they can act on during the day. Operations staff record mobile-money and collection activity and need those records to reconcile without duplicate entry.",
-    link: { label: "BloomCore One product page", href: ROUTES.productsBloomcoreOne },
-    followUps: ["bloomcore-one-features", "bloomcore-one-limits"],
+    link: { label: "MaaCash product page", href: ROUTES.productsMaacash },
+    followUps: ["maacash-features", "maacash-limits"],
   },
   {
-    id: "bloomcore-one-limits",
-    topic: ["bloomcore one", "bloomcore1", "susu"],
+    id: "maacash-limits",
+    topic: ["maacash", "maa cash", "susu"],
     hints: [
       "bank", "banking", "funds", "deposit", "deposits", "hold", "held", "money", "safe",
       "licensed", "licence", "license", "institution", "custody", "integration", "provider",
       "deployment", "claim", "does not",
     ],
-    chip: "Is BloomCore One a bank?",
+    chip: "Is MaaCash a bank?",
     answer:
-      "No. BloomCore One records and administers operations; it is not a bank or a licensed deposit-taking institution and does not hold customer funds. The company does not claim integration with a specific mobile-money provider beyond what is implemented and configured for a deployment, does not publish customer names, transaction volumes, collection totals or branch counts, and notes that feature availability depends on the deployment.",
-    link: { label: "BloomCore One product page", href: ROUTES.productsBloomcoreOne },
-    followUps: ["bloomcore-one-features", "bloomcore-one-access"],
+      "No. MaaCash records and administers operations; it is not a bank or a licensed deposit-taking institution and does not hold customer funds. The company does not claim integration with a specific mobile-money provider beyond what is implemented and configured for a deployment, does not publish customer names, transaction volumes, collection totals or branch counts, and notes that feature availability depends on the deployment.",
+    link: { label: "MaaCash product page", href: ROUTES.productsMaacash },
+    followUps: ["maacash-features", "maacash-access"],
   },
   {
-    id: "bloomcore-one-access",
-    topic: ["bloomcore one", "bloomcore1"],
+    id: "maacash-access",
+    topic: ["maacash", "maa cash"],
     hints: [
       "access", "open", "start", "use", "try", "app", "application", "login", "sign up", "signup",
       "link", "where", "demo", "deployment", "deploy", "organisation", "organization",
     ],
-    chip: "How do I open BloomCore One?",
+    chip: "How do I open MaaCash?",
     answer:
-      "BloomCore One is a live web application at " +
-      PRODUCT_LINKS.bloomcoreOne +
-      ". Open it with the button below or from the 'Visit BloomCore One' button on its product page; both open in a new tab. For a deployment configured for your own organisation, send a short description of what you run through the contact page.",
-    link: BLOOMCORE_ONE_APP,
-    followUps: ["bloomcore-one-features", "contact-details", "services-process"],
+      "MaaCash is a live web application at " +
+      PRODUCT_LINKS.maacash +
+      ". Open it with the button below or from the 'Visit MaaCash' button on its product page; both open in a new tab. For a deployment configured for your own organisation, send a short description of what you run through the contact page.",
+    link: MAACASH_APP,
+    followUps: ["maacash-features", "contact-details", "services-process"],
   },
 
   // ── TillProof ───────────────────────────────────────────────────────────
@@ -469,7 +469,7 @@ export const kbEntries: KBEntry[] = [
     hints: ["work", "built", "builds", "examples", "see", "show", "made", "done", "projects"],
     chip: "What have you built?",
     answer:
-      "The Work page lists the three products with the operating problem each addresses and what was built: SchemeKnit for the repetition between a scheme of learning and lesson plans, BloomCore One for multi-location staff, money and collection records, and TillProof (in development) for electrical retailers who cannot see stock, prices and cash across shops. It publishes no invented case studies, client logos or outcome figures, and labels each product's status plainly.",
+      "The Work page lists the three products with the operating problem each addresses and what was built: SchemeKnit for the repetition between a scheme of learning and lesson plans, MaaCash for multi-location staff, money and collection records, and TillProof (in development) for electrical retailers who cannot see stock, prices and cash across shops. It publishes no invented case studies, client logos or outcome figures, and labels each product's status plainly.",
     link: { label: "Work page", href: ROUTES.work },
     followUps: ["products-overview", "founder-projects"],
   },
@@ -649,7 +649,7 @@ export type AssistantReply = {
 };
 
 const fallback: AssistantReply = {
-  text: "That one is outside what I know. I can answer questions about this site and where to find each page, the three products (SchemeKnit, BloomCore One, TillProof), the services, the founder and their data projects, contact details and privacy. Or reach a human directly — replies usually come the same day.",
+  text: "That one is outside what I know. I can answer questions about this site and where to find each page, the three products (SchemeKnit, MaaCash, TillProof), the services, the founder and their data projects, contact details and privacy. Or reach a human directly — replies usually come the same day.",
   link: { label: "Contact page", href: ROUTES.contact },
   entryId: null,
   followUps: [getEntry("navigation-help"), getEntry("products-overview"), getEntry("contact-details")],
@@ -664,7 +664,7 @@ export function getEntry(id: string): KBEntry {
 export const defaultChips = [
   "products-overview",
   "schemeknit-overview",
-  "bloomcore-one-overview",
+  "maacash-overview",
   "tillproof-overview",
   "navigation-help",
   "contact-details",

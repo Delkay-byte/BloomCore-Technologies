@@ -64,8 +64,9 @@ Setup steps:
 
 Static-export notes:
 
-- The old product URL `/products/bik-prestige` is not generated. Netlify applies a
-  permanent redirect from it to `/products/bloomcore-one` (see `netlify.toml`).
+- The old product URLs `/products/bik-prestige` and `/products/bloomcore-one` are not
+  generated. Netlify applies a permanent redirect from both to `/products/maacash` (see
+  `netlify.toml`).
 
 - `next/image` runs with `unoptimized: true`; image files are served from the export as-is.
 - `/about`, `/products` and every other route is emitted as `about.html`, `products.html`, etc.
@@ -118,7 +119,7 @@ Send.
 
 ## Content rules
 
-The published pages describe products at their actual stage. SchemeKnit and BloomCore One are
+The published pages describe products at their actual stage. SchemeKnit and MaaCash are
 labelled available; TillProof is labelled in development. Interface previews are
 identified as representations, not screenshots.
 

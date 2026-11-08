@@ -14,7 +14,7 @@ export const ROUTES = {
   about: "/about",
   products: "/products",
   productsSchemeKnit: "/products/schemeknit",
-  productsBloomcoreOne: "/products/bloomcore-one",
+  productsMaacash: "/products/maacash",
   productsTillProof: "/products/tillproof",
   services: "/services",
   work: "/work",
@@ -47,7 +47,7 @@ export const NAVIGATION: ReadonlyArray<NavItem> = [
     href: ROUTES.products,
     children: [
       { label: "SchemeKnit", href: ROUTES.productsSchemeKnit },
-      { label: "BloomCore One", href: ROUTES.productsBloomcoreOne },
+      { label: "MaaCash", href: ROUTES.productsMaacash },
       { label: "TillProof", href: ROUTES.productsTillProof },
     ],
   },
@@ -82,8 +82,8 @@ export const PRODUCTS = [
       "A teacher-focused lesson-planning platform that transforms curriculum schemes of learning into structured, indicator-focused lesson plans.",
   },
   {
-    slug: "bloomcore-one",
-    name: "BloomCore One",
+    slug: "maacash",
+    name: "MaaCash",
     category: "Business Operations and Management Software",
     status: "live",
     statusLabel: "Available",
@@ -170,5 +170,5 @@ export const SERVICES = [
 /** Live product applications. TillProof has no public application yet. */
 export const PRODUCT_LINKS = {
   schemeknit: "https://schemeknit-frontend.onrender.com/",
-  bloomcoreOne: "https://bloomcore-one.onrender.com/",
+  maacash: "https://bloomcore-one.onrender.com/",
 } as const;

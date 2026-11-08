@@ -8,7 +8,7 @@ const routes = [
   "/about",
   "/products",
   "/products/schemeknit",
-  "/products/bloomcore-one",
+  "/products/maacash",
   "/products/tillproof",
   "/services",
   "/work",

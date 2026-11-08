@@ -15,7 +15,7 @@ const companyLinks = [
 
 const productHrefs: Record<string, string> = {
   schemeknit: ROUTES.productsSchemeKnit,
-  "bloomcore-one": ROUTES.productsBloomcoreOne,
+  "maacash": ROUTES.productsMaacash,
   tillproof: ROUTES.productsTillProof,
 };
 

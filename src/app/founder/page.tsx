@@ -76,10 +76,10 @@ const products = [
     href: ROUTES.productsSchemeKnit,
   },
   {
-    name: "BloomCore One",
+    name: "MaaCash",
     status: "Available",
     detail: "Multi-location administration, roles, mobile money and susu workflows.",
-    href: ROUTES.productsBloomcoreOne,
+    href: ROUTES.productsMaacash,
   },
   {
     name: "TillProof",

@@ -13,7 +13,13 @@
 # generated and nothing depends on a Next.js server.
 [[redirects]]
   from = "/products/bik-prestige"
-  to = "/products/bloomcore-one"
+  to = "/products/maacash"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/products/bloomcore-one"
+  to = "/products/maacash"
   status = 301
   force = true
 

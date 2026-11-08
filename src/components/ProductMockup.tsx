@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type MockupKind = "schemeknit" | "bloomcore-one" | "tillproof";
+type MockupKind = "schemeknit" | "maacash" | "tillproof";
 
 function Chrome({
   appName,
@@ -147,10 +147,10 @@ function SchemeKnitMockup() {
   );
 }
 
-function BloomCoreOneMockup() {
+function MaaCashMockup() {
   return (
     <Chrome
-      appName="BloomCore One · Administration"
+      appName="MaaCash · Administration"
       nav={["Overview", "Locations", "Staff", "MoMo", "Susu", "Reports"]}
       activeIndex={1}
     >
@@ -258,7 +258,7 @@ export function ProductMockup({
   return (
     <div className={className}>
       {kind === "schemeknit" && <SchemeKnitMockup />}
-      {kind === "bloomcore-one" && <BloomCoreOneMockup />}
+      {kind === "maacash" && <MaaCashMockup />}
       {kind === "tillproof" && <TillProofMockup />}
       <p className="mt-3 text-xs leading-5 text-foreground-faint">
         Interface representation prepared for this website. It is not a screenshot of a customer

@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const ENQUIRY_TYPES = [
   "New software project",
   "Product enquiry — SchemeKnit",
-  "Product enquiry — BloomCore One",
+  "Product enquiry — MaaCash",
   "Product enquiry — TillProof",
   "Support request",
   "General enquiry",

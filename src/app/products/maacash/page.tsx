@@ -3,31 +3,38 @@ import { ProductPageShell, type ProductDetail } from "@/components/ProductPageSh
 import { BRAND, PRODUCT_LINKS } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "BloomCore One",
+  title: "MaaCash",
   description:
-    "BloomCore One supports organisations operating across several locations with staff administration, role-based access, mobile-money operations and susu collection workflows.",
-  alternates: { canonical: "/products/bloomcore-one" },
+    "MaaCash supports organisations operating across several locations with staff administration, role-based access, mobile-money operations and susu collection workflows.",
+  alternates: { canonical: "/products/maacash" },
   openGraph: {
-    title: `BloomCore One — ${BRAND.name}`,
-    url: "/products/bloomcore-one",
+    title: `MaaCash — ${BRAND.name}`,
+    url: "/products/maacash",
     description:
       "Multi-location administration, staff and role management, mobile-money operations and susu collection workflows in one platform.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `MaaCash — ${BRAND.name}`,
+    description:
+      "Multi-location administration, staff and role management, mobile-money operations and susu collection workflows in one platform.",
+    images: ["/og-image.png"],
   },
 };
 
 const detail: ProductDetail = {
-  slug: "bloomcore-one",
+  slug: "maacash",
   category: "Business Operations and Management Software",
   statusLabel: "Available",
   statusTone: "default",
   launch: {
-    label: "Visit BloomCore One",
-    url: PRODUCT_LINKS.bloomcoreOne,
+    label: "Visit MaaCash",
+    url: PRODUCT_LINKS.maacash,
   },
   lead: "One administration platform for organisations that run across more than one location and need staff, access and money records to agree with each other.",
   overview: [
     "A business with several locations accumulates separate records. Staff are managed in one place, collections in another, and oversight depends on someone compiling a report by hand at the end of the month.",
-    "BloomCore One brings those records into one platform with scoped access. Administrators configure the organisation and its locations; managers see their own branch; collectors see the customers assigned to them.",
+    "MaaCash brings those records into one platform with scoped access. Administrators configure the organisation and its locations; managers see their own branch; collectors see the customers assigned to them.",
     "The platform is available and in use. Mobile-money operations and susu collection workflows are part of the supported capability set, described here at the level of process rather than customer detail.",
   ],
   capabilities: [
@@ -64,7 +71,7 @@ const detail: ProductDetail = {
   ],
   limits: [
     "We do not publish customer names, transaction volumes, collection totals or branch counts.",
-    "BloomCore One is not a bank or a licensed deposit-taking institution. It records and administers operations; it does not hold customer funds.",
+    "MaaCash is not a bank or a licensed deposit-taking institution. It records and administers operations; it does not hold customer funds.",
     "We do not claim integration with a specific mobile-money provider beyond what is implemented and configured for a deployment.",
     "Feature availability depends on the deployment. This page describes the platform, not the configuration of any particular customer.",
   ],
@@ -98,6 +105,6 @@ const detail: ProductDetail = {
   ],
 };
 
-export default function BloomCoreOnePage() {
+export default function MaaCashPage() {
   return <ProductPageShell detail={detail} />;
 }

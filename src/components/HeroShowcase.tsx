@@ -122,10 +122,10 @@ const products: ShowcaseProduct[] = [
     ),
   },
   {
-    slug: "bloomcore-one",
-    name: "BloomCore One",
+    slug: "maacash",
+    name: "MaaCash",
     status: "Available",
-    href: ROUTES.productsBloomcoreOne,
+    href: ROUTES.productsMaacash,
     app: "Administration",
     preview: (
       <PreviewShell>

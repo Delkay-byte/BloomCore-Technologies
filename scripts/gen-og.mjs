@@ -16,7 +16,7 @@ const svg = `<svg width="1200" height="630" viewBox="0 0 1200 630" xmlns="http:/
   <text x="80" y="330" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="bold" letter-spacing="-2.5" fill="#FFFFFF">Technology that moves</text>
   <text x="80" y="418" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="bold" letter-spacing="-2.5" fill="#FFFFFF">work forward.</text>
   <rect x="80" y="470" width="64" height="6" fill="#0B5D4B"/>
-  <text x="80" y="532" font-family="Consolas, monospace" font-size="16" letter-spacing="2" fill="#8A8A8A">SCHEMEKNIT · BIK PRESTIGE ENTERPRISE · TILLPROOF</text>
+  <text x="80" y="532" font-family="Consolas, monospace" font-size="16" letter-spacing="2" fill="#8A8A8A">SCHEMEKNIT · MAACASH · TILLPROOF</text>
 </svg>`;
 
 const png = await sharp(Buffer.from(svg)).png({ compressionLevel: 9 }).toBuffer();

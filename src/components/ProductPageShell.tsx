@@ -6,7 +6,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
 
 export type ProductDetail = {
-  slug: "schemeknit" | "bloomcore-one" | "tillproof";
+  slug: "schemeknit" | "maacash" | "tillproof";
   category: string;
   statusLabel: string;
   statusTone: "default" | "muted";
@@ -21,7 +21,7 @@ export type ProductDetail = {
 
 const hrefs: Record<string, string> = {
   schemeknit: ROUTES.productsSchemeKnit,
-  "bloomcore-one": ROUTES.productsBloomcoreOne,
+  "maacash": ROUTES.productsMaacash,
   tillproof: ROUTES.productsTillProof,
 };
 
