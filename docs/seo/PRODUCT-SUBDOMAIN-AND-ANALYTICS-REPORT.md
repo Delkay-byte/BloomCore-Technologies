@@ -4,7 +4,8 @@ Date: 9 November 2026
 Site: `https://bloomcoretech.com`
 Repository: `Delkay-byte/BloomCore-Technologies`
 Implementation commit: `1cc9ef4`
-Production deploy: `6af210a17902c7d10366691e`
+Implementation deploy: `6af210a17902c7d10366691e`
+Documentation deploy: `6af211a85e28ec1c0a49deb5`
 
 ## A. Executive summary
 
