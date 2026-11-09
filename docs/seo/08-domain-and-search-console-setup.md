@@ -137,7 +137,16 @@ Values must be entered by the owner.
 Do not request indexing before step 1. Indexing a page that still declares the wrong canonical wastes
 the request.
 
-## 8. What is still outstanding
+## 8. What has been done and what is still outstanding
+
+Done on 9 November 2026:
+
+- The canonical fix was deployed and verified live.
+- The old Netlify host returns `301` to the apex.
+- `www` and HTTP redirects were reverified.
+- All 15 sitemap URLs return `200` with a self-referencing canonical.
+
+Still outstanding:
 
 - Search Console verification has not been performed. No token exists.
 - Bing verification or import has not been performed.

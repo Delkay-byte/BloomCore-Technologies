@@ -154,8 +154,14 @@ Local production output:
 - `out/sitemap.xml` first `<loc>`: `https://bloomcoretech.com/`
 - `out/robots.txt` sitemap: `https://bloomcoretech.com/sitemap.xml`
 
-Live checks are listed in `01-technical-seo-audit.md`. The canonical fix is not live until the next
-production deploy.
+Live output after the production deploy on 9 November 2026:
+
+- `/`, `/products/schemeknit` and a resource article return apex canonical and `og:url`.
+- `sitemap.xml` and `robots.txt` use the apex.
+- The old Netlify host and `www` return `301` to the apex.
+- All 15 sitemap URLs return `200` with a self-referencing canonical.
+
+Full results are in `01-technical-seo-audit.md`.
 
 ## 11. Constraints
 

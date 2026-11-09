@@ -2,7 +2,7 @@
 
 Date: 9 November 2026
 Domain: `https://bloomcoretech.com`
-Starting point: technical fixes implemented in source, pending production deploy; no verified search
+Starting point: technical fixes deployed and verified on 9 November 2026; no verified search
 console properties; no analytics data.
 
 ## Objective

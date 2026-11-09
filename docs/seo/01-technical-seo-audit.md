@@ -12,15 +12,16 @@ The domain, HTTPS and redirect topology were already correct. The serious defect
 consistency: production pages served canonical tags, `og:url`, the sitemap and `robots.txt` that
 pointed at the old `bloomcore-technologies.netlify.app` host. That told search engines the canonical
 version of every page lived on a different hostname. The source has been corrected and verified in a
-local production build; it takes effect on the next production deploy.
+local production build. The fix was deployed on 9 November 2026 and verified live: every page in
+the sitemap now declares the apex canonical, and the old host redirects to it.
 
 ## Findings
 
 | # | Severity | Finding | Evidence | Status |
 | --- | --- | --- | --- | --- |
-| 1 | Critical | Canonical tags and `og:url` pointed to `https://bloomcore-technologies.netlify.app` | Live `/` and `/products/maacash` both returned the old host in `<link rel="canonical">` | Fixed in `src/lib/site.ts`; confirmed in local `out/` build. Pending deploy |
-| 2 | Critical | `sitemap.xml` and `robots.txt` advertised the old host | Live sitemap `<loc>` entries and `Sitemap:` line used the Netlify hostname | Fixed in `src/app/sitemap.ts` and `src/app/robots.ts`; local build shows apex URLs |
-| 3 | High | Old Netlify hostname still served `200 OK` duplicates | `https://bloomcore-technologies.netlify.app/products/maacash` returned 200 | Permanent redirect to apex added in `netlify.toml` |
+| 1 | Critical | Canonical tags and `og:url` pointed to `https://bloomcore-technologies.netlify.app` | Live `/` and `/products/maacash` both returned the old host in `<link rel="canonical">` | Fixed in `src/lib/site.ts`; deployed and verified live: apex canonical |
+| 2 | Critical | `sitemap.xml` and `robots.txt` advertised the old host | Live sitemap `<loc>` entries and `Sitemap:` line used the Netlify hostname | Fixed in `src/app/sitemap.ts` and `src/app/robots.ts`; deployed and verified live: apex URLs |
+| 3 | High | Old Netlify hostname still served `200 OK` duplicates | `https://bloomcore-technologies.netlify.app/products/maacash` returned 200 | Permanent redirect added in `netlify.toml`; deployed and verified live: `301` to apex |
 | 4 | High | No search engine verification | No Search Console or Bing Webmaster property confirmed; no tokens available | Optional verification env vars added; owner action required |
 | 5 | High | No analytics or conversion measurement | No GA4 measurement ID or tag present | Consent-gated GA4 integration added; measurement ID still required |
 | 6 | Medium | Page titles were mostly bare page names | `/services`, `/about`, `/contact` used short titles such as `Services` | Rewritten with intent and location where accurate |
@@ -62,7 +63,7 @@ These require the site owner:
 
 Exact steps are in `08-domain-and-search-console-setup.md`.
 
-## Post-deploy verification checklist
+## Post-deploy verification performed (9 November 2026)
 
 ```text
 curl -sS https://bloomcoretech.com/ | grep -E 'canonical|og:url'
@@ -73,8 +74,10 @@ curl -sSI https://bloomcore-technologies.netlify.app/
 curl -sSI https://bloomcoretech.com/products/bloomcore-one
 ```
 
-Expected: apex canonical and `og:url`; apex sitemap URLs; apex sitemap declaration in robots; `301`
-for `www`, the old Netlify host and the legacy product paths.
+Result: home, product and article pages return apex canonical and `og:url`; the sitemap and robots
+use the apex; `https://www.bloomcoretech.com/` returns `301`; the old Netlify host returns `301`;
+`/products/bloomcore-one` and `/products/bik-prestige` return `301` to `/products/maacash`; an
+unknown path returns `404`. All 15 sitemap URLs return `200` with a self-referencing canonical.
 
 ## Limits of this audit
 
