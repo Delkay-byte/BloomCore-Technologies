@@ -412,6 +412,7 @@ Updated in `Delkay-byte/BloomCore-One`:
   Turnstile defaults, `render.yaml` and `.env.example`.
 - Health endpoints report `app: "maacash"`.
 - `render.yaml` now describes only the `maacash` service.
+- Auto-deploy on `main` is enabled on `maacash`, matching the blueprint.
 - README, runbook and pilot onboarding point at the branded origin.
 
 Production checks after deployment `dep-dbp4ptrrjlhs73erjni0` (commit
@@ -541,6 +542,10 @@ checks above are the available evidence.
 | Paystack test-mode webhook | **BLOCKED** | No test key, dashboard logged out |
 | MaaCash database and records | **COMPLETED** | Neon preserved, row counts unchanged |
 | Canonical `maacash` service | **COMPLETED** | Active, no billing or plan change |
+
+No Render plan was upgraded, no payment method was added and no custom domain
+was purchased. The service remains on the `free` plan with one verified custom
+domain.
 
 ## N. References
 
