@@ -5,11 +5,23 @@ import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, ROUTES, SERVICES } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Services",
+  title: { absolute: "Software Development Services in Ghana" },
   description:
-    "Custom software development, web applications, process digitisation, data science, AI integration, API development and technology consulting from BloomCore Technologies.",
+    "Custom software, web applications, process digitisation, data science, AI integration and APIs for Ghanaian organisations.",
   alternates: { canonical: "/services" },
-  openGraph: { title: `Services — ${BRAND.name}`, url: "/services" },
+  openGraph: {
+    title: `Services — ${BRAND.name}`,
+    url: "/services",
+    description:
+      "Custom software development, web applications, process digitisation, data science, AI integration, APIs and technology consulting in Ghana.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Software Development Services in Ghana — ${BRAND.name}`,
+    description:
+      "Custom software development, web applications, process digitisation, data science, AI integration, APIs and technology consulting in Ghana.",
+    images: ["/og-image.png"],
+  },
 };
 
 const engagement = [

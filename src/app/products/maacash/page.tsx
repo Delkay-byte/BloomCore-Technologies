@@ -3,9 +3,9 @@ import { ProductPageShell, type ProductDetail } from "@/components/ProductPageSh
 import { BRAND, PRODUCT_LINKS } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "MaaCash",
+  title: { absolute: "MaaCash — Business Operations Software" },
   description:
-    "MaaCash supports organisations operating across several locations with staff administration, role-based access, mobile-money operations and susu collection workflows.",
+    "MaaCash supports multi-location organisations with staff administration, role-based access, mobile-money operations and susu collection workflows.",
   alternates: { canonical: "/products/maacash" },
   openGraph: {
     title: `MaaCash — ${BRAND.name}`,
@@ -102,6 +102,38 @@ const detail: ProductDetail = {
     { term: "Category", detail: "Business operations" },
     { term: "Primary users", detail: "Owners, managers, collectors" },
     { term: "Platform", detail: "Web application" },
+  ],
+  faqs: [
+    {
+      question: "Is MaaCash a bank or a mobile money provider?",
+      answer:
+        "No. MaaCash is an operations platform. It records and administers business activity; it is not a bank or a licensed deposit-taking institution and does not hold customer funds.",
+    },
+    {
+      question: "Can MaaCash manage more than one location?",
+      answer:
+        "Yes. Locations are configured as distinct operational units under one organisation, each with its own staff and records. Managers see their own location rather than every branch.",
+    },
+    {
+      question: "Does MaaCash connect to a specific mobile money provider?",
+      answer:
+        "Integration depends on the deployment. We do not claim a connection to a specific provider beyond what is implemented and configured for a particular organisation.",
+    },
+    {
+      question: "Who can see which records?",
+      answer:
+        "Access follows the role. Administrative, manager, collector and operations roles each have a defined scope, so a collector does not see organisation-wide administration.",
+    },
+    {
+      question: "Does MaaCash support susu collection?",
+      answer:
+        "Yes. Collection rounds, customer balances and payment records are part of the supported workflow set, so a collector's day can be reconciled against the customers assigned to them.",
+    },
+    {
+      question: "How does an organisation get started?",
+      answer:
+        "Send a short description of your locations, roles and current process. We will tell you whether the platform fits, and what a deployment would involve.",
+    },
   ],
 };
 

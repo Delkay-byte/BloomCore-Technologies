@@ -6,21 +6,21 @@ import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, PRODUCTS, ROUTES } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Products",
+  title: { absolute: "Software Products for Ghanaian Organisations" },
   description:
-    "Software products built by BloomCore Technologies: SchemeKnit for lesson planning, MaaCash for business operations, and TillProof for retail.",
+    "Software products built by BloomCore Technologies: SchemeKnit for lesson planning, MaaCash for business operations, and TillProof for electrical retail.",
   alternates: { canonical: "/products" },
   openGraph: {
     title: `Products — ${BRAND.name}`,
     url: "/products",
     description:
-      "Software products built by BloomCore Technologies: SchemeKnit for lesson planning, MaaCash for business operations, and TillProof for retail.",
+      "Software products built by BloomCore Technologies: SchemeKnit for lesson planning, MaaCash for business operations, and TillProof for electrical retail.",
   },
   twitter: {
     card: "summary_large_image",
     title: `Products — ${BRAND.name}`,
     description:
-      "Software products built by BloomCore Technologies: SchemeKnit for lesson planning, MaaCash for business operations, and TillProof for retail.",
+      "Software products built by BloomCore Technologies: SchemeKnit for lesson planning, MaaCash for business operations, and TillProof for electrical retail.",
     images: ["/og-image.png"],
   },
 };

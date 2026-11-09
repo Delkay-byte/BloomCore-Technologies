@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { trackEvent } from "@/lib/analytics";
 import { CONTACT } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
@@ -96,8 +97,13 @@ export function ContactForm() {
   const [preparedHref, setPreparedHref] = useState<string | null>(null);
   const [attempted, setAttempted] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
+  const started = useRef(false);
 
   const update = (field: FieldName, value: string) => {
+    if (!started.current) {
+      started.current = true;
+      trackEvent("contact_form_start");
+    }
     setValues((current) => ({ ...current, [field]: value }));
     setErrors((current) => {
       if (!current[field]) return current;
@@ -125,6 +131,9 @@ export function ContactForm() {
 
     const href = buildMailto(values);
     setPreparedHref(href);
+    trackEvent("contact_form_submit", {
+      enquiry_type: values.enquiryType,
+    });
 
     // Hand the prepared message to the operating system's mail handler. The
     // site sends nothing itself; the visitor reviews and sends the email.

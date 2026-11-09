@@ -18,6 +18,7 @@ export const ROUTES = {
   productsTillProof: "/products/tillproof",
   services: "/services",
   work: "/work",
+  resources: "/resources",
   founder: "/founder",
   contact: "/contact",
   privacy: "/privacy",
@@ -53,6 +54,7 @@ export const NAVIGATION: ReadonlyArray<NavItem> = [
   },
   { label: "Services", href: ROUTES.services },
   { label: "Work", href: ROUTES.work },
+  { label: "Resources", href: ROUTES.resources },
   { label: "Founder", href: ROUTES.founder },
   { label: "Contact", href: ROUTES.contact },
 ];

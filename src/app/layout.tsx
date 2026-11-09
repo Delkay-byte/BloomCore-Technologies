@@ -1,11 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { Analytics } from "@/components/Analytics";
 import { BackToTop } from "@/components/BackToTop";
 import { Footer } from "@/components/Footer";
 import { Header } from "@/components/Header";
 import { HelpChat } from "@/components/HelpChat";
-import { BRAND, CONTACT } from "@/lib/brand";
+import { JsonLd } from "@/components/JsonLd";
+import { BRAND } from "@/lib/brand";
+import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 const inter = Inter({
@@ -21,35 +24,49 @@ const ibmPlexMono = IBM_Plex_Mono({
   display: "swap",
 });
 
+const HOME_TITLE = `${BRAND.name} — Software Development in Ghana`;
+const HOME_DESCRIPTION =
+  "BloomCore Technologies builds SchemeKnit, MaaCash and TillProof, plus custom software, web applications and data systems for Ghanaian organisations.";
+
+const googleVerification = process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION?.trim();
+const bingVerification = process.env.NEXT_PUBLIC_BING_SITE_VERIFICATION?.trim();
+
+const verification: Metadata["verification"] = {
+  ...(googleVerification ? { google: googleVerification } : {}),
+  ...(bingVerification ? { other: { "msvalidate.01": bingVerification } } : {}),
+};
+
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: `${BRAND.name} — ${BRAND.tagline}`,
+    default: HOME_TITLE,
     template: `%s — ${BRAND.name}`,
   },
-  description: BRAND.description,
+  description: HOME_DESCRIPTION,
   applicationName: BRAND.name,
-  authors: [{ name: BRAND.name }],
+  authors: [{ name: BRAND.name, url: SITE_URL }],
   creator: BRAND.name,
   publisher: BRAND.name,
+  category: "technology",
   formatDetection: { email: true, address: true, telephone: true },
   openGraph: {
     type: "website",
     locale: "en_GH",
     url: "/",
     siteName: BRAND.name,
-    title: `${BRAND.name} — ${BRAND.tagline}`,
-    description: BRAND.description,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: BRAND.name }],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${BRAND.name} — ${BRAND.tagline}`,
-    description: BRAND.description,
+    title: HOME_TITLE,
+    description: HOME_DESCRIPTION,
     images: ["/og-image.png"],
   },
   robots: { index: true, follow: true },
   alternates: { canonical: "/" },
+  ...(Object.keys(verification).length > 0 ? { verification } : {}),
   icons: {
     icon: [
       { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
@@ -67,24 +84,6 @@ export const viewport: Viewport = {
   ],
   width: "device-width",
   initialScale: 1,
-};
-
-const organisationSchema = {
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  name: BRAND.name,
-  url: SITE_URL,
-  description: BRAND.description,
-  slogan: BRAND.tagline,
-  email: CONTACT.email,
-  telephone: `+233${CONTACT.phoneCallsWhatsapp.slice(1)}`,
-  address: {
-    "@type": "PostalAddress",
-    streetAddress: "L7 Olive St., Akast Road",
-    addressLocality: "Akatsi",
-    addressRegion: "Volta Region",
-    addressCountry: "GH",
-  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -115,10 +114,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <Footer />
         <BackToTop />
         <HelpChat />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organisationSchema) }}
-        />
+        <Analytics />
+        <JsonLd data={organizationSchema()} />
+        <JsonLd data={websiteSchema()} />
       </body>
     </html>
   );

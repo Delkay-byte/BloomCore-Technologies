@@ -5,11 +5,23 @@ import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, SOCIAL } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Contact",
+  title: { absolute: "Contact BloomCore Technologies" },
   description:
     "Contact BloomCore Technologies by email, telephone or WhatsApp. Registered business name BN428031125, based in Akatsi, Volta Region, Ghana.",
   alternates: { canonical: "/contact" },
-  openGraph: { title: `Contact — ${BRAND.name}`, url: "/contact" },
+  openGraph: {
+    title: `Contact — ${BRAND.name}`,
+    url: "/contact",
+    description:
+      "Email, telephone and WhatsApp contact details for BloomCore Technologies in Akatsi, Volta Region, Ghana.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Contact — ${BRAND.name}`,
+    description:
+      "Email, telephone and WhatsApp contact details for BloomCore Technologies in Akatsi, Volta Region, Ghana.",
+    images: ["/og-image.png"],
+  },
 };
 
 const details = [

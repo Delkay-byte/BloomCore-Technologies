@@ -7,16 +7,23 @@ import { ButtonLink, buttonClasses } from "@/components/ui/Button";
 import { BRAND, CONTACT, ROUTES, SOCIAL } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Founder",
+  title: "Saviour Amegayie — Founder",
   description:
-    "Saviour Amegayie is the founder of BloomCore Technologies: data scientist, IT educator, software developer and AI enthusiast.",
+    "Saviour Amegayie is the founder of BloomCore Technologies: data scientist, IT educator, software developer and applied AI practitioner.",
   alternates: { canonical: "/founder" },
   openGraph: {
-    title: `Founder — ${BRAND.name}`,
+    title: `Saviour Amegayie — Founder — ${BRAND.name}`,
     url: "/founder",
     description:
       "Founder profile: data science, software development, education and applied AI at BloomCore Technologies.",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: BRAND.name }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `Saviour Amegayie — Founder — ${BRAND.name}`,
+    description:
+      "Data science, software development, education and applied AI at BloomCore Technologies.",
+    images: ["/og-image.png"],
   },
 };
 

@@ -2,15 +2,19 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import tillproofLogo from "@/assets/products/tillproof-logo.png";
 import tillproofMark from "@/assets/products/tillproof-mark.png";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { JsonLd } from "@/components/JsonLd";
 import { ArrowLink, Container, Eyebrow } from "@/components/Page";
 import { Reveal } from "@/components/Reveal";
+import { ViewTracker } from "@/components/ViewTracker";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, ROUTES } from "@/lib/brand";
+import { breadcrumbSchema, faqSchema, HOME_CRUMB } from "@/lib/seo";
 
 export const metadata: Metadata = {
-  title: "TillProof",
+  title: { absolute: "TillProof — Retail Software for Electrical Shops" },
   description:
-    "TillProof is currently in development: retail management for electrical shops, covering stock traceability, controlled pricing and owner oversight across locations.",
+    "TillProof is in development: retail management for electrical shops, covering stock traceability, controlled pricing and owner oversight across locations.",
   alternates: { canonical: "/products/tillproof" },
   openGraph: {
     title: `TillProof — ${BRAND.name}`,
@@ -18,8 +22,38 @@ export const metadata: Metadata = {
     description:
       "In development. Remote owner visibility, controlled pricing, cash accountability and traceable stock for electrical retailers.",
   },
+  twitter: {
+    card: "summary_large_image",
+    title: `TillProof — ${BRAND.name}`,
+    description:
+      "In development: stock traceability, controlled pricing and owner oversight for electrical retailers.",
+    images: ["/og-image.png"],
+  },
   robots: { index: true, follow: true },
 };
+
+const faqs = [
+  {
+    question: "Is TillProof available now?",
+    answer:
+      "No. TillProof is in development and there is no public application to open. No release date has been announced.",
+  },
+  {
+    question: "Which businesses is TillProof intended for?",
+    answer:
+      "Electrical retailers, electronics shops and wholesalers that need stock, pricing and cash records to agree across more than one location.",
+  },
+  {
+    question: "Are the features on this page live?",
+    answer:
+      "No. They describe the intended capability of the product, not a released feature set. The page will change when the application is available.",
+  },
+  {
+    question: "Can I register interest?",
+    answer:
+      "Yes. Send an enquiry describing your shop, the number of locations and the stock problems you need to solve. We will reply when there is something concrete to share.",
+  },
+];
 
 const intentions = [
   {
@@ -40,10 +74,20 @@ const intentions = [
 ];
 
 export default function TillProofPage() {
+  const breadcrumbs = [
+    HOME_CRUMB,
+    { name: "Products", href: ROUTES.products },
+    { name: "TillProof", href: ROUTES.productsTillProof },
+  ];
+
   return (
     <>
+      <JsonLd data={breadcrumbSchema(breadcrumbs)} />
+      <JsonLd data={faqSchema(faqs)} />
+      <ViewTracker event="product_page_view" params={{ product: "TillProof" }} />
       <section className="border-b border-border bg-background py-14 sm:py-16 lg:py-20">
         <Container>
+          <Breadcrumbs items={breadcrumbs} />
           <div className="grid gap-12 lg:grid-cols-12 lg:items-start lg:gap-16">
             <div className="lg:col-span-7">
               <Reveal>
@@ -144,6 +188,39 @@ export default function TillProofPage() {
                 <p className="mt-2 text-sm leading-6 text-foreground-subtle">{item.detail}</p>
               </div>
             ))}
+          </div>
+        </Container>
+      </section>
+
+      <section className="border-b border-border bg-muted py-14 sm:py-16">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-4">
+              <Eyebrow>Questions</Eyebrow>
+              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
+                TillProof, answered plainly
+              </h2>
+            </div>
+            <div className="lg:col-span-8">
+              <div className="divide-y divide-border border-y border-border">
+                {faqs.map((faq) => (
+                  <details key={faq.question} className="group py-4">
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
+                      {faq.question}
+                      <span
+                        aria-hidden="true"
+                        className="mt-0.5 shrink-0 font-mono text-foreground-faint transition-transform duration-200 group-open:rotate-45"
+                      >
+                        +
+                      </span>
+                    </summary>
+                    <p className="mt-3 max-w-3xl text-sm leading-6 text-foreground-subtle">
+                      {faq.answer}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
           </div>
         </Container>
       </section>

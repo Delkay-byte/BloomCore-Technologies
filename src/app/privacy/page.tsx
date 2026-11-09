@@ -4,11 +4,16 @@ import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, ROUTES } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Privacy",
+  title: "Privacy Notice",
   description:
-    "How BloomCore Technologies handles personal data: what this website collects, how email enquiries are used, retention and your rights.",
+    "How BloomCore Technologies handles personal data: what this website collects, optional analytics, how email enquiries are used, retention and your rights.",
   alternates: { canonical: "/privacy" },
-  openGraph: { title: `Privacy — ${BRAND.name}`, url: "/privacy" },
+  openGraph: {
+    title: `Privacy — ${BRAND.name}`,
+    url: "/privacy",
+    description:
+      "What this website collects, optional analytics, how enquiries are used, retention and your rights under Ghana's Data Protection Act.",
+  },
 };
 
 const sections = [
@@ -24,9 +29,11 @@ const sections = [
     id: "what-this-site-collects",
     title: "What this website collects",
     body: [
-      "This website has no contact form, no user accounts, no analytics script and no advertising tracker. Reading a page does not require you to provide any personal data.",
-      "The site is served over HTTPS. The hosting provider processes standard technical request data — such as the requested page, the time of the request and the network address it came from — in order to deliver the page and keep the service secure. That processing is carried out by the hosting provider under its own terms.",
-      "There are no cookies set by this website for analytics, advertising or profiling. If that changes, this notice will be updated before the change takes effect.",
+      "This website has no user accounts, no advertising tracker and no profiling cookie. Reading a page does not require you to provide any personal data.",
+      "The enquiry form does not send anything by itself. It prepares a message and opens your own email application, where you review it and press Send. BloomCore Technologies receives only what you choose to send.",
+      "Optional analytics. If a Google Analytics 4 measurement ID is configured for the site, a small panel asks whether analytics may load. Analytics stays off unless you choose Allow analytics. When allowed, it records page views and aggregate interactions such as product link clicks. It does not receive your name, email address, telephone number or message content. You can keep it off and still use every page.",
+      "The site is served over HTTPS. The hosting provider processes standard technical request data, such as the requested page, the time of the request and the network address it came from, in order to deliver the page and keep the service secure. That processing is carried out by the hosting provider under its own terms.",
+      "The site stores two preferences in your browser: your light or dark theme choice, and your analytics choice. Neither is sent to BloomCore Technologies. Analytics cookies are set only after you allow analytics; choosing Keep off leaves them unset. If this changes, this notice will be updated before the change takes effect.",
     ],
   },
   {
@@ -101,7 +108,7 @@ const sections = [
     id: "changes",
     title: "Changes to this notice",
     body: [
-      "This notice is reviewed when the way the company handles data changes — for example, if a contact form, analytics or a client portal is added.",
+      "This notice is reviewed when the way the company handles data changes — for example, if the enquiry process changes or a client portal is added.",
       "The effective date below records when the current text was published. Material changes will be reflected here rather than in a separate document.",
     ],
   },
@@ -143,7 +150,7 @@ export default function PrivacyPage() {
                   <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
                     Effective date
                   </p>
-                  <p className="mt-1 text-sm text-foreground-subtle">1 November 2026</p>
+                  <p className="mt-1 text-sm text-foreground-subtle">9 November 2026</p>
                 </div>
               </div>
             </aside>

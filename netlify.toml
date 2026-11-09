@@ -8,6 +8,14 @@
 [build.environment]
   NODE_VERSION = "22"
 
+# The old Netlify hostname stays reachable for existing links, but search
+# engines must see one canonical site. Send every path to bloomcoretech.com.
+[[redirects]]
+  from = "https://bloomcore-technologies.netlify.app/*"
+  to = "https://bloomcoretech.com/:splat"
+  status = 301
+  force = true
+
 # Previously shared links to the old product URL keep working. Netlify applies
 # this before serving the static files, so no duplicate canonical page is
 # generated and nothing depends on a Next.js server.
@@ -23,7 +31,12 @@
   status = 301
   force = true
 
-# Set NEXT_PUBLIC_SITE_URL in the Netlify UI once the production domain is
-# confirmed, for example https://bloomcoretechnologies.com. It is read at build
-# time by src/lib/site.ts and drives canonical URLs, Open Graph, the sitemap and
-# robots.txt. Without it the build falls back to http://localhost:3000.
+# NEXT_PUBLIC_SITE_URL is optional. The site now defaults to the verified
+# production origin https://bloomcoretech.com in src/lib/site.ts, and rejects
+# localhost, preview and *.netlify.app values so canonical metadata cannot drift.
+#
+# Optional owner-supplied values, set in the Netlify UI at build time:
+#   NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION  Google Search Console HTML tag token
+#   NEXT_PUBLIC_BING_SITE_VERIFICATION    Bing Webmaster msvalidate.01 token
+#   NEXT_PUBLIC_GA_MEASUREMENT_ID         GA4 measurement ID, e.g. G-XXXXXXXXXX
+# Leave any of them unset until the real value exists. Do not invent one.

@@ -6,7 +6,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "Work",
+  title: "Software Products and Projects",
   description:
     "Software built by BloomCore Technologies: SchemeKnit, MaaCash and TillProof, with the operating problem each one addresses.",
   alternates: { canonical: "/work" },

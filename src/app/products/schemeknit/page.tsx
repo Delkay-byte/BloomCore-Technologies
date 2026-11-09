@@ -3,15 +3,22 @@ import { ProductPageShell, type ProductDetail } from "@/components/ProductPageSh
 import { BRAND, PRODUCT_LINKS } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "SchemeKnit",
+  title: { absolute: "SchemeKnit — Lesson Planning Software for Teachers" },
   description:
-    "SchemeKnit turns curriculum schemes of learning into structured, indicator-focused lesson plans that teachers can review, edit and export.",
+    "SchemeKnit turns a Ghanaian scheme of learning into structured, indicator-focused lesson plans that teachers can review, edit and export.",
   alternates: { canonical: "/products/schemeknit" },
   openGraph: {
     title: `SchemeKnit — ${BRAND.name}`,
     url: "/products/schemeknit",
     description:
       "A lesson-planning platform for teachers: curriculum extraction, structured review, generation around indicators, editing and export.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `SchemeKnit — ${BRAND.name}`,
+    description:
+      "Turn a scheme of learning into structured, indicator-focused lesson plans you can review, edit and export.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -90,6 +97,33 @@ const detail: ProductDetail = {
     { term: "Category", detail: "Education technology" },
     { term: "Primary users", detail: "Teachers and subject leads" },
     { term: "Platform", detail: "Web application" },
+  ],
+  faqs: [
+    {
+      question: "Which curriculum does SchemeKnit work from?",
+      answer:
+        "SchemeKnit starts from a scheme of learning that you upload. It is built around the structure used in Ghana's standards-based curriculum: strands, sub-strands, content standards and indicators. It does not claim approval, accreditation or endorsement by NaCCA or the Ghana Education Service.",
+    },
+    {
+      question: "Can I edit a generated lesson plan?",
+      answer:
+        "Yes. Any generated lesson can be opened and changed, and saved edits persist. The plan is a starting point for your professional judgement, not a fixed script.",
+    },
+    {
+      question: "What happens if the uploaded scheme is read incorrectly?",
+      answer:
+        "The extracted structure is shown for review before plans are generated. Correct a misread week, strand or indicator once, and the correction applies to the plans built from it.",
+    },
+    {
+      question: "Can I export plans for printing or submission?",
+      answer:
+        "Yes. Lessons and plans can be exported for printing, offline use or submission in the format your school expects.",
+    },
+    {
+      question: "How is SchemeKnit priced?",
+      answer:
+        "Plans are produced against a credit balance, with packages available for teachers who need more than the initial allowance. Current package details are shown inside the application. This page does not publish a price because packages can change.",
+    },
   ],
 };
 

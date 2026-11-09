@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { ArrowLink, Container, Eyebrow, PageHero, StatusBadge } from "@/components/Page";
+import { JsonLd } from "@/components/JsonLd";
 import { ProductMockup } from "@/components/ProductMockup";
 import { Reveal } from "@/components/Reveal";
+import { ViewTracker } from "@/components/ViewTracker";
 import { ButtonLink } from "@/components/ui/Button";
 import { CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
+import { breadcrumbSchema, faqSchema, HOME_CRUMB, softwareApplicationSchema } from "@/lib/seo";
 
 export type ProductDetail = {
   slug: "schemeknit" | "maacash" | "tillproof";
@@ -16,6 +19,7 @@ export type ProductDetail = {
   limits: string[];
   audience: ReadonlyArray<{ role: string; detail: string }>;
   meta: ReadonlyArray<{ term: string; detail: string }>;
+  faqs: ReadonlyArray<{ question: string; answer: string }>;
   launch?: { label: string; url: string };
 };
 
@@ -27,19 +31,40 @@ const hrefs: Record<string, string> = {
 
 export function ProductPageShell({ detail }: { detail: ProductDetail }) {
   const others = PRODUCTS.filter((product) => product.slug !== detail.slug);
+  const product = PRODUCTS.find((item) => item.slug === detail.slug)!;
+  const productHref = `/products/${detail.slug}`;
+  const breadcrumbs = [
+    HOME_CRUMB,
+    { name: "Products", href: ROUTES.products },
+    { name: product.name, href: productHref },
+  ];
 
   return (
     <>
+      <JsonLd data={breadcrumbSchema(breadcrumbs)} />
+      <JsonLd data={faqSchema(detail.faqs)} />
+      <JsonLd
+        data={softwareApplicationSchema({
+          slug: detail.slug,
+          name: product.name,
+          description: detail.lead,
+        })}
+      />
+      <ViewTracker event="product_page_view" params={{ product: product.name }} />
       <PageHero
         eyebrow={`${detail.category}`}
-        title={PRODUCTS.find((p) => p.slug === detail.slug)!.name}
+        title={product.name}
         lead={detail.lead}
+        breadcrumbs={breadcrumbs}
       >
         <div className="mt-8 flex flex-wrap items-center gap-4">
           <StatusBadge label={detail.statusLabel} tone={detail.statusTone} />
           <ButtonLink
-            href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${PRODUCTS.find((p) => p.slug === detail.slug)!.name}`)}`}
+            href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${product.name}`)}`}
             size="sm"
+            data-analytics="product_cta_click"
+            data-product={product.name}
+            data-location="hero_enquiry"
           >
             Enquire about this product
           </ButtonLink>
@@ -166,8 +191,7 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
                   Open the application
                 </p>
                 <h2 className="mt-4 text-2xl font-semibold tracking-tight text-balance text-neutral-50 sm:text-3xl">
-                  {PRODUCTS.find((product) => product.slug === detail.slug)!.name} runs as a
-                  separate web application
+                  {product.name} runs as a separate web application
                 </h2>
                 <p className="mt-3 text-sm leading-6 text-neutral-400">
                   Continue to the live product in a new tab. This page stays open in your current
@@ -181,6 +205,10 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
                 size="lg"
                 aria-label={`${detail.launch.label} (opens in a new tab)`}
                 className="shrink-0 !bg-white !text-neutral-900 hover:!bg-neutral-200"
+                data-analytics="product_outbound_click"
+                data-product={product.name}
+                data-location="product_launch"
+                data-destination={detail.launch.url}
               >
                 {detail.launch.label}
                 <span aria-hidden="true">&rarr;</span>
@@ -189,6 +217,43 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
           </Container>
         </section>
       )}
+
+      <section className="border-b border-border bg-background py-14 sm:py-16">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-4">
+              <Eyebrow>Questions</Eyebrow>
+              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
+                Answers before you enquire
+              </h2>
+              <p className="mt-4 text-sm leading-6 text-foreground-subtle">
+                If your question is not covered here, send it directly. A specific question gets a
+                specific answer.
+              </p>
+            </div>
+            <div className="lg:col-span-8">
+              <div className="divide-y divide-border border-y border-border">
+                {detail.faqs.map((faq) => (
+                  <details key={faq.question} className="group py-4">
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
+                      {faq.question}
+                      <span
+                        aria-hidden="true"
+                        className="mt-0.5 shrink-0 font-mono text-foreground-faint transition-transform duration-200 group-open:rotate-45"
+                      >
+                        +
+                      </span>
+                    </summary>
+                    <p className="mt-3 max-w-3xl text-sm leading-6 text-foreground-subtle">
+                      {faq.answer}
+                    </p>
+                  </details>
+                ))}
+              </div>
+            </div>
+          </div>
+        </Container>
+      </section>
 
       <section className="border-b border-border bg-background py-14 sm:py-16">
         <Container>
@@ -236,9 +301,12 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
           </p>
           <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
             <ButtonLink
-              href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${PRODUCTS.find((p) => p.slug === detail.slug)!.name}`)}`}
+              href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${product.name}`)}`}
               className="!bg-white !text-neutral-900 hover:!bg-neutral-200"
               size="lg"
+              data-analytics="product_cta_click"
+              data-product={product.name}
+              data-location="product_footer_enquiry"
             >
               Email BloomCore Technologies
             </ButtonLink>

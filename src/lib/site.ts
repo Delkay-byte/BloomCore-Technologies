@@ -1,17 +1,30 @@
 /**
  * Single source for the site's public origin.
  *
- * The production domain is not confirmed yet, so it must never be hardcoded.
- * Set NEXT_PUBLIC_SITE_URL when the real hostname and DNS are ready, for
- * example NEXT_PUBLIC_SITE_URL=https://your-confirmed-domain.example.
+ * The official production domain is bloomcoretech.com. Canonical URLs, Open
+ * Graph metadata, the sitemap and robots.txt must always use it, so a stale or
+ * preview hostname in the build environment can never leak into production.
  *
- * Without the variable the site falls back to the local development origin,
- * which is intentionally not a claim of ownership of any public domain.
+ * NEXT_PUBLIC_SITE_URL is kept for staging only. It is ignored when it points
+ * at a Netlify preview host, localhost or an otherwise non-public origin.
  */
+const OFFICIAL_URL = "https://bloomcoretech.com";
+
 const configuredUrl = process.env.NEXT_PUBLIC_SITE_URL?.trim();
 
-export const SITE_URL = (configuredUrl || "http://localhost:3000").replace(/\/+$/, "");
+function isPublicOrigin(value: string | undefined): value is string {
+  if (!value) return false;
+  if (!/^https?:\/\//i.test(value)) return false;
+  if (/netlify\.app$/i.test(value.replace(/\/+$/, ""))) return false;
+  if (/localhost|127\.0\.0\.1|0\.0\.0\.0/i.test(value)) return false;
+  return true;
+}
 
-export const isSiteUrlConfigured = Boolean(configuredUrl);
+export const SITE_URL = (isPublicOrigin(configuredUrl) ? configuredUrl : OFFICIAL_URL).replace(
+  /\/+$/,
+  "",
+);
+
+export const isSiteUrlConfigured = SITE_URL === OFFICIAL_URL || isPublicOrigin(configuredUrl);
 
 export const SITE_HOST = SITE_URL.replace(/^https?:\/\//, "");

@@ -7,16 +7,26 @@ import { ArrowLink, Container, Eyebrow, StatusBadge } from "@/components/Page";
 import { Reveal } from "@/components/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
+import { RESOURCES } from "@/lib/resources";
 
 export const metadata: Metadata = {
-  title: { absolute: `${BRAND.name} — ${BRAND.tagline}` },
-  description: BRAND.description,
+  title: { absolute: `${BRAND.name} — Software Development in Ghana` },
+  description:
+    "BloomCore Technologies builds SchemeKnit, MaaCash and TillProof, plus custom software, web applications and data systems for Ghanaian organisations.",
   alternates: { canonical: "/" },
   openGraph: {
-    title: `${BRAND.name} — ${BRAND.tagline}`,
-    description: BRAND.description,
+    title: `${BRAND.name} — Software Development in Ghana`,
+    description:
+      "Ghanaian software company building SchemeKnit, MaaCash and TillProof, plus custom software, web applications and data systems.",
     url: "/",
     images: [{ url: "/og-image.png", width: 1200, height: 630, alt: BRAND.name }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${BRAND.name} — Software Development in Ghana`,
+    description:
+      "Ghanaian software company building SchemeKnit, MaaCash and TillProof, plus custom software, web applications and data systems.",
+    images: ["/og-image.png"],
   },
 };
 
@@ -393,6 +403,55 @@ export default function HomePage() {
               </div>
             </div>
           </Reveal>
+        </Container>
+      </section>
+
+      <section className="border-b border-border bg-background py-16 sm:py-20">
+        <Container>
+          <Reveal>
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+              <SectionHeading
+                index="05"
+                eyebrow="Resources"
+                title="Practical guides from the work"
+                lead="Plain explanations of the operating problems our products are built around. No gated downloads and no invented statistics."
+              />
+              <ArrowLink href={ROUTES.resources} className="shrink-0 pb-1">
+                All resources
+              </ArrowLink>
+            </div>
+          </Reveal>
+
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            {RESOURCES.map((article) => (
+              <Link
+                key={article.slug}
+                href={`${ROUTES.resources}/${article.slug}`}
+                className="group flex h-full flex-col justify-between rounded-lg border border-border bg-background p-6 transition-colors hover:border-foreground/25 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+              >
+                <div>
+                  <span className="font-mono text-[10px] tracking-[0.12em] text-foreground-faint uppercase">
+                    {article.category}
+                  </span>
+                  <h3 className="mt-4 text-lg font-semibold tracking-tight text-foreground">
+                    {article.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-6 text-foreground-subtle">
+                    {article.description}
+                  </p>
+                </div>
+                <span className="mt-6 inline-flex items-center gap-2 text-sm font-medium text-foreground">
+                  Read the guide
+                  <span
+                    aria-hidden="true"
+                    className="transition-transform duration-200 group-hover:translate-x-1"
+                  >
+                    &rarr;
+                  </span>
+                </span>
+              </Link>
+            ))}
+          </div>
         </Container>
       </section>
 

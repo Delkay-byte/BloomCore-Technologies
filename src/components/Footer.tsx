@@ -8,6 +8,7 @@ const companyLinks = [
   { label: "About", href: ROUTES.about },
   { label: "Services", href: ROUTES.services },
   { label: "Work", href: ROUTES.work },
+  { label: "Resources", href: ROUTES.resources },
   { label: "Founder", href: ROUTES.founder },
   { label: "Contact", href: ROUTES.contact },
   { label: "Privacy", href: ROUTES.privacy },

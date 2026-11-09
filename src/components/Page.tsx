@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
+import type { Crumb } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
 export function Container({
@@ -37,12 +39,14 @@ export function PageHero({
   title,
   lead,
   children,
+  breadcrumbs,
   bordered = true,
 }: {
   eyebrow: string;
   title: string;
   lead?: string;
   children?: React.ReactNode;
+  breadcrumbs?: ReadonlyArray<Crumb>;
   bordered?: boolean;
 }) {
   return (
@@ -53,6 +57,7 @@ export function PageHero({
       )}
     >
       <Container width="wide">
+        {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
         <Eyebrow>{eyebrow}</Eyebrow>
         <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
           {title}

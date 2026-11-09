@@ -47,19 +47,27 @@ static directory, so Netlify free hosting is sufficient.
 
 | Variable | When to set | Example |
 | --- | --- | --- |
-| `NEXT_PUBLIC_SITE_URL` | Production, after the domain is confirmed | `https://your-domain.example` |
+| `NEXT_PUBLIC_SITE_URL` | Optional, staging only | `https://staging.example.com` |
+| `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | After Search Console issues the token | `google-site-verification-token` |
+| `NEXT_PUBLIC_BING_SITE_VERIFICATION` | After Bing issues the token | `msvalidate.01-token` |
+| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | After a GA4 property exists | `G-XXXXXXXXXX` |
 
-It is read at build time by `src/lib/site.ts` and controls canonical URLs, Open Graph URLs,
-`metadataBase`, the sitemap and `robots.txt`. For Deploy Previews you can either leave it unset
-(preview builds then reference `http://localhost:3000`) or set a preview-specific value.
+The production origin is fixed to `https://bloomcoretech.com` in `src/lib/site.ts`. It drives
+canonical URLs, Open Graph URLs, `metadataBase`, the sitemap and `robots.txt`. A configured
+`NEXT_PUBLIC_SITE_URL` is ignored when it points at `localhost`, a `*.netlify.app` host or another
+non-public origin, so canonical metadata cannot drift.
+
+Analytics is off unless a GA4 measurement ID is set **and** the visitor chooses Allow analytics.
+Never commit real verification tokens or measurement IDs; set them in the Netlify UI.
 
 Setup steps:
 
 1. Push this repository to GitHub (not done by the project tooling).
 2. In Netlify, choose **Add new site -> Import an existing project** and select the repository.
 3. Netlify reads `netlify.toml`; confirm build command `npm run build` and publish directory `out`.
-4. Add `NEXT_PUBLIC_SITE_URL` for the production context once the domain exists.
-5. Deploy. Production deploys follow the production branch; other branches and pull requests get
+4. Confirm `bloomcoretech.com` is the site's custom domain and that HTTPS is active.
+5. Add optional verification and analytics values in the Netlify UI when they exist.
+6. Deploy. Production deploys follow the production branch; other branches and pull requests get
    Deploy Previews automatically.
 
 Static-export notes:
@@ -77,21 +85,19 @@ Static-export notes:
 
 ## Site URL configuration
 
-The production domain is **not confirmed**. Do not hardcode it.
+The production domain is **`https://bloomcoretech.com`**, set once in `src/lib/site.ts`.
 
-Canonical URLs, Open Graph metadata, `metadataBase`, the sitemap and `robots.txt` all read one
-value from `src/lib/site.ts`, which reads `NEXT_PUBLIC_SITE_URL`.
+Canonical URLs, Open Graph metadata, `metadataBase`, the sitemap and `robots.txt` all read that
+single value. `NEXT_PUBLIC_SITE_URL` exists for a genuine staging origin only. It is ignored when it
+points at `localhost`, a `*.netlify.app` host or another non-public origin, so a stale preview value
+cannot leak into production metadata.
 
-```bash
-# .env.local (not committed)
-NEXT_PUBLIC_SITE_URL=https://your-confirmed-domain.example
-```
+DNS: the apex resolves to Netlify; `www` redirects to the apex with a 301 through Cloudflare. The
+old `bloomcore-technologies.netlify.app` host also 301s to the apex, configured in `netlify.toml`.
 
-Without the variable the origin falls back to `http://localhost:3000`, which is deliberately not a
-claim of ownership of any public domain. Set the value only after the domain is purchased and DNS
-is configured, then rebuild.
+`.env.example` documents every optional variable and is committed; real `.env*` files are ignored.
 
-`.env.example` documents the variable and is committed; real `.env*` files are ignored.
+SEO documentation lives in `docs/seo/`.
 
 ## Structure
 

@@ -5,11 +5,23 @@ import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, ROUTES } from "@/lib/brand";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: { absolute: "About BloomCore Technologies" },
   description:
-    "What BloomCore Technologies is, why it exists, and how it approaches software engineering, product development and problem solving.",
+    "What BloomCore Technologies is, why it exists, and how it approaches software engineering, product development and problem solving in Ghana.",
   alternates: { canonical: "/about" },
-  openGraph: { title: `About — ${BRAND.name}`, url: "/about" },
+  openGraph: {
+    title: `About — ${BRAND.name}`,
+    url: "/about",
+    description:
+      "A Ghanaian software company building its own products and delivering custom systems for organisations.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `About — ${BRAND.name}`,
+    description:
+      "A Ghanaian software company building its own products and delivering custom systems for organisations.",
+    images: ["/og-image.png"],
+  },
 };
 
 const values = [
