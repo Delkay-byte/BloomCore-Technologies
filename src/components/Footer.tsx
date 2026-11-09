@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import logo from "@/assets/brand/bloomcore-logo-white.png";
 import { CurrentYear } from "@/components/CurrentYear";
+import { AnalyticsSettingsButton } from "@/components/AnalyticsSettingsButton";
 import { BRAND, CONTACT, PRODUCTS, ROUTES, SOCIAL } from "@/lib/brand";
 
 const companyLinks = [
@@ -102,6 +103,9 @@ export function Footer() {
                   </Link>
                 </li>
               ))}
+              <li>
+                <AnalyticsSettingsButton />
+              </li>
             </Column>
           </div>
 

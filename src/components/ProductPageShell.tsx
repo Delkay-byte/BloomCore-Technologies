@@ -50,7 +50,7 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
           description: detail.lead,
         })}
       />
-      <ViewTracker event="product_page_view" params={{ product: product.name }} />
+      <ViewTracker event="product_page_view" params={{ product_name: product.name }} />
       <PageHero
         eyebrow={`${detail.category}`}
         title={product.name}
@@ -208,7 +208,7 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
                 data-analytics="product_outbound_click"
                 data-product={product.name}
                 data-location="product_launch"
-                data-destination={detail.launch.url}
+                data-destination="product_application"
               >
                 {detail.launch.label}
                 <span aria-hidden="true">&rarr;</span>

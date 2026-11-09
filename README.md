@@ -50,15 +50,19 @@ static directory, so Netlify free hosting is sufficient.
 | `NEXT_PUBLIC_SITE_URL` | Optional, staging only | `https://staging.example.com` |
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | After Search Console issues the token | `google-site-verification-token` |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | After Bing issues the token | `msvalidate.01-token` |
-| `NEXT_PUBLIC_GA_MEASUREMENT_ID` | After a GA4 property exists | `G-XXXXXXXXXX` |
+
+Google Tag Manager container `GTM-TQK7FMJT` is defined in `src/lib/analytics.ts`, and the GA4
+Google tag `G-GDBL5SNHKL` lives inside that container. No analytics environment variable is
+needed, and no standalone gtag.js script is installed.
 
 The production origin is fixed to `https://bloomcoretech.com` in `src/lib/site.ts`. It drives
 canonical URLs, Open Graph URLs, `metadataBase`, the sitemap and `robots.txt`. A configured
 `NEXT_PUBLIC_SITE_URL` is ignored when it points at `localhost`, a `*.netlify.app` host or another
 non-public origin, so canonical metadata cannot drift.
 
-Analytics is off unless a GA4 measurement ID is set **and** the visitor chooses Allow analytics.
-Never commit real verification tokens or measurement IDs; set them in the Netlify UI.
+Analytics is off unless the visitor chooses Allow analytics. The footer's Analytics settings control
+changes or withdraws that choice. Never commit real search verification tokens; set them in the
+Netlify UI.
 
 Setup steps:
 
@@ -66,7 +70,7 @@ Setup steps:
 2. In Netlify, choose **Add new site -> Import an existing project** and select the repository.
 3. Netlify reads `netlify.toml`; confirm build command `npm run build` and publish directory `out`.
 4. Confirm `bloomcoretech.com` is the site's custom domain and that HTTPS is active.
-5. Add optional verification and analytics values in the Netlify UI when they exist.
+5. Add optional verification values in the Netlify UI when they exist.
 6. Deploy. Production deploys follow the production branch; other branches and pull requests get
    Deploy Previews automatically.
 

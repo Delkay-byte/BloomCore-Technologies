@@ -508,7 +508,7 @@ export const kbEntries: KBEntry[] = [
     hints: ["data", "collect", "collection", "information", "protect", "protection", "policy", "rights", "retention", "notice"],
     chip: "What is the privacy policy?",
     answer:
-      "The privacy notice at /privacy explains that this website has no user accounts, no analytics script and no advertising tracker, and sets no analytics or advertising cookies. Hosting processes standard technical request data. Information you email or WhatsApp is used to answer the enquiry and is not added to a marketing list or sold. It also covers retention, who else sees data, and your rights under Ghana's Data Protection Act, 2012 (Act 843), with requests sent to the company email address.",
+      "The privacy notice at /privacy explains that this website has no user accounts and no advertising tracker. Optional analytics uses Google Tag Manager and Google Analytics 4 and loads only if you choose Allow analytics; you can change or withdraw that choice through Analytics settings in the footer. The site's analytics code sends page and product labels, not form contents or contact details. Hosting processes standard technical request data. Information you email or WhatsApp is used to answer the enquiry and is not added to a marketing list or sold. It also covers retention, who else sees data, and your rights under Ghana's Data Protection Act, 2012 (Act 843), with requests sent to the company email address.",
     link: { label: "Privacy page", href: ROUTES.privacy },
     followUps: ["contact-details", "contact-form"],
   },

@@ -131,7 +131,7 @@ export function ContactForm() {
 
     const href = buildMailto(values);
     setPreparedHref(href);
-    trackEvent("contact_form_submit", {
+    trackEvent("contact_email_prepared", {
       enquiry_type: values.enquiryType,
     });
 

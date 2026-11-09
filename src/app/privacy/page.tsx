@@ -31,9 +31,9 @@ const sections = [
     body: [
       "This website has no user accounts, no advertising tracker and no profiling cookie. Reading a page does not require you to provide any personal data.",
       "The enquiry form does not send anything by itself. It prepares a message and opens your own email application, where you review it and press Send. BloomCore Technologies receives only what you choose to send.",
-      "Optional analytics. If a Google Analytics 4 measurement ID is configured for the site, a small panel asks whether analytics may load. Analytics stays off unless you choose Allow analytics. When allowed, it records page views and aggregate interactions such as product link clicks. It does not receive your name, email address, telephone number or message content. You can keep it off and still use every page.",
+      "Optional analytics. The site uses Google Tag Manager with Google Analytics 4. A small panel asks whether analytics may load, and nothing is requested from Google until you choose Allow analytics. When allowed, it records page views and aggregate interactions such as product link clicks. The site does not send your name, email address, telephone number, message content or other form field values to analytics. You can keep it off and still use every page.",
       "The site is served over HTTPS. The hosting provider processes standard technical request data, such as the requested page, the time of the request and the network address it came from, in order to deliver the page and keep the service secure. That processing is carried out by the hosting provider under its own terms.",
-      "The site stores two preferences in your browser: your light or dark theme choice, and your analytics choice. Neither is sent to BloomCore Technologies. Analytics cookies are set only after you allow analytics; choosing Keep off leaves them unset. If this changes, this notice will be updated before the change takes effect.",
+      "The site stores two preferences in your browser: your light or dark theme choice, and your analytics choice. Neither is sent to BloomCore Technologies. Analytics cookies are set only after you allow analytics; choosing Keep off leaves them unset. You can change or withdraw your choice at any time through Analytics settings in the footer. Withdrawing consent stops further measurement and clears the analytics cookies this site can remove. If this changes, this notice will be updated before the change takes effect.",
     ],
   },
   {
@@ -59,6 +59,7 @@ const sections = [
     body: [
       "Enquiry correspondence is held in the company's email account and, where relevant, in the company's own project records. Access is limited to the people who need it to respond or to deliver the work.",
       "Service providers used to run the business — email hosting, website hosting and, where applicable, accounting — process data on the company's instructions. We do not share personal data with third parties for their own marketing.",
+      "When you allow analytics, Google processes measurement data as a service provider under its own terms. Google may process that data outside Ghana. The site's own analytics code sends page and product labels, not form contents or contact details.",
       "We may disclose information where the law requires it, or where it is necessary to establish or defend a legal claim.",
     ],
   },

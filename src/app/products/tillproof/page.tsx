@@ -84,7 +84,7 @@ export default function TillProofPage() {
     <>
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd data={faqSchema(faqs)} />
-      <ViewTracker event="product_page_view" params={{ product: "TillProof" }} />
+      <ViewTracker event="product_page_view" params={{ product_name: "TillProof" }} />
       <section className="border-b border-border bg-background py-14 sm:py-16 lg:py-20">
         <Container>
           <Breadcrumbs items={breadcrumbs} />

@@ -136,7 +136,7 @@ export default async function ResourceArticlePage({ params }: PageProps) {
         })}
       />
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
-      <ViewTracker event="resource_article_view" params={{ article: article.slug }} />
+      <ViewTracker event="resource_article_view" params={{ article_slug: article.slug }} />
 
       <PageHero
         eyebrow={article.category}

@@ -169,8 +169,15 @@ export const SERVICES = [
   },
 ] as const;
 
-/** Live product applications. TillProof has no public application yet. */
+/**
+ * Official product application destinations.
+ *
+ * Only SchemeKnit and MaaCash are public launch destinations. TillProof is
+ * listed for completeness but must not be linked from public calls to action
+ * until the product is released.
+ */
 export const PRODUCT_LINKS = {
-  schemeknit: "https://schemeknit-frontend.onrender.com/",
-  maacash: "https://bloomcore-one.onrender.com/",
+  schemeknit: "https://schemeknit.bloomcoretech.com/",
+  maacash: "https://maacash.bloomcoretech.com/",
+  tillproof: "https://tillproof.bloomcoretech.com/",
 } as const;
