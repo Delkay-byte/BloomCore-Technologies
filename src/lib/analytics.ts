@@ -6,7 +6,7 @@
  * second page view.
  */
 
-export const GTM_CONTAINER_ID = "GTM-TQK7FMJT";
+export const GTM_CONTAINER_ID = "GTM-PMZ6ZSVT";
 
 /**
  * Used only for the ga-disable switch and documentation. The measurement ID is
