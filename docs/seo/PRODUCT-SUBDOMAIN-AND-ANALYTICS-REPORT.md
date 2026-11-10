@@ -8,6 +8,7 @@ Implementation deploy: `6af210a17902c7d10366691e`
 Documentation deploy: `6af211a85e28ec1c0a49deb5`
 Analytics re-verification: 10 November 2026
 GTM privacy recheck: 10 November 2026, 10:57 UTC — NOT VERIFIED
+Intended-container audit: 10 November 2026, 11:08 UTC — NOT VERIFIED
 Favicon fix commit: `a034d8f`
 Favicon deploy: `6af2f10202f903ced39a86a4`
 
@@ -41,6 +42,14 @@ fetched again at 10:57 UTC on 10 November 2026. It still served the same
 enabled `__ogt_1p_data_v2` tag. The privacy verification is therefore
 **NOT VERIFIED**, and the audit stopped at that failed check. See sections N
 and N.9.
+
+The owner then identified a second container, `GTM-PMZ6ZSVT`, as the intended
+BloomCore corporate container. Its public JavaScript was audited on
+10 November 2026 at 11:08 UTC. It contains the correct GA4 tag
+`G-GDBL5SNHKL` and the required automatic events, but it still enables the same
+automatic user-provided data collection tag. Production was not switched to an
+unverified container. The mismatch and exact evidence are recorded in
+section P. Result: **NOT VERIFIED**.
 
 A separate favicon fix now gives Google Search eligible 48px, 96px and 192px
 icons plus a multi-resolution `/favicon.ico`. Production assets and homepage
@@ -675,3 +684,108 @@ workspace and are not guaranteed.
 Implementation and production delivery are **VERIFIED**. Google's displayed
 Search icon is **NOT YET VERIFIED** and must not be reported as changed until
 Search Console or a Search result shows the new icon.
+
+## P. GTM container mismatch audit, 10 November 2026
+
+Final classification: **NOT VERIFIED**. The intended container
+`GTM-PMZ6ZSVT` is not safely published, so production was not switched.
+
+### P.1 Why the old container was loaded
+
+The runtime installation is hard-coded, not environment-driven. The only active
+loader uses `GTM_CONTAINER_ID` in `src/lib/analytics.ts`, and that constant still
+held `GTM-TQK7FMJT`. The production HTML contains no GTM reference before
+consent, and the loader injects
+`https://www.googletagmanager.com/gtm.js?id=GTM-TQK7FMJT` after Allow.
+
+Locations found:
+
+| Location | Role | Action |
+| --- | --- | --- |
+| `src/lib/analytics.ts` line 9 | active runtime container ID | unchanged, blocked |
+| `README.md` line 54 | documentation | unchanged, blocked |
+| `netlify.toml` line 43 | deployment comment | unchanged, blocked |
+| `.env.example` line 12 | comment only; no analytics variable | unchanged, blocked |
+| `docs/seo/07-analytics-and-conversion-tracking.md` | historical operations doc | unchanged, blocked |
+| `docs/seo/PRODUCT-SUBDOMAIN-AND-ANALYTICS-REPORT.md` | audit record | this section |
+
+There is no GTM environment variable, no GTM `noscript` iframe and no second GTM
+loader in the repository.
+
+### P.2 Intended container verification
+
+The owner reports that `GTM-PMZ6ZSVT` is the intended BloomCore corporate
+website container. Its public JavaScript was fetched directly:
+
+```text
+URL:     https://www.googletagmanager.com/gtm.js?id=GTM-PMZ6ZSVT
+Time:    2026-11-10T11:07:48Z and 11:08:12Z
+Status:  200
+Bytes:   557087
+SHA-256: F801A602C621FED8DE1C234EFF4FE8134B8A65600F4B9EE5E5C1C8D672AF5D34
+```
+
+The correct container bootstrap and GA4 Google tag are present:
+
+```json
+{"function":"__gct","vtp_trackingId":"G-GDBL5SNHKL","vtp_sessionDuration":0,"tag_id":9}
+```
+
+Page-view and browser-history behaviour remain enabled:
+
+```json
+{"function":"__ogt_auto_events","priority":23,"vtp_enableOutboundClick":true,"vtp_enableScroll":true,"vtp_enableDownload":true,"vtp_enableHistoryEvents":true,"vtp_enableForm":true,"vtp_enableVideo":true}
+```
+
+The container is therefore the right destination and still uses
+`G-GDBL5SNHKL`. However, its published configuration enables automatic
+user-provided data collection:
+
+```json
+{"function":"__ogt_1p_data_v2","priority":13,"vtp_isAutoEnabled":true,"vtp_isManualEnabled":false,"vtp_autoPhoneEnabled":true,"vtp_autoCollectExclusionSelectors":["list",["map","exclusionSelector",""]],"vtp_isEnabled":true,"vtp_autoAddressEnabled":true,"vtp_autoEmailEnabled":true,"vtp_isAutoCollectPiiEnabledFlag":true,"tag_id":13}
+```
+
+| Field | Served value |
+| --- | --- |
+| `vtp_isAutoEnabled` | `true` |
+| `vtp_autoEmailEnabled` | `true` |
+| `vtp_autoPhoneEnabled` | `true` |
+| `vtp_autoAddressEnabled` | `true` |
+| `vtp_isAutoCollectPiiEnabledFlag` | `true` |
+
+No `false` value was present for these fields. This is positive evidence of the
+enabled state, not merely an absence of configuration.
+
+### P.3 Decision and current production state
+
+Production still loads `GTM-TQK7FMJT`. It was not changed to
+`GTM-PMZ6ZSVT` because the intended container has not been safely published.
+This follows the instruction not to switch production to an unverified
+container. No source file, GTM container, GA4 property, consent behaviour or
+analytics event was changed in this step. No build or deployment was performed
+for this audit.
+
+Consequences:
+
+1. The website still loads the old container, which also enables automatic
+   user-provided data collection.
+2. The container mismatch is real: editing `GTM-PMZ6ZSVT` has no production
+   effect while the site loads `GTM-TQK7FMJT`.
+3. Changing the source ID now would move production to a container that is
+   still not privacy-safe.
+
+### P.4 Required owner action
+
+1. Open `GTM-PMZ6ZSVT`.
+2. Disable automatic user-provided data collection in the Google tag.
+3. Publish the container.
+4. Re-fetch `https://www.googletagmanager.com/gtm.js?id=GTM-PMZ6ZSVT` after the
+   container cache expires.
+5. Confirm the served `__ogt_1p_data_v2` tag is absent or has all five fields
+   set to `false`.
+6. Only then change `GTM_CONTAINER_ID` to `GTM-PMZ6ZSVT`, run lint, TypeScript,
+   build and the consent/event regression checks, deploy, and verify that the
+   browser network loads only `gtm.js?id=GTM-PMZ6ZSVT`.
+
+The GA4 Measurement ID must remain `G-GDBL5SNHKL`. Do not load both containers
+and do not add standalone `gtag.js`.
