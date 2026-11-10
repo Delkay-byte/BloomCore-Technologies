@@ -205,14 +205,10 @@ defect was found. The live artifact matches the committed source.
 
 ## 13. Outstanding limitations
 
-1. The GTM container contains one GA4 event tag (`__gaawe`, tag_id 8) whose
-   event name is `product_outbound_click` with no parameters. The application
-   sends the same event with `product_name`, `location` and `destination_type`,
-   so GA4 receives two hits per product launch click. Runtime evidence: a second
-   hit with `_s=3`, 5001 ms later, same document location, no event parameters.
-   The application pushes the event once, so the duplicate originates in the
-   container configuration. It was not changed, because the container is
-   owner-managed and the reported symptom is unrelated.
+1. ~~The GTM container contained one GA4 event tag (`__gaawe`, tag_id 8) whose
+   event name was `product_outbound_click` with no parameters, producing a
+   second GA4 hit per product launch click.~~ Resolved by GTM version 7,
+   "Publish paused outbound click tag". See section 14.
 2. Tag Assistant could not be run without a Google sign-in and the Companion
    extension.
 3. One transient Cloudflare `Error 1102` was observed on `/contact` during a
@@ -223,13 +219,145 @@ defect was found. The live artifact matches the committed source.
    container `GTM-TQK7FMJT`. Application code and the live site use
    `GTM-PMZ6ZSVT`.
 
+## 14. GTM version 7 follow-up verification
+
+Verified 10 November 2026, 23:05-23:20 UTC. Container: `GTM-PMZ6ZSVT`.
+GA4: `G-GDBL5SNHKL`. Owner-published version: 7, "Publish paused outbound click
+tag" (published 10 November 2026, 22:27), which paused the tag
+`GA4 Event - Product Outbound Click`.
+
+### 14.1 Served container configuration
+
+Two cache-busted fetches of
+`https://www.googletagmanager.com/gtm.js?id=GTM-PMZ6ZSVT` gave the same result:
+
+| Check | Result |
+| --- | --- |
+| `product_outbound_click` string in container | 0 occurrences |
+| Paused tag entry | `{"function":"__paused","vtp_originalTagType":"gaawe","tag_id":8}` |
+| GA4 destination | `G-GDBL5SNHKL` only |
+| `GTM-TQK7FMJT` | absent |
+| `vtp_isEnabled` in `__ogt_1p_data_v2` | `false` |
+
+The paused entry is the former GA4 Event tag for `product_outbound_click`. The
+container no longer carries the event name, so it cannot resend it. GTM does not
+expose the published version number in the public script, so version 7 is
+confirmed by this configuration change, not by reading a version string.
+
+### 14.2 Pre-consent network results
+
+Fresh profile, `/products/schemeknit`:
+
+| Check | Result |
+| --- | --- |
+| Google requests | 0 |
+| GTM script elements | 0 |
+| `dataLayer` | `null` |
+| Cookies | empty |
+| Consent storage | empty |
+| Page | rendered, consent banner present |
+
+### 14.3 Post-consent network results
+
+| Check | Result |
+| --- | --- |
+| `gtm.js` requests | 1, `id=GTM-PMZ6ZSVT` |
+| `script#gtm-script` elements | 1 |
+| `dataLayer` `gtm.js` entries | 1 |
+| `window.google_tag_manager` | `GTM-PMZ6ZSVT` |
+| `gtag/js` requests | 0 |
+| `GTM-TQK7FMJT` requests | 0 |
+| GA4 hits | `tid=G-GDBL5SNHKL`, `gcs=G101`, `npa=1` |
+
+### 14.4 Outbound-click acceptance test
+
+One deliberate click on each product application link, in one session with
+consent granted.
+
+SchemeKnit, `dl=https://bloomcoretech.com/products/schemeknit`:
+
+| Field | Value |
+| --- | --- |
+| Link | `https://schemeknit.bloomcoretech.com/`, `target="_blank"` |
+| GA4 `product_outbound_click` hits | **1** |
+| `product_name` | `SchemeKnit` |
+| `location` | `product_launch` |
+| `destination_type` | `product_application` |
+| Parameterless duplicate | none |
+| `_s` | 2 |
+
+MaaCash, `dl=https://bloomcoretech.com/products/maacash`:
+
+| Field | Value |
+| --- | --- |
+| Link | `https://maacash.bloomcoretech.com/`, `target="_blank"` |
+| GA4 `product_outbound_click` hits | **1** |
+| `product_name` | `MaaCash` |
+| `location` | `product_launch` |
+| `destination_type` | `product_application` |
+| Parameterless duplicate | none |
+| `_s` | 3 |
+
+The application still pushes the event once from
+`src/lib/analytics.ts:154-163`, driven by `data-analytics="product_outbound_click"`
+in `src/components/ProductPageShell.tsx:208-211`. The previous second hit
+(`_s=3`, 5001 ms later, no parameters) no longer occurs.
+
+### 14.5 Other analytics events
+
+| Scenario | Hits |
+| --- | --- |
+| Homepage after Allow | 1 x `page_view` |
+| Direct load `/products/maacash` | `page_view`, `product_page_view` (`product_name=MaaCash`) |
+| Client navigation to `/products/schemeknit` | `page_view` for the new route, `product_page_view` (`product_name=SchemeKnit`), no second `gtm.js` |
+| Contact form submit, synthetic values | `contact_form_start`, `form_start`, `contact_email_prepared` with `enquiry_type` only |
+
+Every hit carried `allow_user_provided_data=false`. No name, email address,
+organisation, message text or other personal value appeared in any request. No
+event was duplicated.
+
+### 14.6 Consent withdrawal
+
+| Check | Result |
+| --- | --- |
+| Consent state | `denied` in `localStorage` |
+| Disable flag | `window["ga-disable-G-GDBL5SNHKL"] === "true"` |
+| Cookies | `_ga` and `_ga_GDBL5SNHKL` cleared |
+| Requests after withdrawal | 0 to Google |
+| Reload | choice stays `denied`, no `gtm.js`, `dataLayer` null, no banner |
+
+### 14.7 Tag Assistant
+
+Not run. `tagassistant.google.com` requires a signed-in Google account and the
+Tag Assistant Companion extension. This workspace has no such session, and
+supplying credentials is out of scope. Verification was done from GA4 network
+telemetry and the `window.google_tag_manager` contents instead.
+
+### 14.8 Repository and deployment state
+
+No application change was made, so the live artifact is unchanged.
+
+| Item | Value |
+| --- | --- |
+| Branch | `main` |
+| Commit before this report | `3310463c56ffaa506cc78fdf9bb7f3f7fe76105a` |
+| Live Worker version | `e505564b-29be-4571-9952-b6111f0122da` (version 7) |
+| Custom domain | `bloomcoretech.com`, apex 200, `www` 301 to apex |
+| Console errors during tests | none |
+
 ## Classification
 
-**AMBER — implementation verified working; Tag Assistant session incomplete.**
+**GREEN — duplicate event resolved.**
 
-Every runtime GTM and GA4 criterion passed on the production domain: the correct
-container loads exactly once after consent, GA4 uses `G-GDBL5SNHKL`, consent
-rejection and withdrawal block all Google requests, and no old container or
-duplicate Google tag is present. The only unmet item is the third-party Tag
-Assistant check, which needs a signed-in Google account and the Companion
-extension. No code change or deployment was required.
+Both product outbound-click tests produced exactly one GA4
+`product_outbound_click` event per deliberate click, with the correct
+`product_name`, `location` and `destination_type`, and no parameterless second
+hit. The correct container `GTM-PMZ6ZSVT` loads exactly once after consent, GA4
+uses `G-GDBL5SNHKL`, other events are unchanged, and consent rejection and
+withdrawal still block all Google requests. Tag Assistant was not run because it
+requires a signed-in Google account and the Companion extension; that limitation
+does not affect the network-level result.
+
+Earlier version of this report, before GTM version 7, recorded the duplicate
+container tag and the AMBER status. That finding is now resolved in production.
+
