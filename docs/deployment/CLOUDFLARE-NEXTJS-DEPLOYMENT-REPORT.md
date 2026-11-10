@@ -272,11 +272,14 @@ present:
 | Worker name | `bloomcore-technologies-page` |
 | Version ID | `029b00ba-43fe-4cd0-84ad-230d2ed94715` |
 | Deployment URL | `https://bloomcore-technologies-page.bloomcoretechnologies.workers.dev` |
+| Git commit | `0092f4f9a799b2a8c096b9bf03c63d1d361c06df` |
 | Upload size | 5721.94 KiB, 1220.27 KiB gzip |
 | Worker startup time | 15 ms |
 | Bindings | `ASSETS`, `WORKER_SELF_REFERENCE` |
 
-Deployed with `npx opennextjs-cloudflare deploy` after the verified build. The
+The Worker was built from the same working tree that produced this commit and
+deployed with `npx opennextjs-cloudflare deploy`. The Netlify site was left
+untouched and still answers on `bloomcoretech.com`. The
 Worker was then tested independently over HTTPS, outside the local runtime:
 
 | Check | Result |
