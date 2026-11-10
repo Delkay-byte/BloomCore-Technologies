@@ -7,6 +7,7 @@ Implementation commit: `1cc9ef4`
 Implementation deploy: `6af210a17902c7d10366691e`
 Documentation deploy: `6af211a85e28ec1c0a49deb5`
 Analytics re-verification: 10 November 2026
+GTM privacy recheck: 10 November 2026, 10:57 UTC — NOT VERIFIED
 Favicon fix commit: `a034d8f`
 Favicon deploy: `6af2f10202f903ced39a86a4`
 
@@ -31,11 +32,15 @@ verified because GTM and GA4 account access is unavailable here.
 On 10 November 2026 the production analytics behaviour was independently
 re-checked in a browser. Consent gating, the single GTM container, the GA4
 measurement ID, page views, product events and the absence of observed personal
-data all passed. The check found one material discrepancy: the published
-container still enables automatic user-provided data collection. It also found
-that Google account surfaces (published GTM version, Tag Assistant, GA4
-Realtime and DebugView) still require authentication. Final analytics
-classification: **PARTIALLY VERIFIED**. See section N.
+data all passed. However, the published container still enabled automatic
+user-provided data collection. Google account surfaces (published GTM version,
+Tag Assistant, GA4 Realtime and DebugView) also required authentication.
+
+After the owner reported publishing a fix, the public container JavaScript was
+fetched again at 10:57 UTC on 10 November 2026. It still served the same
+enabled `__ogt_1p_data_v2` tag. The privacy verification is therefore
+**NOT VERIFIED**, and the audit stopped at that failed check. See sections N
+and N.9.
 
 A separate favicon fix now gives Google Search eligible 48px, 96px and 192px
 icons plus a multi-resolution `/favicon.ico`. Production assets and homepage
@@ -369,7 +374,8 @@ References:
 
 ## N. Independent analytics re-verification, 10 November 2026
 
-Final classification: **PARTIALLY VERIFIED**.
+Final classification: **NOT VERIFIED**. Automatic user-provided data collection
+remains enabled in the publicly served container; see N.9.
 
 The production site was driven in an independent browser session. Network
 requests, the data layer, consent state, cookies and the public GTM container
@@ -487,13 +493,75 @@ with the expected names and parameters reached
 
 Consent gating, container installation, measurement ID, page-view counting,
 SPA page views, product events, external-click behaviour and the observed
-absence of form data all passed. The check is **PARTIALLY VERIFIED**, not
-VERIFIED, because:
+absence of form data all passed. The privacy configuration is nevertheless
+**NOT VERIFIED**, because:
 
-1. The published GTM version, Tag Assistant, GA4 Realtime and GA4 DebugView
-   could not be read without authentication.
-2. The served container still enables automatic user-provided data collection,
+1. The served container still enables automatic user-provided data collection,
    which contradicts the owner's completion claim.
+2. The published GTM version, Tag Assistant, GA4 Realtime and GA4 DebugView
+   could not be read without authentication.
+
+### N.9 Recheck after the owner's published fix
+
+The owner reported that `GTM-TQK7FMJT` had been updated and published to disable
+automatic user-provided data collection. Verification only followed: no source
+file, GTM setting, container version or GA4 property was changed.
+
+Public container fetch:
+
+```text
+URL:     https://www.googletagmanager.com/gtm.js?id=GTM-TQK7FMJT
+Time:    2026-11-10T10:57:26Z
+Status:  200
+Bytes:   546752
+Cache:   private, max-age=900
+SHA-256: 5CAD9F8DFB5B1074A8A6AA0F9D7D49FB6510798C3C1AFA1490551CF3CD7D6257
+```
+
+The same JavaScript was fetched again at 10:57:36 UTC with `curl` and at
+10:58:08 UTC through an independent HTTP client. All responses served the same
+enabled tag. The asset size and configuration matched the earlier 10:20 UTC
+fetch.
+
+Exact compiled tag in the published container:
+
+```json
+{"function":"__ogt_1p_data_v2","priority":13,"vtp_isAutoEnabled":true,"vtp_isManualEnabled":false,"vtp_autoPhoneEnabled":true,"vtp_autoCollectExclusionSelectors":["list",["map","exclusionSelector",""]],"vtp_isEnabled":true,"vtp_autoAddressEnabled":true,"vtp_autoEmailEnabled":true,"vtp_isAutoCollectPiiEnabledFlag":true,"tag_id":8}
+```
+
+This is positive evidence of the enabled state, not an absence of fields:
+
+| Field | Served value |
+| --- | --- |
+| `vtp_isAutoEnabled` | `true` |
+| `vtp_autoEmailEnabled` | `true` |
+| `vtp_autoPhoneEnabled` | `true` |
+| `vtp_autoAddressEnabled` | `true` |
+| `vtp_isAutoCollectPiiEnabledFlag` | `true` |
+
+The correct container and measurement ID remain configured:
+
+```json
+{"function":"__gct","vtp_trackingId":"G-GDBL5SNHKL","vtp_sessionDuration":0,"tag_id":4}
+```
+
+- `GTM-TQK7FMJT` is present in the container bootstrap.
+- `G-GDBL5SNHKL` is present as the Google tag tracking ID.
+- Automatic events remain enabled, including form, outbound click and history
+  events.
+
+The published version number is not independently readable without GTM
+sign-in, so no version number is claimed. The verification failed before the
+consent, page-view and contact-form rechecks were repeated, as instructed for a
+failed privacy check. The earlier consent and event results in N.2 to N.6 still
+describe the same live website code and container at 10:20 UTC, but they are not
+presented as a new passing recheck.
+
+Required owner action: in GTM, verify the Google tag's user-provided data
+setting, publish the corrected container, then confirm that
+`https://www.googletagmanager.com/gtm.js?id=GTM-TQK7FMJT` no longer contains the
+enabled `__ogt_1p_data_v2` tag. A new fetch after the container cache expires is
+required before this item can be marked verified.
 
 ## O. Favicon fix and production deployment, 10 November 2026
 
