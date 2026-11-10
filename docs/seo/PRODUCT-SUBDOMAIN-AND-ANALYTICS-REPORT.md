@@ -12,6 +12,7 @@ Intended-container audit: 10 November 2026, 11:08 UTC — NOT VERIFIED
 Intended-container recheck: 10 November 2026, 11:15 UTC — still NOT VERIFIED
 Intended-container third recheck: 10 November 2026, 12:09 UTC — still NOT VERIFIED
 Intended-container fourth recheck: 10 November 2026, 12:22 UTC — still NOT VERIFIED
+GTM container switch: 10 November 2026, 12:53 UTC — source switched, deployment BLOCKED
 Favicon fix commit: `a034d8f`
 Favicon deploy: `6af2f10202f903ced39a86a4`
 
@@ -56,6 +57,12 @@ served the enabled tag. A third check at 12:09 UTC and a fourth at 12:22 UTC
 each returned a byte-identical base response with the same enabled tag.
 Production was not switched to an unverified container. The mismatch and exact
 evidence are recorded in section P. Result: **NOT VERIFIED**.
+
+A later container version, served from 12:53 UTC on 10 November 2026, disables
+the automatic user-provided data tag in its compiled body. The website source was
+switched to `GTM-PMZ6ZSVT` and the build passed, but the Netlify account credit
+limit blocked every deploy, so production still loads `GTM-TQK7FMJT`. Source
+switch complete, deployment **NOT DONE**. See section P.10.
 
 A separate favicon fix now gives Google Search eligible 48px, 96px and 192px
 icons plus a multi-resolution `/favicon.ico`. Production assets and homepage
@@ -965,3 +972,142 @@ Production was not switched, and no source, GTM, GA4, consent, build or deploy
 action was taken. The public URL still serves the pre-correction container
 artifact. The owner must publish a container version that actually changes this
 public JavaScript before the source switch can proceed.
+
+### P.10 Fifth check: container corrected, source switched, deployment blocked
+
+#### P.10.1 Public container verified
+
+A fifth set of independent fetches on 10 November 2026 returned a new, smaller
+public artifact:
+
+| Request | Timestamp (UTC) | Status | Bytes | SHA-256 |
+| --- | --- | --- | --- | --- |
+| 1, `cb` parameter | 2026-11-10T12:53:33Z | 200 | 556873 | `E31877C4E522BAF5980DD2837DD9096D778928B8F731D2B651A049630B41261E` |
+| 2, `l=check` | 2026-11-10T12:53:36Z | 200 | 556869 | `4A46981D05C5A5B29B540E59A5B471A928252DE490EDD031CA65BD650811536B` |
+| 3, `l=verify` | 2026-11-10T12:53:38Z | 200 | 556870 | `69BE4C6A6D89255858F394D3A3B9F144ADAA227A7D4D16AC12C5A2DA76B39372` |
+
+The base response dropped from 557087 to 556873 bytes, so a new container
+version is now published. The automatic user-provided data tag is present but
+explicitly disabled:
+
+```json
+{"function":"__ogt_1p_data_v2","priority":13,"vtp_isEnabled":false,"vtp_isAutoCollectPiiEnabledFlag":true,"tag_id":13}
+```
+
+The five prohibited fields are absent as `true` values:
+
+```text
+"vtp_isAutoEnabled":true                    0 matches
+"vtp_autoEmailEnabled":true                 0 matches
+"vtp_autoPhoneEnabled":true                 0 matches
+"vtp_autoAddressEnabled":true               0 matches
+"vtp_isAutoCollectPiiEnabledFlag":true      1 match, on disabled tag
+```
+
+`vtp_isEnabled` appears once in the whole container, on this tag only. The
+compiled tag guard exits before any collection:
+
+```text
+[22,[28,[17,[15,"a"],"isEnabled"]],[46,[53,[2,[15,"a"],"gtmOnSuccess",[7]],[36]]]]
+```
+
+When `isEnabled` is false, the tag calls `gtmOnSuccess` and returns without
+detecting or sending user-provided data. The residual
+`vtp_isAutoCollectPiiEnabledFlag:true` is inert because the tag body cannot run.
+
+GA4 remains correct:
+
+```json
+{"function":"__gct","vtp_trackingId":"G-GDBL5SNHKL","vtp_sessionDuration":0,"tag_id":9}
+```
+
+The destination tag still sets `allow_user_provided_data` to `false`. Automatic
+event detection remains configured as intended:
+
+```json
+{"function":"__ogt_auto_events","priority":23,"vtp_enableOutboundClick":true,"vtp_enableScroll":true,"vtp_enableDownload":true,"vtp_enableHistoryEvents":true,"vtp_enableForm":true,"vtp_enableVideo":true,"vtp_enableInPageEventsHidden":false,"vtp_hidePageViewToggle":true,"tag_id":11}
+```
+
+Outbound-click and browser-history detection are enabled. The privacy gate
+therefore passed at 12:53 UTC. A confirming fetch at 14:45 UTC returned the same
+556873-byte artifact with the same disabled tag, so the published state is
+stable.
+
+#### P.10.2 Source updated and tested
+
+Only the active container ID changed:
+
+```diff
+- export const GTM_CONTAINER_ID = "GTM-TQK7FMJT";
++ export const GTM_CONTAINER_ID = "GTM-PMZ6ZSVT";
+```
+
+in `src/lib/analytics.ts` (commit `02d0dc3996df14665a7db269c9a4c79191af226f`).
+Current-reference comments in `README.md`, `netlify.toml` and `.env.example`
+were updated in commit `a7b76497e376f9934e7cad1d4f1700be8e4ff287`. No historical
+section of this report was rewritten. No GTM or GA4 account setting was touched.
+
+Results:
+
+| Check | Result |
+| --- | --- |
+| `npm run lint` | passed, no output |
+| `npx tsc --noEmit` | passed, no output |
+| `npm run build` | passed, 19 static routes |
+| Built chunk scan | only `GTM-PMZ6ZSVT` present; `GTM-TQK7FMJT` absent |
+| Duplicate GTM loader | none |
+| Standalone `gtag.js` | none added |
+
+Consent gating, the data layer, page-view dispatch, product events and contact
+event parameters were not modified. The switch is a one-token ID change.
+
+#### P.10.3 Deployment blocked by Netlify account credits
+
+Both git-triggered builds were skipped by Netlify before any build step ran:
+
+| Deploy | Commit | State | Build error |
+| --- | --- | --- | --- |
+| `6af314fb67503ee531e06618` | `02d0dc3` | error, skipped | `Skipped due to account credit usage exceeded` |
+| `6af3163dddd30c1e04a236c0` | `a7b7649` | error, skipped | `Skipped due to account credit usage exceeded` |
+
+A direct production deploy of the prebuilt static `out` directory was also
+refused by the Netlify API:
+
+```json
+{"error":"Account credit usage exceeded - new deploys are blocked until credits are added"}
+```
+
+The block is at account level, not in the repository or build configuration.
+`netlify.toml` has no ignore rule, the site is linked to `main`, and the last
+successful deploy `6af30cd7eeee33863d745eba` (commit `1213cf5`) is still the
+published production deploy. No alternative host or bypass was used.
+
+#### P.10.4 Production verification not performed
+
+Because no deploy reached production, no production browser check of the new
+container was run. That would be invalid evidence. The production site was
+checked directly and still serves the old container:
+
+```text
+https://bloomcoretech.com/ (200, 110972 bytes)
+https://bloomcoretech.com/_next/static/chunks/34p6q__7b9twr.js => GTM-TQK7FMJT
+```
+
+`GTM-PMZ6ZSVT` is absent from production. Production behaviour is therefore
+unchanged and still consistent with the previously verified old-container
+results.
+
+#### P.10.5 Classification
+
+| Stage | Result |
+| --- | --- |
+| 1. GTM configuration published | yes — owner-reported, confirmed by changed public artifact |
+| 2. Public container configuration verified | yes — `__ogt_1p_data_v2` disabled at 12:53 and 14:45 UTC |
+| 3. Website source updated | yes — commit `02d0dc3`, docs commit `a7b7649` |
+| 4. Production deployment completed | **no — blocked by Netlify account credit limit** |
+| 5. Production behaviour independently verified | **no — old container still live** |
+
+Required owner action: add Netlify build credits or upgrade the account, then
+redeploy the current `main` head. After the deploy publishes, the production
+network check listed in Part 6 of the task must still be run; it has not been
+satisfied by this record.
