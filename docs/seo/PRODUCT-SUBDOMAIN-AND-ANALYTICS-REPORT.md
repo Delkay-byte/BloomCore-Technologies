@@ -9,6 +9,7 @@ Documentation deploy: `6af211a85e28ec1c0a49deb5`
 Analytics re-verification: 10 November 2026
 GTM privacy recheck: 10 November 2026, 10:57 UTC — NOT VERIFIED
 Intended-container audit: 10 November 2026, 11:08 UTC — NOT VERIFIED
+Intended-container recheck: 10 November 2026, 11:15 UTC — still NOT VERIFIED
 Favicon fix commit: `a034d8f`
 Favicon deploy: `6af2f10202f903ced39a86a4`
 
@@ -47,9 +48,11 @@ The owner then identified a second container, `GTM-PMZ6ZSVT`, as the intended
 BloomCore corporate container. Its public JavaScript was audited on
 10 November 2026 at 11:08 UTC. It contains the correct GA4 tag
 `G-GDBL5SNHKL` and the required automatic events, but it still enables the same
-automatic user-provided data collection tag. Production was not switched to an
-unverified container. The mismatch and exact evidence are recorded in
-section P. Result: **NOT VERIFIED**.
+automatic user-provided data collection tag. After the owner reported a second
+publication, the container was fetched three more times at 11:15 UTC. It still
+served the enabled tag. Production was not switched to an unverified container.
+The mismatch and exact evidence are recorded in section P. Result:
+**NOT VERIFIED**.
 
 A separate favicon fix now gives Google Search eligible 48px, 96px and 192px
 icons plus a multi-resolution `/favicon.ico`. Production assets and homepage
@@ -789,3 +792,69 @@ Consequences:
 
 The GA4 Measurement ID must remain `G-GDBL5SNHKL`. Do not load both containers
 and do not add standalone `gtag.js`.
+
+### P.5 Recheck after the owner's second publication
+
+The owner then confirmed that `GTM-PMZ6ZSVT` had been published again. The public
+container was fetched three times with independent HTTP requests on
+10 November 2026:
+
+| Request | Timestamp (UTC) | Status | Bytes | SHA-256 |
+| --- | --- | --- | --- | --- |
+| 1, `cb` parameter | 2026-11-10T11:15:52Z | 200 | 557087 | `A428176A1DF02A318BD5665BDEA0D9C0745DB21FDAC666669A2973797DDC3B36` |
+| 2, `l=check` | 2026-11-10T11:15:54Z | 200 | 557083 | `B0767A8511DC3B044E8B8BCEB5F8A70D1C023A2D6D2FACD9F30CCBBEF28057C1` |
+| 3, `l=verify` | 2026-11-10T11:15:55Z | 200 | 557084 | `0B4272ED547CE35D1C49A1BFF0F59C58CDA820B89227B76C6B13E5DC3C014CF9` |
+
+Two further requests to the exact same URL returned the same 557087 bytes and
+the same `A428176A...` hash, so the base response is stable.
+
+All three responses served the same enabled user-provided data tag:
+
+```json
+{"function":"__ogt_1p_data_v2","priority":13,"vtp_isAutoEnabled":true,"vtp_isManualEnabled":false,"vtp_autoPhoneEnabled":true,"vtp_autoCollectExclusionSelectors":["list",["map","exclusionSelector",""]],"vtp_isEnabled":true,"vtp_autoAddressEnabled":true,"vtp_autoEmailEnabled":true,"vtp_isAutoCollectPiiEnabledFlag":true,"tag_id":13}
+```
+
+Positive enabled evidence:
+
+```text
+"vtp_isAutoEnabled":true                        1 match
+"vtp_autoEmailEnabled":true                     1 match
+"vtp_autoPhoneEnabled":true                     1 match
+"vtp_autoAddressEnabled":true                   1 match
+"vtp_isAutoCollectPiiEnabledFlag":true          1 match
+```
+
+No corresponding `false` value appeared for any of the five fields. The GA4 tag
+remained correct:
+
+```json
+{"function":"__gct","vtp_trackingId":"G-GDBL5SNHKL","vtp_sessionDuration":0,"tag_id":9}
+```
+
+Automatic outbound click, form, scroll, download, video and browser-history
+detection remained enabled.
+
+The base response was still 557087 bytes, the same size as the 11:07 UTC fetch,
+and the tag still had `tag_id:13` with all five fields set to `true`. The
+published privacy correction is therefore not present in the public
+configuration served at 11:15 UTC.
+
+### P.6 Second decision
+
+Production was not switched. `src/lib/analytics.ts` still contains
+`GTM-TQK7FMJT`; `GTM-PMZ6ZSVT` is not loaded; no source, GTM, GA4 or consent
+setting changed; no build or deployment ran for this recheck.
+
+Final classification for this attempt:
+
+| Area | Result |
+| --- | --- |
+| Published GTM configuration verified | **NOT VERIFIED** — auto user data still enabled |
+| Website code updated | no |
+| Production deployment verified | no |
+| Privacy and consent regression verified | not run; stopped at the failed precondition |
+
+The owner must confirm in the GTM account that the change was saved to the
+correct container, published, and that its public JavaScript no longer contains
+the enabled tag. A source switch before that would move production from one
+privacy-unsafe container to another.
