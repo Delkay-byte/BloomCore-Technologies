@@ -3,7 +3,8 @@
 #
 # netlify.toml only works because next.config.ts keeps output: "export" when
 # Netlify builds (it sets NETLIFY=true). Cloudflare Workers builds use OpenNext
-# standalone output instead. See docs/deployment/CLOUDFLARE-NEXTJS-DEPLOYMENT-REPORT.md.
+# standalone output instead. Netlify is kept as a fallback, not the live host.
+# See docs/deployment/CLOUDFLARE-NEXTJS-DEPLOYMENT-REPORT.md.
 
 [build]
   command = "npm run build"

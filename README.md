@@ -39,14 +39,16 @@ The Worker is `bloomcore-technologies-page`, configured in `wrangler.jsonc` and
 Workers Builds must use `npx opennextjs-cloudflare build` as the build command
 and `npx wrangler deploy` as the deploy command.
 
-`bloomcoretech.com` is not yet attached to the Worker. Until it is, the live
-site remains on Netlify. Full evidence: `docs/deployment/CLOUDFLARE-NEXTJS-DEPLOYMENT-REPORT.md`.
+`bloomcoretech.com` is now served by this Worker as a custom domain. `www`
+redirects to the apex and HTTP redirects to HTTPS. The Netlify site is retained
+as a rebuildable fallback until it is explicitly retired. Full evidence:
+`docs/deployment/CLOUDFLARE-NEXTJS-DEPLOYMENT-REPORT.md`.
 
 ## Deploying to Netlify
 
 The site has no backend, no API routes, no server actions and no runtime data.
-Netlify keeps building the static `out/` directory while the Cloudflare
-migration is verified.
+Netlify keeps building the static `out/` directory as a fallback. It no longer
+serves the production domain.
 
 **Build settings** (also committed in `netlify.toml`):
 
