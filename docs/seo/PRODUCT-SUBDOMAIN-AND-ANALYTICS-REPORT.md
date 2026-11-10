@@ -10,6 +10,7 @@ Analytics re-verification: 10 November 2026
 GTM privacy recheck: 10 November 2026, 10:57 UTC — NOT VERIFIED
 Intended-container audit: 10 November 2026, 11:08 UTC — NOT VERIFIED
 Intended-container recheck: 10 November 2026, 11:15 UTC — still NOT VERIFIED
+Intended-container third recheck: 10 November 2026, 12:09 UTC — still NOT VERIFIED
 Favicon fix commit: `a034d8f`
 Favicon deploy: `6af2f10202f903ced39a86a4`
 
@@ -50,9 +51,10 @@ BloomCore corporate container. Its public JavaScript was audited on
 `G-GDBL5SNHKL` and the required automatic events, but it still enables the same
 automatic user-provided data collection tag. After the owner reported a second
 publication, the container was fetched three more times at 11:15 UTC. It still
-served the enabled tag. Production was not switched to an unverified container.
-The mismatch and exact evidence are recorded in section P. Result:
-**NOT VERIFIED**.
+served the enabled tag. A third check at 12:09 UTC returned a byte-identical
+base response with the same enabled tag. Production was not switched to an
+unverified container. The mismatch and exact evidence are recorded in
+section P. Result: **NOT VERIFIED**.
 
 A separate favicon fix now gives Google Search eligible 48px, 96px and 192px
 icons plus a multi-resolution `/favicon.ico`. Production assets and homepage
@@ -858,3 +860,80 @@ The owner must confirm in the GTM account that the change was saved to the
 correct container, published, and that its public JavaScript no longer contains
 the enabled tag. A source switch before that would move production from one
 privacy-unsafe container to another.
+
+### P.7 Third recheck after `allow_user_provided_data: false`
+
+The owner then reported setting `allow_user_provided_data` to `false` and
+publishing a fresh container version, and explicitly authorised the production
+switch. The public container was fetched three more times on
+10 November 2026:
+
+| Request | Timestamp (UTC) | Status | Bytes | SHA-256 |
+| --- | --- | --- | --- | --- |
+| 1, `cb` parameter | 2026-11-10T12:09:39Z | 200 | 557087 | `A428176A1DF02A318BD5665BDEA0D9C0745DB21FDAC666669A2973797DDC3B36` |
+| 2, `l=check` | 2026-11-10T12:09:41Z | 200 | 557083 | `E4EA5C61B843008B44690AEFFFB7CCBB2A08A6024353D65F7C8B217A4BE9B817` |
+| 3, `l=verify` | 2026-11-10T12:09:43Z | 200 | 557084 | `055FDE15E690D90791E1DA71D6DB199FA15CA41BAF48C83A15B2E8CBEA6B4C26` |
+
+The base response is byte-identical to the 11:15 UTC fetch: 557087 bytes and
+the same `A428176A...` hash. No new published container artefact is visible at
+the public URL.
+
+The destination tag now carries the reported setting:
+
+```json
+{"function":"__dest_ga","metadata":["map"],"once_per_event":true,"vtp_destinationId":"G-GDBL5SNHKL","vtp_configSettingsTable":["list",["map","parameter","allow_user_provided_data","parameterValue","false"]],"vtp_enableVariablesInDestinationId":true,"tag_id":3}
+```
+
+However, the automatic user-provided data collection tag is still enabled in
+the same served container:
+
+```json
+{"function":"__ogt_1p_data_v2","priority":13,"vtp_isAutoEnabled":true,"vtp_isManualEnabled":false,"vtp_autoPhoneEnabled":true,"vtp_autoCollectExclusionSelectors":["list",["map","exclusionSelector",""]],"vtp_isEnabled":true,"vtp_autoAddressEnabled":true,"vtp_autoEmailEnabled":true,"vtp_isAutoCollectPiiEnabledFlag":true,"tag_id":13}
+```
+
+The five prohibited fields remain `true`, and no `false` counterpart appears:
+
+```text
+"vtp_isAutoEnabled":true                        1 match
+"vtp_autoEmailEnabled":true                     1 match
+"vtp_autoPhoneEnabled":true                     1 match
+"vtp_autoAddressEnabled":true                   1 match
+"vtp_isAutoCollectPiiEnabledFlag":true          1 match
+```
+
+A destination-level `allow_user_provided_data: false` does not satisfy the
+explicit safety gate. The compiled `__ogt_1p_data_v2` tag itself still has
+`vtp_isEnabled:true` and every automatic collection field set to `true`.
+Automatic PII detection therefore remains active at the container level.
+
+The GA4 tag remains correct:
+
+```json
+{"function":"__gct","vtp_trackingId":"G-GDBL5SNHKL","vtp_sessionDuration":0,"tag_id":9}
+```
+
+Automatic outbound click, form, scroll, download, video and browser-history
+detection remain enabled.
+
+### P.8 Third decision
+
+Production was not switched. This check failed the safety gate before any source
+edit, test, build, commit or deployment:
+
+| Area | Result |
+| --- | --- |
+| GTM configuration published | owner-reported only; no new public artefact observed |
+| Public container configuration verified | **NOT VERIFIED** — `__ogt_1p_data_v2` still enabled |
+| Website source updated | no |
+| Production deployment completed | no |
+| Production behaviour independently verified | no |
+
+`src/lib/analytics.ts` still contains `GTM-TQK7FMJT`. The production site still
+loads `GTM-TQK7FMJT`, so the mismatch remains. No GTM or GA4 account setting was
+changed.
+
+Required owner action: open the Google tag or user-provided data settings in
+`GTM-PMZ6ZSVT`, remove or explicitly disable the `__ogt_1p_data_v2` tag so the
+five fields are absent or `false`, then publish and confirm that the public
+JavaScript hash changes and the enabled tag is gone. A destination-level
+`allow_user_provided_data` value alone is not sufficient for this gate.
