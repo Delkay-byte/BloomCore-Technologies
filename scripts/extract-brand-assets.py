@@ -7,6 +7,10 @@ Outputs:
   src/assets/brand/bloomcore-c-symbol.png     the C element only, 512px, transparent
   public/favicon-16.png                       C only, 16px
   public/favicon-32.png                       C only, 32px
+  public/favicon-48x48.png                    C only, 48px, dark field
+  public/favicon-96x96.png                    C only, 96px, dark field
+  public/favicon-192x192.png                  C only, 192px, dark field
+  public/favicon.ico                          16/32/48px, dark field
   public/apple-touch-icon.png                 C only, 180px, dark field
 """
 
@@ -86,6 +90,21 @@ c32.save(OUT_PUBLIC / "favicon-32.png", optimize=True)
 
 c16 = rounded_icon(16, 0.78, 0.22)
 c16.save(OUT_PUBLIC / "favicon-16.png", optimize=True)
+
+# Google Search only accepts square favicons of at least 48px. These larger
+# rasters are the primary icons; the 16px and 32px files stay for browser tabs.
+for icon_size in (48, 96, 192):
+    icon = rounded_icon(icon_size, 0.82, 0.22)
+    icon.save(OUT_PUBLIC / f"favicon-{icon_size}x{icon_size}.png", optimize=True)
+
+# Multi-resolution ICO at the conventional root path, so a request to
+# /favicon.ico returns valid image data instead of the Netlify 404 page.
+ico_48 = rounded_icon(48, 0.82, 0.22)
+ico_48.save(
+    OUT_PUBLIC / "favicon.ico",
+    format="ICO",
+    sizes=[(16, 16), (32, 32), (48, 48)],
+)
 
 # Apple touch icon: full-bleed square. iOS applies its own rounded mask, so
 # pre-rounding here would create a double-rounded edge.
