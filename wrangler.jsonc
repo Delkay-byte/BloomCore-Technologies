@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "name": "bloomcore-technologies-page",
+  "compatibility_date": "2026-11-10",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": {
+    "directory": ".open-next/assets",
+    "binding": "ASSETS"
+  },
+  "services": [
+    {
+      // Self-reference service binding. The service name must match "name".
+      "binding": "WORKER_SELF_REFERENCE",
+      "service": "bloomcore-technologies-page"
+    }
+  ],
+  "observability": {
+    "enabled": true
+  }
+}

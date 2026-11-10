@@ -18,20 +18,35 @@ metrics or deployments.
 
 ```bash
 npm run dev     # development server on http://localhost:3000
-npm run build   # production build, writes the static site to out/
-npm run start   # serve out/ locally (static preview)
-npm run preview # same as start
+npm run build   # production build (standalone output for OpenNext)
+npm run start   # serve the standalone build locally
+npm run preview # OpenNext build, then run it in the local Workers runtime
+npm run deploy  # OpenNext build, then deploy the Worker to Cloudflare
 npm run lint    # ESLint
 npx tsc --noEmit
 ```
 
-The project uses `output: "export"`, so every page is emitted as static files in `out/`.
-`next start` is not used; `npm run start` serves the exported directory instead.
+The project builds with OpenNext standalone output, which Cloudflare Workers
+needs. Netlify still receives the static `out/` directory: `next.config.ts`
+selects `output: "export"` only when Netlify's own build sets `NETLIFY=true`.
+Every other build, including local and Cloudflare, produces
+`.next/standalone`.
+
+## Deploying to Cloudflare Workers
+
+The Worker is `bloomcore-technologies-page`, configured in `wrangler.jsonc` and
+`open-next.config.ts`. Build and deploy locally with `npm run deploy`. Cloudflare
+Workers Builds must use `npx opennextjs-cloudflare build` as the build command
+and `npx wrangler deploy` as the deploy command.
+
+`bloomcoretech.com` is not yet attached to the Worker. Until it is, the live
+site remains on Netlify. Full evidence: `docs/deployment/CLOUDFLARE-NEXTJS-DEPLOYMENT-REPORT.md`.
 
 ## Deploying to Netlify
 
-The site has no backend, no API routes, no server actions and no runtime data. It builds to a
-static directory, so Netlify free hosting is sufficient.
+The site has no backend, no API routes, no server actions and no runtime data.
+Netlify keeps building the static `out/` directory while the Cloudflare
+migration is verified.
 
 **Build settings** (also committed in `netlify.toml`):
 

@@ -1,5 +1,9 @@
 # Netlify build settings for the static export.
 # The site is fully static, so no functions or runtime are required.
+#
+# netlify.toml only works because next.config.ts keeps output: "export" when
+# Netlify builds (it sets NETLIFY=true). Cloudflare Workers builds use OpenNext
+# standalone output instead. See docs/deployment/CLOUDFLARE-NEXTJS-DEPLOYMENT-REPORT.md.
 
 [build]
   command = "npm run build"

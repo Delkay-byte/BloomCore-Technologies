@@ -1,0 +1,4 @@
+# Legacy product URLs keep working on Cloudflare Workers static assets.
+# These mirror the rules in netlify.toml so the migration does not break them.
+/products/bik-prestige   /products/maacash   301
+/products/bloomcore-one  /products/maacash   301
