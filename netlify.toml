@@ -40,5 +40,5 @@
 #   NEXT_PUBLIC_BING_SITE_VERIFICATION    Bing Webmaster msvalidate.01 token
 # Leave either unset until the real value exists. Do not invent one.
 #
-# Google Tag Manager container GTM-TQK7FMJT and its GA4 Google tag are
+# Google Tag Manager container GTM-PMZ6ZSVT and its GA4 Google tag are
 # configured in source. No analytics environment variable is required.

@@ -51,7 +51,7 @@ static directory, so Netlify free hosting is sufficient.
 | `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` | After Search Console issues the token | `google-site-verification-token` |
 | `NEXT_PUBLIC_BING_SITE_VERIFICATION` | After Bing issues the token | `msvalidate.01-token` |
 
-Google Tag Manager container `GTM-TQK7FMJT` is defined in `src/lib/analytics.ts`, and the GA4
+Google Tag Manager container `GTM-PMZ6ZSVT` is defined in `src/lib/analytics.ts`, and the GA4
 Google tag `G-GDBL5SNHKL` lives inside that container. No analytics environment variable is
 needed, and no standalone gtag.js script is installed.
 
