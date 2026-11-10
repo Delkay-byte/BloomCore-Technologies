@@ -11,6 +11,7 @@ GTM privacy recheck: 10 November 2026, 10:57 UTC — NOT VERIFIED
 Intended-container audit: 10 November 2026, 11:08 UTC — NOT VERIFIED
 Intended-container recheck: 10 November 2026, 11:15 UTC — still NOT VERIFIED
 Intended-container third recheck: 10 November 2026, 12:09 UTC — still NOT VERIFIED
+Intended-container fourth recheck: 10 November 2026, 12:22 UTC — still NOT VERIFIED
 Favicon fix commit: `a034d8f`
 Favicon deploy: `6af2f10202f903ced39a86a4`
 
@@ -51,10 +52,10 @@ BloomCore corporate container. Its public JavaScript was audited on
 `G-GDBL5SNHKL` and the required automatic events, but it still enables the same
 automatic user-provided data collection tag. After the owner reported a second
 publication, the container was fetched three more times at 11:15 UTC. It still
-served the enabled tag. A third check at 12:09 UTC returned a byte-identical
-base response with the same enabled tag. Production was not switched to an
-unverified container. The mismatch and exact evidence are recorded in
-section P. Result: **NOT VERIFIED**.
+served the enabled tag. A third check at 12:09 UTC and a fourth at 12:22 UTC
+each returned a byte-identical base response with the same enabled tag.
+Production was not switched to an unverified container. The mismatch and exact
+evidence are recorded in section P. Result: **NOT VERIFIED**.
 
 A separate favicon fix now gives Google Search eligible 48px, 96px and 192px
 icons plus a multi-resolution `/favicon.ico`. Production assets and homepage
@@ -937,3 +938,30 @@ Required owner action: open the Google tag or user-provided data settings in
 five fields are absent or `false`, then publish and confirm that the public
 JavaScript hash changes and the enabled tag is gone. A destination-level
 `allow_user_provided_data` value alone is not sufficient for this gate.
+
+### P.9 Fourth recheck
+
+The same switch instruction was repeated after the owner again confirmed the
+publication. The public container was fetched three more times on
+10 November 2026:
+
+| Request | Timestamp (UTC) | Status | Bytes | SHA-256 |
+| --- | --- | --- | --- | --- |
+| 1, `cb` parameter | 2026-11-10T12:22:58Z | 200 | 557087 | `A428176A1DF02A318BD5665BDEA0D9C0745DB21FDAC666669A2973797DDC3B36` |
+| 2, `l=check` | 2026-11-10T12:22:59Z | 200 | 557083 | `E4EA5C61B843008B44690AEFFFB7CCBB2A08A6024353D65F7C8B217A4BE9B817` |
+| 3, `l=verify` | 2026-11-10T12:23:00Z | 200 | 557084 | `0B4272ED547CE35D1C49A1BFF0F59C58CDA820B89227B76C6B13E5DC3C014CF9` |
+
+The base response is again byte-identical to 11:15 and 12:09: 557087 bytes and
+the same `A428176A...` hash. The served `__ogt_1p_data_v2` tag is still:
+
+```json
+{"function":"__ogt_1p_data_v2","priority":13,"vtp_isAutoEnabled":true,"vtp_isManualEnabled":false,"vtp_autoPhoneEnabled":true,"vtp_autoCollectExclusionSelectors":["list",["map","exclusionSelector",""]],"vtp_isEnabled":true,"vtp_autoAddressEnabled":true,"vtp_autoEmailEnabled":true,"vtp_isAutoCollectPiiEnabledFlag":true,"tag_id":13}
+```
+
+All five prohibited fields remain `true`; none is `false`. The correct
+`G-GDBL5SNHKL` Google tag and the automatic event configuration are unchanged.
+
+Production was not switched, and no source, GTM, GA4, consent, build or deploy
+action was taken. The public URL still serves the pre-correction container
+artifact. The owner must publish a container version that actually changes this
+public JavaScript before the source switch can proceed.
