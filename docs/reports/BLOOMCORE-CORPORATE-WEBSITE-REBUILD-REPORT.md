@@ -304,7 +304,7 @@ so no Next.js development indicator is present.
 | `64bd10c` | last pre-redesign production code (baseline, unchanged) |
 | `42cfe80` | rejected redesign (historical) |
 | `4aa61bf` | rejected redesign documentation (historical) |
-| `pending` | premium rebuild commit |
+| `55246e9` | premium rebuild (this report) |
 
 ## 16. Production deployment
 
@@ -317,16 +317,30 @@ npx wrangler deploy
 
 Worker: `bloomcore-technologies-page`. Branch: `main`.
 
-Deployment identifier: pending final publish. This section is updated after the
-Worker version and live checks return.
+Deployed 11 November 2026 as Worker version
+`757301d4-bb29-442b-bb22-81089a9b12ed`, from commit `55246e9`.
 
 ## 17. Live production verification
 
-Pending final publish:
+Verified against `https://bloomcoretech.com` after deployment:
 
-- All public routes and 404.
-- WWW to apex redirect.
-- Product application destinations.
-- Consent gating and one GTM container.
-- Carousel controls on production.
-- No console errors.
+| Check | Result |
+| --- | --- |
+| Homepage | 200 |
+| 13 public routes at 390 | 200, one `h1`, no overflow |
+| Unknown route | 404 |
+| WWW | redirects to `https://bloomcoretech.com/` |
+| `sitemap.xml`, `robots.txt`, `og-image.png` | 200 |
+| WebGL canvas on production | present |
+| Carousel direct selection | `MaaCash · Available` |
+| Carousel next control | `TillProof · In development` |
+| Desktop overflow | 0 |
+| Runtime errors | 0 |
+| Google requests before consent | 0 |
+| GTM after consent | one `gtm.js?id=GTM-PMZ6ZSVT`, one script |
+| GA4 page view | one |
+| Product outbound click | one `product_outbound_click` with correct parameters |
+
+No critical or high defects remained in the final independent review. The final
+review scored hero 8, typography 8, colour 8, mobile 7, product pages 8, overall
+8/10.
