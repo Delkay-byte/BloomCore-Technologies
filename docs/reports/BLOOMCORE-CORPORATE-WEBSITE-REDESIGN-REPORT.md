@@ -165,7 +165,21 @@ continue to come from the article source.
 | Horizontal overflow | 0 |
 | `npx opennextjs-cloudflare build` | pass |
 | `NETLIFY=true npm run build` | pass |
-| Wrangler deploy | pending final publish step |
+| `npx wrangler deploy` | pass; version `62469f78-2109-4ee1-9f61-c580856c0a5f` |
+
+Production checks after deploy:
+
+| Check | Result |
+| --- | --- |
+| `https://www.bloomcoretech.com/` | 301/308 to `https://bloomcoretech.com/` |
+| 13 public routes | 200 |
+| Unknown route | 404 |
+| `sitemap.xml`, `robots.txt`, `og-image.png`, `favicon.ico` | 200 |
+| Horizontal overflow at 390px | none |
+| Google requests before consent on production | 0 |
+| Cookies and `dataLayer` before consent | none / absent |
+| GTM after consent | one `gtm.js?id=GTM-PMZ6ZSVT`, one `#gtm-script` |
+| Product outbound click on production | one `product_outbound_click` with `product_name`, `location`, `destination_type` |
 
 ## 10. Deployment
 
@@ -181,6 +195,11 @@ Worker: `bloomcore-technologies-page`. Branch: `main`. Netlify fallback:
 ```bash
 NETLIFY=true npm run build
 ```
+
+Deployed 11 November 2026 as Worker version
+`62469f78-2109-4ee1-9f61-c580856c0a5f`, from commit `42cfe80`.
+Worker URL: `https://bloomcore-technologies-page.bloomcoretechnologies.workers.dev`,
+served on `https://bloomcoretech.com`.
 
 No new runtime dependency was added. Jost is self-hosted by `next/font`, so the
 site does not add a render-blocking Google Fonts request.
