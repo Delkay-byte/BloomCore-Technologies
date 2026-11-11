@@ -14,21 +14,24 @@ export function Container({
 }) {
   const widths = {
     narrow: "max-w-[820px]",
-    default: "max-w-[1240px]",
-    wide: "max-w-[1440px]",
+    default: "max-w-[1280px]",
+    wide: "max-w-[1480px]",
   };
 
   return (
-    <div className={cn("mx-auto w-full px-5 sm:px-8 lg:px-12", widths[width], className)}>
+    <div className={cn("mx-auto w-full px-4 sm:px-6", widths[width], className)}>
       {children}
     </div>
   );
 }
 
-/** Sentence-case label. Kept for pages that still need a written category. */
+/** Section context, set as readable text rather than a tracked label. */
 export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="text-[0.9375rem] leading-6 font-medium text-foreground-subtle">{children}</p>
+    <p className="flex items-center gap-2 text-[0.8125rem] leading-5 font-semibold text-foreground-faint">
+      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-gold" />
+      {children}
+    </p>
   );
 }
 
@@ -47,7 +50,7 @@ export function SectionHeading({
     <div className={cn("max-w-3xl", align === "right" && "ml-auto text-right", className)}>
       <h2 className="h2">{title}</h2>
       {lead && (
-        <p className={cn("lead mt-6 max-w-2xl text-foreground-subtle", align === "right" && "ml-auto")}>
+        <p className={cn("lead mt-5 max-w-2xl text-foreground-subtle", align === "right" && "ml-auto")}>
           {lead}
         </p>
       )}
@@ -61,30 +64,34 @@ export function PageHero({
   lead,
   children,
   breadcrumbs,
+  headingClassName,
 }: {
   eyebrow?: string;
   title: React.ReactNode;
   lead?: React.ReactNode;
   children?: React.ReactNode;
   breadcrumbs?: ReadonlyArray<Crumb>;
+  headingClassName?: string;
 }) {
   return (
-    <section className={cn("bg-background pt-10 pb-14 sm:pt-14 sm:pb-20 lg:pt-16 lg:pb-24")}>
-      <Container width="wide">
-        {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-        <div className="grid gap-8 pt-8 lg:grid-cols-12 lg:items-end lg:gap-12 lg:pt-12">
-          <div className="lg:col-span-8">
-            {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
-            <h1 className={cn("h1 max-w-5xl", eyebrow && "mt-4")}>{title}</h1>
-          </div>
-          {lead && (
-            <div className="lg:col-span-4 lg:pb-2">
-              <p className="lead max-w-xl text-foreground-subtle">{lead}</p>
+    <section className="bg-background pt-3 pb-3">
+      <div className="page-frame">
+        <div className="rounded-[var(--radius)] bg-surface px-5 py-10 sm:px-8 sm:py-12 lg:px-10 lg:py-14">
+          {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-12">
+            <div className="lg:col-span-8">
+              {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+              <h1 className={cn("h1 max-w-[20ch]", eyebrow && "mt-4", headingClassName)}>{title}</h1>
             </div>
-          )}
+            {lead && (
+              <div className="lg:col-span-4 lg:pb-2">
+                <p className="lead max-w-xl text-foreground-subtle">{lead}</p>
+              </div>
+            )}
+          </div>
+          {children}
         </div>
-        {children}
-      </Container>
+      </div>
     </section>
   );
 }
@@ -99,9 +106,9 @@ export function Prose({
   return (
     <div
       className={cn(
-        "flex flex-col gap-5 text-[1.0625rem] leading-[1.65] text-foreground-subtle",
-        "[&_h2]:mt-4 [&_h2]:text-[1.65rem] [&_h2]:leading-tight [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-foreground",
-        "[&_h3]:mt-2 [&_h3]:text-[1.2rem] [&_h3]:font-semibold [&_h3]:text-foreground",
+        "flex flex-col gap-5 text-[1.0625rem] leading-[1.7] text-foreground-subtle",
+        "[&_h2]:mt-4 [&_h2]:text-[1.65rem] [&_h2]:leading-tight [&_h2]:font-bold [&_h2]:tracking-tight [&_h2]:text-foreground",
+        "[&_h3]:mt-2 [&_h3]:text-[1.2rem] [&_h3]:font-bold [&_h3]:text-foreground",
         "[&_strong]:font-semibold [&_strong]:text-foreground",
         "[&_a]:text-foreground [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-4",
         className,
@@ -118,13 +125,13 @@ export function DefinitionList({
   items: ReadonlyArray<{ term: string; detail: string }>;
 }) {
   return (
-    <dl className="flex flex-col gap-3">
+    <dl className="flex flex-col gap-2">
       {items.map((item) => (
         <div
           key={item.term}
-          className="grid gap-2 bg-surface px-5 py-5 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)] sm:gap-8 sm:px-6"
+          className="grid gap-2 rounded-[var(--radius)] bg-surface px-5 py-5 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)] sm:gap-8 sm:px-6"
         >
-          <dt className="h3 text-[1.1rem] text-foreground">{item.term}</dt>
+          <dt className="text-[1.05rem] font-bold text-foreground">{item.term}</dt>
           <dd className="body-copy text-foreground-subtle">{item.detail}</dd>
         </div>
       ))}
@@ -145,7 +152,7 @@ export function ArrowLink({
     <Link
       href={href}
       className={cn(
-        "group inline-flex items-center gap-3 text-[1rem] font-medium text-foreground underline-offset-4 hover:underline",
+        "group inline-flex items-center gap-3 text-[1rem] font-semibold text-foreground underline-offset-4 hover:underline",
         className,
       )}
     >
@@ -172,15 +179,15 @@ export function StatusBadge({
   tone?: "default" | "invert" | "muted";
 }) {
   const tones = {
-    default: "bg-gold text-[#15170f]",
-    invert: "bg-background text-foreground",
-    muted: "bg-transparent text-foreground-subtle ring-1 ring-inset ring-border",
+    default: "bg-gold text-gold-contrast",
+    invert: "bg-surface text-foreground",
+    muted: "bg-transparent text-foreground-subtle ring-1 ring-inset ring-line-strong",
   };
 
   return (
     <span
       className={cn(
-        "inline-flex items-center px-2.5 py-1 text-[0.8125rem] leading-none font-medium",
+        "inline-flex items-center rounded-full px-2.5 py-1 text-[0.75rem] leading-none font-bold",
         tones[tone],
       )}
     >

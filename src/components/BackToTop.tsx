@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 /**
@@ -8,6 +9,7 @@ import { cn } from "@/lib/utils";
  * and scrolls smoothly unless reduced motion is requested.
  */
 export function BackToTop() {
+  const pathname = usePathname();
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -26,6 +28,8 @@ export function BackToTop() {
     window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
   };
 
+  if (pathname === "/contact") return null;
+
   return (
     <button
       type="button"
@@ -35,9 +39,9 @@ export function BackToTop() {
       aria-hidden={!visible}
       tabIndex={visible ? 0 : -1}
       className={cn(
-        "fixed right-4 bottom-24 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full",
-        "border border-border bg-background/90 text-foreground shadow-[0_12px_30px_-12px_rgba(8,8,8,0.45)]",
-        "backdrop-blur-md transition-[opacity,transform,border-color,color] duration-300",
+        "fixed right-4 bottom-24 z-40 inline-flex h-11 w-11 items-center justify-center rounded-[9px]",
+        "border border-line bg-background text-foreground shadow-[0_12px_30px_-12px_rgba(8,8,8,0.45)]",
+        "transition-[opacity,transform,border-color,color] duration-300",
         "hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground",
         "sm:right-6",
         visible ? "translate-y-0 opacity-100" : "pointer-events-none translate-y-3 opacity-0",

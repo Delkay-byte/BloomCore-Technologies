@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
@@ -58,10 +58,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   };
 }
 
+function headingId(value: string) {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "");
+}
+
 function Block({ block }: { block: ResourceBlock }) {
   switch (block.type) {
     case "heading":
-      return <h2 className="h3 mt-6 text-foreground">{block.text}</h2>;
+      return (
+        <h2 id={headingId(block.text)} className="h3 mt-6 scroll-mt-28 text-foreground">
+          {block.text}
+        </h2>
+      );
     case "subheading":
       return (
         <h3 className="mt-3 text-[1.2rem] font-semibold tracking-tight text-foreground">
@@ -83,7 +94,7 @@ function Block({ block }: { block: ResourceBlock }) {
       return (
         <ol className="grid gap-6 sm:grid-cols-2">
           {block.items.map((item) => (
-            <li key={item.title} className="bg-muted p-5">
+            <li key={item.title} className="rounded-[var(--radius)] bg-surface p-5">
               <h3 className="text-[1.05rem] font-semibold text-foreground">{item.title}</h3>
               <p className="mt-2 text-[0.9375rem] leading-6 text-foreground-subtle">{item.detail}</p>
             </li>
@@ -92,7 +103,7 @@ function Block({ block }: { block: ResourceBlock }) {
       );
     case "note":
       return (
-        <aside className="border-l-4 border-gold bg-muted p-5">
+        <aside className="rounded-[var(--radius)] border-l-4 border-gold bg-muted p-5">
           <p className="text-[0.9375rem] leading-6 text-foreground-subtle">{block.text}</p>
         </aside>
       );
@@ -133,6 +144,7 @@ export default async function ResourceArticlePage({ params }: PageProps) {
         title={article.title}
         lead={article.description}
         breadcrumbs={breadcrumbs}
+        headingClassName="max-w-[24ch] text-[clamp(1.95rem,3.6vw,3.6rem)]"
       >
         <p className="mt-6 text-[0.8125rem] text-foreground-faint">
           By {BRAND.name} · {formatDate(article.published)} · {article.readingMinutes} min read
@@ -142,15 +154,15 @@ export default async function ResourceArticlePage({ params }: PageProps) {
       <section className="bg-surface py-14 sm:py-16 lg:py-20">
         <Container>
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
-            <article className="lg:col-span-8">
+            <article className="max-w-[68ch] lg:col-span-8">
               <div className="flex flex-col gap-5">
                 {article.blocks.map((block, index) => (
                   <Block key={`${block.type}-${index}`} block={block} />
                 ))}
               </div>
 
-              <div className="mt-12 bg-background p-6 sm:p-8">
-                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+              <div className="mt-12 rounded-[var(--radius)] bg-background p-6 sm:p-8">
+                <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                   Related product
                 </p>
                 <h2 className="h3 mt-3">{product.name}</h2>
@@ -176,7 +188,7 @@ export default async function ResourceArticlePage({ params }: PageProps) {
 
             <aside className="lg:col-span-4">
               <div className="lg:sticky lg:top-28">
-                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                   In this guide
                 </p>
                 <nav aria-label="Guide sections" className="mt-4">
@@ -188,7 +200,12 @@ export default async function ResourceArticlePage({ params }: PageProps) {
                       )
                       .map((block) => (
                         <li key={block.text} className="text-[0.9375rem] leading-6 text-foreground-subtle">
-                          {block.text}
+                          <a
+                            href={`#${headingId(block.text)}`}
+                            className="underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                          >
+                            {block.text}
+                          </a>
                         </li>
                       ))}
                   </ul>
@@ -196,7 +213,7 @@ export default async function ResourceArticlePage({ params }: PageProps) {
 
                 {related.length > 0 && (
                   <div className="mt-8">
-                    <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                    <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                       More guides
                     </p>
                     <ul className="mt-3 flex flex-col gap-3">
@@ -225,3 +242,4 @@ export default async function ResourceArticlePage({ params }: PageProps) {
     </>
   );
 }
+

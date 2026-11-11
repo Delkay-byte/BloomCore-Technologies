@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+﻿import { cn } from "@/lib/utils";
 
 /*
  * Interface fragments. These are representative crops built from the
@@ -23,12 +23,12 @@ function ChromeBar({
           aria-hidden="true"
           className="h-2 w-2 shrink-0 rounded-full bg-[var(--product-accent,var(--accent))]"
         />
-        <span className="truncate text-[12px] font-medium text-foreground">{app}</span>
+        <span className="truncate text-[13px] font-medium text-foreground">{app}</span>
       </div>
       <div className="flex shrink-0 items-center gap-2">
-        {meta && <span className="hidden text-[11px] text-foreground-faint sm:inline">{meta}</span>}
+        {meta && <span className="hidden text-[12px] text-foreground-faint sm:inline">{meta}</span>}
         {status && (
-          <span className="border border-border bg-background px-2 py-0.5 text-[10px] font-medium text-foreground-subtle">
+          <span className="border border-border bg-background px-2 py-0.5 text-[11px] font-medium text-foreground-subtle">
             {status}
           </span>
         )}
@@ -54,20 +54,20 @@ function IndicatorRow({
     <div
       className={cn(
         "flex items-center justify-between gap-3 px-3 py-2.5",
-        active ? "bg-[var(--product-accent,#0d3b31)] text-white" : "bg-background text-foreground",
+        active ? "bg-[var(--product-accent,#0c3b30)] text-white" : "bg-background text-foreground",
       )}
     >
       <div className="min-w-0">
-        <p className={cn("truncate text-[12px] font-medium", active ? "text-white" : "text-foreground")}>
+        <p className={cn("truncate text-[13px] font-medium", active ? "text-white" : "text-foreground")}>
           {label}
         </p>
-        <p className={cn("text-[10px]", active ? "text-white/90" : "text-foreground-faint")}>
+        <p className={cn("text-[11px]", active ? "text-white/90" : "text-foreground-faint")}>
           {code} · {week}
         </p>
       </div>
       <span
         className={cn(
-          "shrink-0 border px-1.5 py-0.5 text-[10px] font-medium",
+          "shrink-0 border px-1.5 py-0.5 text-[11px] font-medium",
           active
             ? "border-white/30 text-white/90"
             : "border-border text-foreground-subtle",
@@ -87,24 +87,24 @@ export function SchemeKnitFragment({ className }: { className?: string }) {
         "overflow-hidden border border-border bg-surface",
         className,
       )}
-      style={{ "--product-accent": "#1c7189" } as React.CSSProperties}
+      style={{ "--product-accent": "#0c3b30" } as React.CSSProperties}
     >
       <ChromeBar app="SchemeKnit · Lesson planning" meta="Basic 7 · Computing" status="Draft" />
       <div className="p-4">
         <div className="flex items-start justify-between gap-3">
           <div>
             <p className="text-[14px] font-semibold text-foreground">Term 1 · Week 1</p>
-            <p className="mt-0.5 text-[11px] text-foreground-faint">
+            <p className="mt-0.5 text-[12px] text-foreground-faint">
               36 lesson plans from 12 scheme weeks
             </p>
           </div>
-          <span className="bg-[#e6f1f3] px-2 py-1 text-[10px] font-medium text-[#1c7189]">
+          <span className="bg-[#e2ede7] px-2 py-1 text-[11px] font-medium text-[#0c3b30]">
             3 of 36 planned
           </span>
         </div>
 
         <div className="mt-3 h-1.5 overflow-hidden bg-muted">
-          <div className="h-full w-[34%] bg-[#1c7189]" />
+          <div className="h-full w-[34%] bg-[#0c3b30]" />
         </div>
 
         <div className="mt-4 flex flex-col gap-1">
@@ -131,14 +131,14 @@ export function SchemeKnitFragment({ className }: { className?: string }) {
 
         <div className="mt-4 grid gap-2 sm:grid-cols-2">
           <div className="bg-muted p-3">
-            <p className="text-[10px] text-foreground-faint">Lesson plan</p>
-            <p className="mt-1 text-[11px] leading-4 text-foreground">
+            <p className="text-[11px] text-foreground-faint">Lesson plan</p>
+            <p className="mt-1 text-[12px] leading-4 text-foreground">
               Starter, new learning and assessment, built around the selected indicator.
             </p>
           </div>
           <div className="bg-muted p-3">
-            <p className="text-[10px] text-foreground-faint">Export</p>
-            <p className="mt-1 text-[11px] leading-4 text-foreground">
+            <p className="text-[11px] text-foreground-faint">Export</p>
+            <p className="mt-1 text-[12px] leading-4 text-foreground">
               Review, edit, then export for printing or submission.
             </p>
           </div>
@@ -153,7 +153,7 @@ export function MaaCashFragment({ className }: { className?: string }) {
     <div
       data-ui
       className={cn("overflow-hidden border border-border bg-surface", className)}
-      style={{ "--product-accent": "#0d3b31" } as React.CSSProperties}
+      style={{ "--product-accent": "#0c3b30" } as React.CSSProperties}
     >
       <ChromeBar app="MaaCash · Business workspace" meta="Organisation administration" status="Admin" />
       <div className="grid grid-cols-1 sm:grid-cols-[9rem_1fr]">
@@ -163,9 +163,9 @@ export function MaaCashFragment({ className }: { className?: string }) {
               <span
                 key={item}
                 className={cn(
-                  "px-2 py-1.5 text-[11px]",
+                  "px-2 py-1.5 text-[12px]",
                   index === 1
-                    ? "bg-[#0d3b31] font-medium text-white"
+                    ? "bg-[#0c3b30] font-medium text-white"
                     : "text-foreground-subtle",
                 )}
               >
@@ -177,7 +177,7 @@ export function MaaCashFragment({ className }: { className?: string }) {
         <div className="p-4">
           <div className="flex items-center justify-between gap-3">
             <p className="text-[14px] font-semibold text-foreground">Location overview</p>
-            <span className="border border-border px-2 py-0.5 text-[10px] text-foreground-subtle">
+            <span className="border border-border px-2 py-0.5 text-[11px] text-foreground-subtle">
               3 locations
             </span>
           </div>
@@ -188,7 +188,7 @@ export function MaaCashFragment({ className }: { className?: string }) {
               ["Reconciled", "Today"],
             ].map(([label, value]) => (
               <div key={label} className="bg-muted p-2.5">
-                <p className="text-[10px] text-foreground-faint">{label}</p>
+                <p className="text-[11px] text-foreground-faint">{label}</p>
                 <p className="mt-1 text-[15px] font-semibold text-foreground">{value}</p>
               </div>
             ))}
@@ -205,16 +205,13 @@ export function MaaCashFragment({ className }: { className?: string }) {
                 className="flex items-center justify-between gap-3 border-b border-border px-3 py-2 last:border-0"
               >
                 <div className="min-w-0">
-                  <p className="truncate text-[11px] font-medium text-foreground">{role}</p>
-                  <p className="truncate text-[10px] text-foreground-faint">{scope}</p>
+                  <p className="truncate text-[12px] font-medium text-foreground">{role}</p>
+                  <p className="truncate text-[11px] text-foreground-faint">{scope}</p>
                 </div>
-                <span className="shrink-0 text-[10px] text-foreground-subtle">{access}</span>
+                <span className="shrink-0 text-[11px] text-foreground-subtle">{access}</span>
               </div>
             ))}
           </div>
-          <p className="mt-3 text-[10px] leading-4 text-foreground-faint">
-            Representative workspace layout. No customer records are shown.
-          </p>
         </div>
       </div>
     </div>
@@ -226,7 +223,7 @@ export function TillProofFragment({ className }: { className?: string }) {
     <div
       data-ui
       className={cn("overflow-hidden border border-border bg-surface", className)}
-      style={{ "--product-accent": "#44515e" } as React.CSSProperties}
+      style={{ "--product-accent": "#565d57" } as React.CSSProperties}
     >
       <ChromeBar app="TillProof · Owner dashboard" meta="Stock by location" status="Concept" />
       <div className="p-4">
@@ -235,9 +232,9 @@ export function TillProofFragment({ className }: { className?: string }) {
             <span
               key={location}
               className={cn(
-                "border px-2 py-1 text-[10px]",
+                "border px-2 py-1 text-[11px]",
                 index === 0
-                  ? "border-[#44515e] bg-[#44515e] text-white"
+                  ? "border-[#565d57] bg-[#565d57] text-white"
                   : "border-border text-foreground-subtle",
               )}
             >
@@ -257,10 +254,10 @@ export function TillProofFragment({ className }: { className?: string }) {
               className="flex items-center justify-between gap-3 border-b border-border px-3 py-2.5 last:border-0"
             >
               <div className="min-w-0">
-                <p className="truncate text-[11px] font-medium text-foreground">{label}</p>
-                <p className="text-[10px] text-foreground-faint">{code}</p>
+                <p className="truncate text-[12px] font-medium text-foreground">{label}</p>
+                <p className="text-[11px] text-foreground-faint">{code}</p>
               </div>
-              <span className="shrink-0 text-[10px] text-foreground-subtle">{qty} in stock</span>
+              <span className="shrink-0 text-[11px] text-foreground-subtle">{qty} in stock</span>
             </div>
           ))}
         </div>
@@ -271,14 +268,11 @@ export function TillProofFragment({ className }: { className?: string }) {
             ["Recorded events", "All"],
           ].map(([label, value]) => (
             <div key={label} className="bg-muted p-2.5">
-              <p className="text-[10px] text-foreground-faint">{label}</p>
-              <p className="mt-1 text-[12px] font-semibold text-foreground">{value}</p>
+              <p className="text-[11px] text-foreground-faint">{label}</p>
+              <p className="mt-1 text-[13px] font-semibold text-foreground">{value}</p>
             </div>
           ))}
         </div>
-        <p className="mt-3 text-[10px] leading-4 text-foreground-faint">
-          Interface concept for a product in development. Not a live deployment.
-        </p>
       </div>
     </div>
   );
@@ -295,3 +289,4 @@ export function ProductFragment({
   if (kind === "maacash") return <MaaCashFragment className={className} />;
   return <TillProofFragment className={className} />;
 }
+

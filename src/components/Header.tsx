@@ -3,19 +3,24 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import logo from "@/assets/brand/bloomcore-logo-white.png";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
+import logo from "@/assets/brand/bloomcore-logo-white.png";
+import { AssistantTrigger } from "@/components/AssistantTrigger";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { BRAND, NAVIGATION, ROUTES } from "@/lib/brand";
+import { BRAND, NAVIGATION, PRODUCTS, ROUTES } from "@/lib/brand";
 import { cn } from "@/lib/utils";
+
+const PRODUCT_PATHS = Object.fromEntries(
+  PRODUCTS.map((product) => [`/products/${product.slug}`, product]),
+);
 
 function BrandLockup() {
   return (
     <Link
       href="/"
-      className="inline-flex shrink-0 items-center bg-[#08241f] px-2.5 py-1.5"
       aria-label={`${BRAND.name} — home`}
+      className="inline-flex shrink-0 items-center rounded-[6px] bg-[#0c3b30] px-2.5 py-1.5"
     >
       <Image
         src={logo}
@@ -43,7 +48,7 @@ function DesktopNav() {
 
   const scheduleClose = () => {
     cancelClose();
-    closeTimer.current = setTimeout(() => setOpenMenu(null), 120);
+    closeTimer.current = setTimeout(() => setOpenMenu(null), 130);
   };
 
   useEffect(() => {
@@ -60,7 +65,7 @@ function DesktopNav() {
     <nav aria-label="Primary" className="hidden lg:block">
       <ul className="flex items-center gap-6 xl:gap-8">
         {NAVIGATION.filter((item) => item.href !== ROUTES.home).map((item) => {
-          const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          const isActive = pathname.startsWith(item.href);
 
           if (item.children) {
             const isOpen = openMenu?.label === item.label && openMenu.path === pathname;
@@ -73,6 +78,11 @@ function DesktopNav() {
                   setOpenMenu({ label: item.label, path: pathname });
                 }}
                 onMouseLeave={scheduleClose}
+                onBlur={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
+                    setOpenMenu(null);
+                  }
+                }}
               >
                 <button
                   type="button"
@@ -80,16 +90,13 @@ function DesktopNav() {
                   aria-haspopup="true"
                   onClick={(event) => {
                     const opened = { label: item.label, path: pathname };
-                    if (event.detail === 0) {
-                      setOpenMenu(isOpen ? null : opened);
-                    } else {
-                      setOpenMenu(opened);
-                    }
+                    setOpenMenu(event.detail === 0 && isOpen ? null : opened);
                   }}
-                  onFocus={() => setOpenMenu({ label: item.label, path: pathname })}
                   className={cn(
-                    "flex items-center gap-1.5 py-2 text-[0.9375rem] font-medium tracking-tight transition-colors",
-                    isActive || isOpen ? "text-foreground" : "text-foreground-subtle hover:text-foreground",
+                    "flex items-center gap-1.5 py-2 text-[0.9375rem] font-semibold transition-colors",
+                    isActive || isOpen
+                      ? "text-foreground"
+                      : "text-foreground-subtle hover:text-foreground",
                   )}
                 >
                   {item.label}
@@ -111,31 +118,43 @@ function DesktopNav() {
                   </svg>
                 </button>
                 {isOpen && (
-                  <div className="absolute top-full left-0 z-50 w-64 pt-3">
-                    <ul className="bg-[#08241f] p-2 shadow-[0_24px_48px_-24px_rgba(0,0,0,0.4)]">
+                  <div className="absolute top-full left-0 z-50 w-[19rem] pt-3">
+                    <ul className="overflow-hidden rounded-[var(--radius)] border border-line bg-surface p-2 shadow-[0_24px_48px_-24px_rgba(8,20,15,0.3)]">
                       <li>
                         <Link
                           href={item.href}
-                          className="block px-3 py-2.5 text-[0.9375rem] font-semibold text-[#f7f4ec] transition-colors hover:bg-white/10"
+                          onClick={() => setOpenMenu(null)}
+                          className="flex items-center justify-between rounded-[6px] px-3 py-2.5 text-[0.9375rem] font-semibold text-foreground transition-colors hover:bg-surface-2"
                         >
                           All products
+                          <span aria-hidden="true">→</span>
                         </Link>
                       </li>
-                      {item.children.map((child) => (
-                        <li key={child.href}>
-                          <Link
-                            href={child.href}
-                            className={cn(
-                              "block px-3 py-2.5 text-[0.9375rem] transition-colors hover:bg-white/10",
-                              pathname === child.href
-                                ? "text-gold"
-                                : "text-[#d6ded4] hover:text-[#f7f4ec]",
-                            )}
-                          >
-                            {child.label}
-                          </Link>
-                        </li>
-                      ))}
+                      {item.children.map((child) => {
+                        const product = PRODUCT_PATHS[child.href];
+                        return (
+                          <li key={child.href}>
+                            <Link
+                              href={child.href}
+                              onClick={() => setOpenMenu(null)}
+                              className={cn(
+                                "block rounded-[6px] px-3 py-2.5 transition-colors hover:bg-surface-2",
+                                pathname === child.href ? "bg-surface-2" : "",
+                              )}
+                            >
+                              <span className="flex items-center justify-between gap-3 text-[0.9375rem] font-semibold text-foreground">
+                                {child.label}
+                                <span className="text-[0.75rem] font-medium text-foreground-faint">
+                                  {product?.statusLabel}
+                                </span>
+                              </span>
+                              <span className="mt-0.5 block text-[0.8125rem] leading-5 text-foreground-subtle">
+                                {product?.category}
+                              </span>
+                            </Link>
+                          </li>
+                        );
+                      })}
                     </ul>
                   </div>
                 )}
@@ -149,11 +168,14 @@ function DesktopNav() {
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "py-2 text-[0.9375rem] font-medium tracking-tight transition-colors",
+                  "relative py-2 text-[0.9375rem] font-semibold transition-colors",
                   isActive ? "text-foreground" : "text-foreground-subtle hover:text-foreground",
                 )}
               >
                 {item.label}
+                {isActive && (
+                  <span aria-hidden="true" className="absolute -bottom-0.5 left-0 h-0.5 w-full bg-gold" />
+                )}
               </Link>
             </li>
           );
@@ -182,7 +204,6 @@ function MobileNav() {
 
   useEffect(() => {
     if (!open) return;
-
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
@@ -193,15 +214,12 @@ function MobileNav() {
         return;
       }
       if (event.key !== "Tab") return;
-
       const focusables = panelRef.current?.querySelectorAll<HTMLElement>(
         "a[href], button:not([disabled])",
       );
       if (!focusables || focusables.length === 0) return;
-
       const first = focusables[0];
       const last = focusables[focusables.length - 1];
-
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();
@@ -229,33 +247,23 @@ function MobileNav() {
         aria-controls="mobile-navigation"
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         onClick={() => setOpenPath(open ? null : pathname)}
-        className="flex h-11 w-11 items-center justify-center text-foreground transition-colors hover:bg-surface-2"
+        className="flex h-11 w-11 items-center justify-center rounded-[7px] border border-line text-foreground transition-colors hover:bg-surface-2 active:translate-y-px"
       >
-        <svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           {open ? (
-            <path
-              d="M5 5L15 15M15 5L5 15"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-            />
+            <path d="M5 5L15 15M15 5L5 15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
           ) : (
-            <path
-              d="M2.5 5.5h15M2.5 10h15M2.5 14.5h15"
-              stroke="currentColor"
-              strokeWidth="1.6"
-              strokeLinecap="round"
-            />
+            <path d="M2.5 5.5h15M2.5 10h15M2.5 14.5h15" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
           )}
         </svg>
       </button>
 
       {open && (
         <motion.div
-          initial={reduceMotion ? false : { opacity: 0, y: -8 }}
+          initial={reduceMotion ? false : { opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.18, ease: "easeOut" }}
-          className="fixed inset-x-0 top-[68px] h-[calc(100dvh-68px)] bg-[#08241f] sm:top-[76px] sm:h-[calc(100dvh-76px)]"
+          transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+          className="fixed inset-x-0 top-[76px] h-[calc(100dvh-76px)] bg-accent text-accent-contrast"
         >
           <div
             id="mobile-navigation"
@@ -263,42 +271,42 @@ function MobileNav() {
             className="h-full overflow-y-auto overscroll-contain px-5 py-8 sm:px-8"
           >
             <nav aria-label="Mobile">
-              <ul className="flex flex-col">
+              <ul className="flex flex-col gap-1">
                 {NAVIGATION.map((item) => {
                   const isActive =
                     item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
-
                   return (
-                    <li key={item.href}>
+                    <li key={item.href} className="border-b border-white/10">
                       <Link
                         href={item.href}
                         aria-current={isActive ? "page" : undefined}
                         onClick={() => setOpenPath(null)}
                         className={cn(
-                          "flex items-center justify-between py-3 text-[2rem] leading-tight font-semibold tracking-tight uppercase transition-colors",
-                          isActive ? "text-gold" : "text-[#f7f4ec] hover:text-gold",
+                          "flex items-center justify-between py-3 font-display text-[2.4rem] leading-none transition-colors",
+                          isActive ? "text-gold" : "text-accent-contrast hover:text-gold",
                         )}
                       >
                         {item.label}
-                        {isActive && (
-                          <span aria-hidden="true" className="h-2 w-2 bg-gold" />
-                        )}
+                        {isActive && <span aria-hidden="true" className="h-2 w-2 rounded-full bg-gold" />}
                       </Link>
                       {item.children && (
-                        <ul className="flex flex-col gap-1 pb-4 pl-3">
+                        <ul className="flex flex-col gap-1 pb-4 pl-1">
                           {item.children.map((child) => (
                             <li key={child.href}>
                               <Link
                                 href={child.href}
                                 onClick={() => setOpenPath(null)}
                                 className={cn(
-                                  "block py-1.5 text-[1rem] transition-colors",
+                                  "flex items-center justify-between gap-3 py-1.5 text-[0.9375rem] font-medium transition-colors",
                                   pathname === child.href
                                     ? "text-gold"
-                                    : "text-[#bfc9bd] hover:text-[#f7f4ec]",
+                                    : "text-accent-contrast/70 hover:text-accent-contrast",
                                 )}
                               >
                                 {child.label}
+                                <span className="text-[0.75rem] text-accent-contrast/45">
+                                  {PRODUCT_PATHS[child.href]?.statusLabel}
+                                </span>
                               </Link>
                             </li>
                           ))}
@@ -309,20 +317,31 @@ function MobileNav() {
                 })}
               </ul>
             </nav>
-            <div className="mt-10 bg-gold p-5 text-[#15170f]">
-              <p className="text-[1.35rem] leading-tight font-semibold uppercase">
+
+            <div className="mt-8 rounded-[var(--radius)] bg-gold p-5 text-gold-contrast">
+              <p className="font-display text-[1.9rem] leading-none">
                 Have a project in mind?
               </p>
               <p className="mt-2 text-[0.9375rem] leading-6">
-                Describe the problem. We will say plainly whether it is work we can take on.
+                Tell us what the work needs to do. We will say plainly whether it is work we can
+                take on.
               </p>
               <Link
                 href={ROUTES.contact}
                 onClick={() => setOpenPath(null)}
-                className="mt-4 inline-flex h-11 items-center bg-[#08241f] px-5 text-[0.9375rem] font-medium text-[#f7f4ec]"
+                className="mt-4 inline-flex h-11 items-center rounded-[7px] bg-accent px-5 text-[0.9375rem] font-semibold text-accent-contrast"
               >
-                Contact BloomCore
+                Start a project
               </Link>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between text-[0.875rem] text-accent-contrast/60">
+              <a href="mailto:bloomcoretechnologies@gmail.com" className="hover:text-accent-contrast">
+                Email
+              </a>
+              <a href="tel:0240064668" className="hover:text-accent-contrast">
+                0240064668
+              </a>
             </div>
           </div>
         </motion.div>
@@ -333,17 +352,18 @@ function MobileNav() {
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full bg-background">
-      <div className="page-frame flex h-[68px] items-center justify-between gap-4 sm:h-[76px]">
+    <header className="sticky top-0 z-50 border-b border-line bg-background">
+      <div className="page-frame flex h-[76px] items-center justify-between gap-4">
         <BrandLockup />
         <div className="flex items-center gap-3 xl:gap-6">
           <DesktopNav />
           <Link
             href={ROUTES.contact}
-            className="hidden h-11 items-center bg-accent px-5 text-[0.9375rem] font-medium text-accent-contrast transition-colors hover:bg-accent-strong xl:inline-flex"
+            className="hidden h-11 items-center rounded-[7px] bg-accent px-5 text-[0.9375rem] font-semibold text-accent-contrast transition-colors hover:bg-accent-strong active:translate-y-px xl:inline-flex"
           >
             Start a project
           </Link>
+          <AssistantTrigger className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[7px] text-foreground-subtle transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground" />
           <ThemeToggle />
           <MobileNav />
         </div>

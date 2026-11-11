@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { ArrowLink, Container, PageHero, StatusBadge } from "@/components/Page";
 import { ProductFragment } from "@/components/ProductFragments";
+import { Reveal } from "@/components/Reveal";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
 
@@ -77,104 +79,165 @@ export default function ProductsPage() {
     <>
       <PageHero
         eyebrow="Products"
-        title="Software products built and operated by BloomCore Technologies"
-        lead="Each product answers a specific operating problem. Status is stated plainly: two products are available today, and one is in active development."
+        title="Software built and operated here."
+        lead="Each product answers one operating problem. Two are available today; one is in active development."
       >
-        <div className="mt-8 flex flex-wrap items-center gap-5">
+        <div className="mt-8 flex flex-wrap items-center gap-4">
           <ButtonLink href={ROUTES.contact}>Ask about a product</ButtonLink>
           <ArrowLink href={ROUTES.work}>See the work</ArrowLink>
         </div>
+        <div className="mt-8 grid gap-2 sm:grid-cols-3">
+          {[
+            { name: "SchemeKnit", status: "Available", href: ROUTES.productsSchemeKnit },
+            { name: "MaaCash", status: "Available", href: ROUTES.productsMaacash },
+            { name: "TillProof", status: "In development", href: ROUTES.productsTillProof },
+          ].map((item) => (
+            <Link
+              key={item.name}
+              href={item.href}
+              className="group flex items-center justify-between gap-3 rounded-[8px] bg-surface-2 px-4 py-3 transition-colors hover:bg-surface-3"
+            >
+              <span className="text-[0.9375rem] font-bold text-foreground">{item.name}</span>
+              <span className="text-[0.75rem] text-foreground-subtle">
+                {item.status}
+                <span aria-hidden="true" className="ml-2 transition-transform group-hover:translate-x-0.5">→</span>
+              </span>
+            </Link>
+          ))}
+        </div>
       </PageHero>
 
-      <div className="bg-background">
-        {PRODUCTS.map((product, index) => {
-          const summary = summaries[product.slug];
-          const reversed = index % 2 === 1;
-
-          return (
-            <section
-              key={product.slug}
-              className={index % 2 === 0 ? "bg-surface py-16 sm:py-20" : "bg-background py-16 sm:py-20"}
-            >
-              <Container width="wide">
-                <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
-                  <div
-                    className={
-                      reversed
-                        ? "lg:col-span-7 lg:order-2"
-                        : "lg:col-span-7"
-                    }
-                  >
-                    <div className="flex flex-wrap items-center gap-4">
-                      <p className="text-[0.8125rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
-                        {product.category}
-                      </p>
-                      <StatusBadge
-                        label={product.statusLabel}
-                        tone={product.status === "live" ? "default" : "muted"}
-                      />
-                    </div>
-                    <h2 className="h2 mt-4">{product.name}</h2>
-                    <p className="lead mt-5 max-w-[46ch] text-foreground-subtle">
-                      {summary.detail}
-                    </p>
-                    <p className="mt-5 max-w-[52ch] text-[0.9375rem] leading-6 text-foreground-faint">
-                      <span className="font-medium text-foreground-subtle">Built for:</span>{" "}
-                      {summary.users}
-                    </p>
-                    <div className="mt-7 flex flex-wrap gap-3">
-                      <ButtonLink href={hrefs[product.slug]}>Product details</ButtonLink>
-                      <ButtonLink
-                        href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${product.name}`)}`}
-                        variant="outline"
-                      >
-                        Enquire
-                      </ButtonLink>
-                    </div>
-                  </div>
-
-                  <div className={reversed ? "lg:col-span-5 lg:order-1" : "lg:col-span-5"}>
-                    <ProductFragment kind={product.slug} />
-                  </div>
-
-                  <div
-                    className={
-                      reversed
-                        ? "lg:col-span-12 lg:order-3"
-                        : "lg:col-span-12"
-                    }
-                  >
-                    <ul className="grid gap-x-10 sm:grid-cols-2 lg:grid-cols-3">
-                      {summary.capabilities.map((capability) => (
-                        <li
-                          key={capability}
-                          className="flex items-start gap-3 py-2.5 text-[0.9375rem] leading-6 text-foreground-subtle"
+      <section className="bg-background pt-2.5">
+        <div className="page-frame flex flex-col gap-2.5">
+          {PRODUCTS.map((product, index) => {
+            const summary = summaries[product.slug];
+            const reversed = index % 2 === 1;
+            return (
+              <Reveal key={product.slug}>
+                <article
+                  className={
+                    product.status === "development"
+                      ? "overflow-hidden rounded-[var(--radius)] bg-accent p-5 text-accent-contrast sm:p-8 lg:p-10"
+                      : "overflow-hidden rounded-[var(--radius)] bg-surface p-5 sm:p-8 lg:p-10"
+                  }
+                >
+                  <div className="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
+                    <div className={reversed ? "lg:col-span-5 lg:order-2" : "lg:col-span-5"}>
+                      <div className="flex flex-wrap items-center gap-3">
+                        <p
+                          className={
+                            product.status === "development"
+                              ? "text-[0.8125rem] font-semibold text-accent-contrast/60"
+                              : "text-[0.8125rem] font-semibold text-foreground-faint"
+                          }
                         >
-                          <span aria-hidden="true" className="mt-2.5 h-1.5 w-1.5 shrink-0 bg-gold" />
-                          {capability}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </Container>
-            </section>
-          );
-        })}
-      </div>
+                          {product.category}
+                        </p>
+                        {product.status === "live" ? (
+                          <StatusBadge label={product.statusLabel} />
+                        ) : (
+                          <span className="rounded-full bg-white/10 px-2.5 py-1 text-[0.75rem] font-bold text-accent-contrast">
+                            {product.statusLabel}
+                          </span>
+                        )}
+                      </div>
+                      <h2
+                        className={
+                          product.status === "development"
+                            ? "mt-3 font-display text-[clamp(2.8rem,4.8vw,4.6rem)] leading-none text-accent-contrast"
+                            : "mt-3 font-display text-[clamp(2.8rem,4.8vw,4.6rem)] leading-none text-foreground"
+                        }
+                      >
+                        {product.name}
+                      </h2>
+                      <p
+                        className={
+                          product.status === "development"
+                            ? "mt-5 max-w-[46ch] text-[1.05rem] leading-7 text-accent-contrast/80"
+                            : "mt-5 max-w-[46ch] text-[1.05rem] leading-7 text-foreground-subtle"
+                        }
+                      >
+                        {summary.detail}
+                      </p>
+                      <p
+                        className={
+                          product.status === "development"
+                            ? "mt-3 max-w-[50ch] text-[0.9375rem] leading-6 text-accent-contrast/60"
+                            : "mt-3 max-w-[50ch] text-[0.9375rem] leading-6 text-foreground-faint"
+                        }
+                      >
+                        <span className="font-semibold">{product.status === "development" ? "Intended for:" : "Built for:"}</span>{" "}
+                        {summary.users}
+                      </p>
+                      <div className="mt-7 flex flex-wrap items-center gap-4">
+                        <ButtonLink
+                          href={hrefs[product.slug]}
+                          variant={product.status === "development" ? "inverse" : "primary"}
+                        >
+                          Product details
+                        </ButtonLink>
+                        <a
+                          href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${product.name}`)}`}
+                          className={
+                            product.status === "development"
+                              ? "text-[0.9375rem] font-semibold text-accent-contrast underline decoration-1 underline-offset-4"
+                              : "text-[0.9375rem] font-semibold text-foreground underline decoration-1 underline-offset-4"
+                          }
+                        >
+                          Enquire
+                        </a>
+                      </div>
+                    </div>
 
-      <section className="bg-surface-2 py-16 sm:py-20">
+                    <div className={reversed ? "lg:col-span-7 lg:order-1" : "lg:col-span-7"}>
+                      <ProductFragment kind={product.slug} />
+                    </div>
+                  </div>
+
+                  {product.status === "development" && (
+                    <p className="mt-6 text-[0.8125rem] font-semibold text-accent-contrast/60">
+                      Intended capability, not a released feature set.
+                    </p>
+                  )}
+                  <ul
+                    className={
+                      product.status === "development"
+                        ? "mt-2 grid gap-x-8 gap-y-0 border-t border-white/15 pt-3 sm:grid-cols-2 lg:grid-cols-3"
+                        : "mt-8 grid gap-x-8 gap-y-0 border-t border-line pt-3 sm:grid-cols-2 lg:grid-cols-3"
+                    }
+                  >
+                    {summary.capabilities.map((capability) => (
+                      <li
+                        key={capability}
+                        className={
+                          product.status === "development"
+                            ? "py-2 text-[0.9375rem] leading-6 text-accent-contrast/75"
+                            : "py-2 text-[0.9375rem] leading-6 text-foreground-subtle"
+                        }
+                      >
+                        {capability}
+                      </li>
+                    ))}
+                  </ul>
+                </article>
+              </Reveal>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="bg-background section-pad">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <h2 className="h2 max-w-[12ch]">What the labels mean</h2>
-              <p className="lead mt-6 max-w-[30ch] text-foreground-subtle">
+              <h2 className="h2 max-w-[12ch]">What the labels mean.</h2>
+              <p className="lead mt-5 max-w-[30ch] text-foreground-subtle">
                 A status label is a promise about evidence, not a marketing position.
               </p>
             </div>
             <div className="lg:col-span-8">
-              <dl>
-                <div className="grid gap-2 py-5 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6">
+              <dl className="flex flex-col gap-2">
+                <div className="grid gap-2 rounded-[var(--radius)] bg-surface p-5 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6 sm:p-6">
                   <dt>
                     <StatusBadge label="Available" />
                   </dt>
@@ -183,7 +246,7 @@ export default function ProductsPage() {
                     present in the application.
                   </dd>
                 </div>
-                <div className="grid gap-2 py-5 sm:grid-cols-[9rem_minmax(0,1fr)] sm:gap-6">
+                <div className="grid gap-2 rounded-[var(--radius)] bg-surface p-5 sm:grid-cols-[10rem_minmax(0,1fr)] sm:gap-6 sm:p-6">
                   <dt>
                     <StatusBadge label="In development" tone="muted" />
                   </dt>
@@ -193,7 +256,7 @@ export default function ProductsPage() {
                   </dd>
                 </div>
               </dl>
-              <p className="mt-4 max-w-2xl text-[0.9375rem] leading-6 text-foreground-subtle">
+              <p className="mt-5 max-w-2xl text-[0.9375rem] leading-6 text-foreground-subtle">
                 We do not publish customer names, revenue figures or usage statistics for any
                 product.
               </p>
@@ -202,26 +265,35 @@ export default function ProductsPage() {
         </Container>
       </section>
 
-      <section className="bg-background py-20 sm:py-24">
-        <Container width="narrow">
-          <h2 className="h2 max-w-[20ch]">Need something that is not in the catalogue?</h2>
-          <p className="lead mt-6 max-w-xl text-foreground-subtle">
-            We also build software to order. Tell us what the workflow needs to do and we will tell
-            you whether it is a good fit.
-          </p>
-          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-            <ButtonLink href={ROUTES.services} size="lg">
-              View our services
-            </ButtonLink>
-            <ButtonLink href={ROUTES.contact} variant="outline" size="lg">
-              Contact BloomCore Technologies
-            </ButtonLink>
+      <section className="bg-background pb-3">
+        <div className="page-frame">
+          <div className="grid gap-8 rounded-[var(--radius)] bg-gold p-6 text-gold-contrast sm:p-9 lg:grid-cols-12 lg:items-center">
+            <div className="lg:col-span-8">
+              <h2 className="h2 max-w-[18ch]">Need something outside the catalogue?</h2>
+              <p className="mt-4 max-w-xl text-[1rem] leading-7 opacity-80">
+                We also build software to order. Tell us what the workflow needs to do and we will
+                tell you whether it is a good fit.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 sm:flex-row lg:col-span-4 lg:justify-end">
+              <ButtonLink
+                href={ROUTES.services}
+                className="!bg-accent !text-accent-contrast hover:!bg-accent-strong"
+                size="lg"
+              >
+                View services
+              </ButtonLink>
+              <ButtonLink
+                href={ROUTES.contact}
+                variant="outline"
+                className="!border-gold-contrast/40 !text-gold-contrast hover:!bg-gold-contrast/10"
+                size="lg"
+              >
+                Contact us
+              </ButtonLink>
+            </div>
           </div>
-          <p className="mt-8 text-[0.9375rem] text-foreground-subtle">
-            Looking for engineering detail instead?{" "}
-            <ArrowLink href={ROUTES.work}>See the work</ArrowLink>
-          </p>
-        </Container>
+        </div>
       </section>
     </>
   );

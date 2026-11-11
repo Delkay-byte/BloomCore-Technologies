@@ -1,4 +1,4 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { Container } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
 import { ROUTES } from "@/lib/brand";
@@ -17,7 +17,7 @@ export default function NotFound() {
       <Container width="wide">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-14">
           <div className="lg:col-span-7">
-            <p className="display text-[clamp(5rem,16vw,12rem)] leading-[0.8] text-gold">404</p>
+            <p className="display text-[clamp(5rem,16vw,12rem)] leading-[0.8] text-accent">404</p>
             <h1 className="h1 mt-6 max-w-[16ch]">This page does not exist</h1>
           </div>
           <div className="lg:col-span-5">
@@ -37,7 +37,7 @@ export default function NotFound() {
         </div>
 
         <nav aria-label="Site sections" className="mt-14">
-          <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+          <p className="text-[0.8125rem] font-semibold text-foreground-faint">
             Site sections
           </p>
           <ul className="mt-4 flex flex-wrap gap-x-8 gap-y-3">
@@ -45,7 +45,7 @@ export default function NotFound() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="text-[1rem] text-foreground-subtle underline-offset-4 hover:text-foreground hover:underline"
+                  className="inline-flex rounded-[7px] border border-line px-4 py-2 text-[0.9375rem] font-semibold text-foreground-subtle transition-colors hover:bg-surface hover:text-foreground"
                 >
                   {link.label}
                 </Link>
@@ -57,3 +57,4 @@ export default function NotFound() {
     </section>
   );
 }
+

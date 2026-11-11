@@ -51,7 +51,7 @@ export function QuickEnquiry() {
             setError(null);
             setPrepared(null);
           }}
-          placeholder="A sentence is enough to start."
+          placeholder="A sentence is enough."
           aria-invalid={Boolean(error)}
           aria-describedby={error ? "quick-enquiry-error" : "quick-enquiry-hint"}
           className="h-16 w-full border border-accent-contrast/35 bg-accent-strong/35 px-4 pr-16 text-[1.0625rem] text-accent-contrast placeholder:text-accent-contrast/45 focus-visible:border-accent-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-contrast"
@@ -59,7 +59,7 @@ export function QuickEnquiry() {
         <button
           type="submit"
           aria-label="Prepare an email with this description"
-          className="absolute top-2 right-2 flex h-12 w-12 items-center justify-center bg-gold text-[#15170f] transition-colors hover:bg-[#c8922f]"
+          className="absolute top-2 right-2 flex h-12 w-12 items-center justify-center rounded-[7px] bg-gold text-gold-contrast transition-colors hover:bg-gold-strong active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-contrast"
         >
           <svg width="20" height="14" viewBox="0 0 20 14" fill="none" aria-hidden="true">
             <path d="M1 7h17M12 1.5 18.5 7 12 12.5" stroke="currentColor" strokeWidth="1.8" />

@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Jost } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 import { Analytics } from "@/components/Analytics";
 import { BackToTop } from "@/components/BackToTop";
@@ -11,10 +11,21 @@ import { BRAND } from "@/lib/brand";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
-const jost = Jost({
-  variable: "--font-jost",
-  subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+const sourceSerif = localFont({
+  src: "../assets/fonts/source-serif-4-roman.woff2",
+  variable: "--font-source-serif",
+  weight: "200 900",
+  display: "swap",
+});
+
+const inter = localFont({
+  src: [
+    { path: "../assets/fonts/inter-400.woff2", weight: "400", style: "normal" },
+    { path: "../assets/fonts/inter-500.woff2", weight: "500", style: "normal" },
+    { path: "../assets/fonts/inter-600.woff2", weight: "600", style: "normal" },
+    { path: "../assets/fonts/inter-700.woff2", weight: "700", style: "normal" },
+  ],
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -77,8 +88,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f0e7" },
-    { media: "(prefers-color-scheme: dark)", color: "#0a0c0a" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f1e9" },
+    { media: "(prefers-color-scheme: dark)", color: "#090f0c" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -89,7 +100,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${jost.variable} h-full antialiased`}
+      className={`${sourceSerif.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
         <script

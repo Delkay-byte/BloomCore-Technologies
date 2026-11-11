@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { ArrowLink, Container, PageHero, Prose } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, ROUTES, SERVICES } from "@/lib/brand";
@@ -81,7 +81,7 @@ export default function ServicesPage() {
     <>
       <PageHero
         eyebrow="Services"
-        title="Software and technology work, scoped to what a small team can genuinely deliver"
+        title="Software, scoped to what we can deliver."
         lead="BloomCore Technologies builds applications to order and advises on the systems a business already runs. The services below describe the work we take on, not a catalogue of everything technology can do."
       >
         <div className="mt-8 flex flex-wrap gap-3">
@@ -116,19 +116,19 @@ export default function ServicesPage() {
                     </dt>
                     <dd className="mt-4 grid gap-4 text-[0.9375rem] leading-6 text-foreground-subtle sm:grid-cols-3">
                       <div>
-                        <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                        <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                           The problem
                         </p>
                         <p className="mt-1.5">{service.problem}</p>
                       </div>
                       <div>
-                        <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                        <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                           What we do
                         </p>
                         <p className="mt-1.5">{service.solution}</p>
                       </div>
                       <div>
-                        <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                        <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                           What changes
                         </p>
                         <p className="mt-1.5">{service.benefits}</p>
@@ -147,7 +147,7 @@ export default function ServicesPage() {
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
               <h2 className="h2 max-w-[14ch] text-accent-contrast">
-                Four stages, each with something you keep
+                How an engagement runs
               </h2>
             </div>
             <div className="lg:col-span-8">
@@ -249,3 +249,5 @@ export default function ServicesPage() {
     </>
   );
 }
+
+

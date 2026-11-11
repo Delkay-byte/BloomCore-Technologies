@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { ArrowLink, Container, PageHero } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, ROUTES } from "@/lib/brand";
@@ -6,7 +6,7 @@ import { BRAND, CONTACT, ROUTES } from "@/lib/brand";
 export const metadata: Metadata = {
   title: "Privacy Notice",
   description:
-    "How BloomCore Technologies handles personal data: what this website collects, optional analytics, how email enquiries are used, retention and your rights.",
+    "How BloomCore handles personal data.: what this website collects, optional analytics, how email enquiries are used, retention and your rights.",
   alternates: { canonical: "/privacy" },
   openGraph: {
     title: `Privacy — ${BRAND.name}`,
@@ -120,16 +120,45 @@ export default function PrivacyPage() {
     <>
       <PageHero
         eyebrow="Privacy"
-        title="How BloomCore Technologies handles personal data"
+        title="How BloomCore handles personal data."
         lead="This notice covers this website and direct enquiries to the company. It is written to be read, not to hide behind legal phrasing."
       />
 
-      <section className="bg-surface pb-16 sm:pb-20 lg:pb-24">
+      <section className="bg-surface pt-10 pb-16 sm:pt-12 sm:pb-20 lg:pb-24">
         <Container>
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
             <aside className="lg:col-span-3">
-              <div className="lg:sticky lg:top-28">
-                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+              <details className="group rounded-[var(--radius)] bg-surface p-4 lg:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[0.9375rem] font-bold text-foreground [&::-webkit-details-marker]:hidden">
+                  Contents
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 12 12"
+                    fill="none"
+                    aria-hidden="true"
+                    className="transition-transform group-open:rotate-180"
+                  >
+                    <path d="M2 4.5L6 8.5L10 4.5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+                  </svg>
+                </summary>
+                <nav aria-label="Privacy notice sections (mobile)" className="mt-3">
+                  <ul className="flex flex-col gap-2">
+                    {sections.map((section) => (
+                      <li key={section.id}>
+                        <a
+                          href={`#${section.id}`}
+                          className="text-[0.9375rem] text-foreground-subtle underline-offset-4 hover:text-foreground hover:underline"
+                        >
+                          {section.title}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </nav>
+              </details>
+              <div className="hidden lg:sticky lg:top-28 lg:block">
+                <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                   On this page
                 </p>
                 <nav aria-label="Privacy notice sections" className="mt-4">
@@ -147,7 +176,7 @@ export default function PrivacyPage() {
                   </ul>
                 </nav>
                 <div className="mt-6">
-                  <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                  <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                     Effective date
                   </p>
                   <p className="mt-1 text-[0.9375rem] text-foreground-subtle">9 November 2026</p>
@@ -155,9 +184,9 @@ export default function PrivacyPage() {
               </div>
             </aside>
 
-            <div className="lg:col-span-9">
+            <div className="max-w-[70ch] lg:col-span-9">
               <div className="border-l-4 border-gold bg-muted p-5 sm:p-6">
-                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                   Status of this notice
                 </p>
                 <p className="mt-3 text-[0.9375rem] leading-6 text-foreground-subtle">
@@ -215,3 +244,5 @@ export default function PrivacyPage() {
     </>
   );
 }
+
+

@@ -1,64 +1,86 @@
 @import "tailwindcss";
 
 /*
- * BloomCore Technologies design tokens.
- * One ground, one ink, one accent. Surfaces are separated by tone steps, not
- * by hairlines or shadows. Interface fragments use their own control borders.
+ * BloomCore design tokens.
+ * Two chromatic colours only: forest and brass. Everything else is a
+ * neutral step. Surfaces are separated by tone; thin lines are reserved for
+ * functional controls and the tile board.
  */
 :root {
   color-scheme: light;
-  --background: #f4f0e7;
-  --surface: #fbf8f1;
-  --surface-2: #e8e2d5;
-  --foreground: #15170f;
-  --foreground-subtle: #4c5147;
-  --foreground-faint: #5e6458;
-  --muted: #ece6da;
-  --border: #d7d0c2;
-  --accent: #0d3b31;
-  --accent-strong: #08241f;
-  --accent-contrast: #f7f4ec;
-  --gold: #d9a33c;
-  --gold-soft: #f1dfc0;
-  --field: #fbf8f1;
-  --tracking-tight: -0.03em;
+  --background: #f4f1e9;
+  --surface: #fffdf8;
+  --surface-2: #ebe6db;
+  --surface-3: #dfd9cc;
+  --foreground: #111512;
+  --foreground-subtle: #4d544d;
+  --foreground-faint: #626960;
+  --line: #d8d2c5;
+  --line-strong: #b9b2a3;
+  --muted: #eee9de;
+  --field: #fffdf8;
+  --accent: #0c3b30;
+  --accent-strong: #08251f;
+  --accent-contrast: #f8f5ec;
+  --accent-soft: #e2ede7;
+  --accent-line: #b7cec3;
+  --gold: #c69a3e;
+  --gold-strong: #a97e27;
+  --gold-soft: #f3e6c6;
+  --gold-contrast: #1a1408;
+  --radius: 10px;
+  --type-display: var(--font-source-serif), Georgia, "Times New Roman", serif;
+  --type-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
 }
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #0a0c0a;
-  --surface: #121612;
-  --surface-2: #1b211b;
-  --foreground: #f2efe6;
-  --foreground-subtle: #b9beb2;
-  --foreground-faint: #919888;
-  --muted: #171d17;
-  --border: #2a322a;
-  --accent: #8ad6bc;
-  --accent-strong: #a8e5cf;
+  --background: #090f0c;
+  --surface: #101712;
+  --surface-2: #161f19;
+  --surface-3: #1e2921;
+  --foreground: #f2eee3;
+  --foreground-subtle: #b8bfb6;
+  --foreground-faint: #949c92;
+  --line: #29352c;
+  --line-strong: #3c4a3f;
+  --muted: #131b16;
+  --field: #101712;
+  --accent: #82d5b5;
+  --accent-strong: #a6e7ca;
   --accent-contrast: #08241f;
-  --gold: #e7b75c;
-  --gold-soft: #33280f;
-  --field: #121612;
+  --accent-soft: #14271f;
+  --accent-line: #2d4a3d;
+  --gold: #e0b86a;
+  --gold-strong: #efc97f;
+  --gold-soft: #322711;
+  --gold-contrast: #171105;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --background: #0a0c0a;
-    --surface: #121612;
-    --surface-2: #1b211b;
-    --foreground: #f2efe6;
-    --foreground-subtle: #b9beb2;
-    --foreground-faint: #919888;
-    --muted: #171d17;
-    --border: #2a322a;
-    --accent: #8ad6bc;
-    --accent-strong: #a8e5cf;
+    --background: #090f0c;
+    --surface: #101712;
+    --surface-2: #161f19;
+    --surface-3: #1e2921;
+    --foreground: #f2eee3;
+    --foreground-subtle: #b8bfb6;
+    --foreground-faint: #949c92;
+    --line: #29352c;
+    --line-strong: #3c4a3f;
+    --muted: #131b16;
+    --field: #101712;
+    --accent: #82d5b5;
+    --accent-strong: #a6e7ca;
     --accent-contrast: #08241f;
-    --gold: #e7b75c;
-    --gold-soft: #33280f;
-    --field: #121612;
+    --accent-soft: #14271f;
+    --accent-line: #2d4a3d;
+    --gold: #e0b86a;
+    --gold-strong: #efc97f;
+    --gold-soft: #322711;
+    --gold-contrast: #171105;
   }
 }
 
@@ -66,43 +88,54 @@
   --color-background: var(--background);
   --color-surface: var(--surface);
   --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
   --color-foreground: var(--foreground);
   --color-foreground-subtle: var(--foreground-subtle);
   --color-foreground-faint: var(--foreground-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-border: var(--line);
+  --color-muted-border: var(--line);
+  --color-surface-border: var(--line);
   --color-muted: var(--muted);
-  --color-border: var(--border);
+  --color-field: var(--field);
   --color-accent: var(--accent);
   --color-accent-strong: var(--accent-strong);
   --color-accent-contrast: var(--accent-contrast);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-line: var(--accent-line);
   --color-gold: var(--gold);
+  --color-gold-strong: var(--gold-strong);
   --color-gold-soft: var(--gold-soft);
-  --color-field: var(--field);
-  --font-sans: var(--font-jost), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
-    "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
+  --color-gold-contrast: var(--gold-contrast);
+  --radius-tile: var(--radius);
+  --font-sans: var(--type-sans);
+  --font-display: var(--type-display);
 }
 
 * {
-  border-color: var(--border);
+  border-color: var(--line);
 }
 
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: 96px;
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans);
+  font-family: var(--type-sans);
   font-size: 1.0625rem;
-  line-height: 1.55;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "ss01" 1;
 }
 
 ::selection {
   background: var(--gold);
-  color: #15170f;
+  color: var(--gold-contrast);
 }
 
 :focus-visible {
@@ -110,50 +143,54 @@ body {
   outline-offset: 3px;
 }
 
-/* Type roles. Five visible sizes plus the interface's own true-size text. */
-.display {
-  font-family: var(--font-sans);
-  font-size: clamp(2.7rem, 7.1vw, 7.4rem);
-  font-weight: 700;
-  line-height: 0.88;
-  letter-spacing: -0.045em;
-  text-transform: uppercase;
+/* Type roles. The display face is used for statements, never for UI labels. */
+.font-display {
+  font-family: var(--type-display);
 }
 
+.display,
 .h1 {
-  font-size: clamp(2.4rem, 5.2vw, 5.2rem);
-  font-weight: 700;
-  line-height: 0.94;
-  letter-spacing: -0.04em;
-  text-transform: uppercase;
+  font-family: var(--type-display);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: -0.022em;
   text-wrap: balance;
 }
 
+.display {
+  font-size: clamp(3.2rem, 7.4vw, 7.6rem);
+}
+
+.h1 {
+  font-size: clamp(2.9rem, 6vw, 6rem);
+}
+
 .h2 {
-  font-size: clamp(2rem, 3.6vw, 3.6rem);
-  font-weight: 700;
-  line-height: 0.98;
-  letter-spacing: -0.035em;
-  text-transform: uppercase;
+  font-family: var(--type-display);
+  font-size: clamp(2.2rem, 4vw, 3.9rem);
+  font-weight: 400;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
 .h3 {
-  font-size: clamp(1.3rem, 1.8vw, 1.85rem);
-  font-weight: 600;
-  line-height: 1.1;
+  font-family: var(--type-sans);
+  font-size: clamp(1.2rem, 1.6vw, 1.55rem);
+  font-weight: 700;
+  line-height: 1.2;
   letter-spacing: -0.02em;
 }
 
 .lead {
-  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
-  line-height: 1.5;
-  letter-spacing: -0.005em;
+  font-size: clamp(1.1rem, 1.35vw, 1.3rem);
+  line-height: 1.55;
+  letter-spacing: -0.008em;
 }
 
 .body-copy {
   font-size: 1.0625rem;
-  line-height: 1.62;
+  line-height: 1.65;
 }
 
 .small-copy {
@@ -172,46 +209,39 @@ body {
   text-decoration-thickness: 2px;
 }
 
-/* Page frame. */
+/* Frame and rhythm. */
 .page-frame {
   width: 100%;
-  max-width: 1440px;
+  max-width: 1480px;
   margin-inline: auto;
-  padding-inline: clamp(20px, 4vw, 64px);
+  padding-inline: 16px;
+}
+
+@media (min-width: 640px) {
+  .page-frame {
+    padding-inline: 24px;
+  }
 }
 
 .section-pad {
-  padding-block: clamp(88px, 11vw, 168px);
+  padding-block: clamp(80px, 9vw, 132px);
 }
 
 .section-pad-sm {
-  padding-block: clamp(64px, 7vw, 112px);
+  padding-block: clamp(56px, 6vw, 88px);
 }
 
-/* Interface fragments. Inside data-ui the product's own conventions apply. */
-[data-ui] {
-  font-size: 13px;
-  line-height: 1.4;
-}
-
-[data-ui] input,
-[data-ui] select,
-[data-ui] button,
-[data-ui] textarea {
-  font: inherit;
-}
-
-/* Form controls. Functional borders are allowed; decorative rules are not. */
+/* Functional field. */
 .field {
   width: 100%;
   min-height: 3.25rem;
-  border: 1px solid var(--border);
-  border-radius: 0;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
   background: var(--field);
   color: var(--foreground);
   padding: 0.8rem 1rem;
   font-size: 1rem;
-  transition: border-color 160ms ease, background-color 160ms ease;
+  transition: border-color 160ms ease, background-color 160ms ease, box-shadow 160ms ease;
 }
 
 .field::placeholder {
@@ -224,7 +254,7 @@ body {
 
 .field:focus-visible {
   outline: 2px solid var(--foreground);
-  outline-offset: 1px;
+  outline-offset: 2px;
   border-color: var(--foreground);
 }
 
@@ -256,10 +286,11 @@ textarea.field {
   }
 }
 
-@keyframes hero-card-in {
+/* Hero entrance choreography. */
+@keyframes hero-rise {
   from {
     opacity: 0;
-    transform: translateY(26px);
+    transform: translateY(18px);
   }
   to {
     opacity: 1;
@@ -267,61 +298,31 @@ textarea.field {
   }
 }
 
-.hero-card-in {
-  animation: hero-card-in 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+.hero-rise {
+  animation: hero-rise 680ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Assistant. Kept functional; the mascot is parked bottom-left. */
-@keyframes bc-mascot-float {
-  100% {
-    transform: translateY(-3px);
-  }
+.hero-rise-1 {
+  animation-delay: 70ms;
 }
 
-.bc-mascot-float {
-  animation: bc-mascot-float 3.4s cubic-bezier(0.77, 0, 0.175, 1) infinite alternate;
+.hero-rise-2 {
+  animation-delay: 140ms;
 }
 
-.bc-mascot-body {
-  transform-origin: 50% 100%;
+.hero-rise-3 {
+  animation-delay: 220ms;
 }
 
-@keyframes bc-mascot-wiggle {
-  25% {
-    rotate: -6deg;
-  }
-  60% {
-    rotate: 5deg;
-  }
-  85% {
-    rotate: -2deg;
-  }
+.hero-rise-4 {
+  animation-delay: 300ms;
 }
 
-.bc-fab:hover .bc-mascot-body,
-.bc-fab:focus-visible .bc-mascot-body {
-  animation: bc-mascot-wiggle 0.6s cubic-bezier(0.77, 0, 0.175, 1) 1 normal none;
-}
-
-@keyframes bc-nudge-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.bc-nudge-in {
-  animation: bc-nudge-in 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both;
-}
-
+/* Assistant panel entrance. */
 @keyframes bc-panel-in {
   from {
     opacity: 0;
-    transform: translateY(6px) scale(0.97);
+    transform: translateY(10px) scale(0.985);
   }
   to {
     opacity: 1;
@@ -330,30 +331,14 @@ textarea.field {
 }
 
 .bc-panel-in {
-  animation: bc-panel-in 0.25s cubic-bezier(0.34, 1.25, 0.64, 1) both;
+  animation: bc-panel-in 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@keyframes bc-ping-ring {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  75%,
-  100% {
-    transform: scale(2.2);
-    opacity: 0;
-  }
-}
-
-.bc-ping-ring {
-  animation: bc-ping-ring 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes bc-typing-blink {
+@keyframes bc-typing {
   0%,
   60%,
   100% {
-    opacity: 0.25;
+    opacity: 0.35;
     transform: translateY(0);
   }
   30% {
@@ -363,56 +348,45 @@ textarea.field {
 }
 
 .bc-typing-dot {
-  animation: bc-typing-blink 1.1s ease-in-out infinite;
+  animation: bc-typing 1.1s ease-in-out infinite;
 }
 
-/* Founder-page projects button. Fixed black with white text in both themes. */
-.bc-projects-button {
-  background-color: #000000;
-  color: #ffffff;
-  box-shadow: 0 14px 30px -12px rgba(0, 0, 0, 0.55);
-}
-
-.bc-projects-button:hover {
-  background-color: #1f1f1f;
-  color: #ffffff;
-}
-
-@keyframes bc-attention-pulse {
-  0% {
-    box-shadow: 0 0 0 0 color-mix(in srgb, var(--foreground) 55%, transparent);
-  }
-  70% {
-    box-shadow: 0 0 0 14px transparent;
-  }
-  100% {
-    box-shadow: 0 0 0 0 transparent;
-  }
-}
-
-@keyframes bc-attention-breathe {
+/* Carousel stage. */
+@keyframes carousel-pulse {
   0%,
   100% {
-    transform: scale(1);
+    opacity: 0.25;
   }
   50% {
-    transform: scale(1.03);
+    opacity: 0.55;
   }
 }
 
-.bc-attention {
-  animation:
-    bc-attention-pulse 2.2s cubic-bezier(0.4, 0, 0.6, 1) infinite,
-    bc-attention-breathe 2.2s ease-in-out infinite;
+.carousel-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.carousel-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.06);
+  animation: carousel-pulse 1.8s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
-    scroll-behavior: auto !important;
+  html {
+    scroll-behavior: auto;
+  }
+
+  .bc-panel-in,
+  .bc-typing-dot,
+  .carousel-skeleton::after {
+    animation: none;
+  }
+
+  .hero-rise {
+    animation: none;
   }
 }

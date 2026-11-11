@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Image from "next/image";
-import tillproofLogo from "@/assets/products/tillproof-logo.png";
 import { JsonLd } from "@/components/JsonLd";
-import { ArrowLink, Container, PageHero, StatusBadge } from "@/components/Page";
+import { ArrowLink, Container, StatusBadge } from "@/components/Page";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { ProductFragment } from "@/components/ProductFragments";
 import { ViewTracker } from "@/components/ViewTracker";
 import { ButtonLink } from "@/components/ui/Button";
@@ -84,94 +83,218 @@ export default function TillProofPage() {
       <JsonLd data={faqSchema(faqs)} />
       <ViewTracker event="product_page_view" params={{ product_name: "TillProof" }} />
 
-      <PageHero
-        eyebrow="Retail technology"
-        title="TillProof"
-        lead="Retail management for electrical shops. TillProof is being built to give owners visibility of stock, prices and cash across locations they cannot stand in every day."
-        breadcrumbs={breadcrumbs}
-      >
-        <div className="mt-8 flex flex-wrap items-center gap-5">
-          <StatusBadge label="In development" tone="muted" />
-          <ButtonLink href={ROUTES.contact}>Register interest</ButtonLink>
-          <ArrowLink href={ROUTES.products}>All products</ArrowLink>
-        </div>
-      </PageHero>
-
-      <section className="bg-surface py-16 sm:py-20 lg:py-24">
-        <Container width="wide">
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
-            <div className="lg:col-span-5">
-              <div className="inline-flex bg-muted p-5">
-                <Image
-                  src={tillproofLogo}
-                  alt="TillProof"
-                  priority
-                  sizes="(min-width: 640px) 320px, 240px"
-                  className="h-auto w-[220px] sm:w-[300px]"
-                />
-              </div>
-              <h2 className="h2 mt-8 max-w-[14ch]">Not released. No date announced.</h2>
-              <p className="mt-5 max-w-[38ch] text-[1rem] leading-7 text-foreground-subtle">
-                TillProof is in development and there is no public application to open. The
-                features described below are the intended capability, not a live deployment.
+      <section className="bg-background pt-2.5">
+        <div className="page-frame">
+          <div className="grid gap-2.5 lg:grid-cols-12">
+            <div className="rounded-[var(--radius)] bg-surface p-6 sm:p-8 lg:col-span-5 lg:p-10">
+              <Breadcrumbs items={breadcrumbs} />
+              <p className="text-[0.8125rem] font-semibold text-foreground-faint">Retail technology</p>
+              <h1 className="h1 mt-3 text-[clamp(3.4rem,6vw,5.8rem)]">TillProof</h1>
+              <p className="lead mt-5 max-w-[42ch] text-foreground-subtle">
+                Retail management for electrical shops. TillProof is being built to give owners
+                visibility of stock, prices and cash across locations they cannot stand in every
+                day.
               </p>
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                <StatusBadge label="In development" tone="muted" />
+                <span className="text-[0.8125rem] text-foreground-faint">No release date announced</span>
+              </div>
+              <div className="mt-7 flex flex-wrap items-center gap-4">
+                <ButtonLink
+                  href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("TillProof interest")}`}
+                  data-analytics="product_cta_click"
+                  data-product="TillProof"
+                  data-location="tillproof_hero"
+                >
+                  Register interest
+                </ButtonLink>
+                <ArrowLink href={ROUTES.products}>All products</ArrowLink>
+              </div>
+              <dl className="mt-9 grid grid-cols-2 gap-x-6 gap-y-4">
+                {[
+                  ["Status", "In development"],
+                  ["Category", "Retail technology"],
+                  ["Primary users", "Electrical retailers"],
+                  ["Platform", "Web application"],
+                ].map(([term, value]) => (
+                  <div key={term}>
+                    <dt className="text-[0.75rem] font-semibold text-foreground-faint">{term}</dt>
+                    <dd className="mt-1 text-[0.9375rem] font-semibold text-foreground">{value}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
-            <div className="lg:col-span-7">
-              <ProductFragment kind="tillproof" />
-              <p className="mt-3 text-[0.8125rem] leading-5 text-foreground-faint">
-                Interface concept for a product in development. No shop, staff or stock records are
-                real.
+
+            <div className="flex flex-col rounded-[var(--radius)] bg-accent p-4 text-accent-contrast sm:p-6 lg:col-span-7">
+              <div className="flex items-center justify-between gap-4">
+                <p className="text-[0.8125rem] font-semibold text-accent-contrast/65">
+                  TillProof · Owner dashboard
+                </p>
+                <span className="rounded-full bg-white/10 px-3 py-1.5 text-[0.75rem] font-bold">
+                  Interface concept
+                </span>
+              </div>
+              <div className="mt-5 flex flex-1 items-center">
+                <ProductFragment kind="tillproof" className="w-full" />
+              </div>
+              <p className="mt-4 text-[0.8125rem] leading-5 text-accent-contrast/55">
+                A product in development. No shop, staff or stock records are real.
               </p>
             </div>
           </div>
-        </Container>
+        </div>
       </section>
 
-      <section className="bg-accent py-16 text-accent-contrast sm:py-20 lg:py-24">
+      <section className="bg-background section-pad">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <h2 className="h2 max-w-[14ch] text-accent-contrast">
-                The problems TillProof is intended to solve
-              </h2>
-              <p className="mt-6 max-w-[32ch] text-[1rem] leading-7 text-accent-contrast/70">
+              <h2 className="h2 max-w-[14ch]">Not released. No date announced.</h2>
+              <p className="mt-5 max-w-[32ch] text-[1rem] leading-7 text-foreground-subtle">
                 Electrical retailers carry high-value, individually identifiable stock. When records
                 live in a notebook, an owner cannot see what left the shelf, at what price, or who
-                handled the cash.
+                handled the cash. TillProof is being built around those three gaps.
               </p>
             </div>
             <div className="lg:col-span-8">
-              <ul className="flex flex-col gap-8">
-                {intentions.map((item) => (
-                  <li key={item.title}>
-                    <h3 className="text-[1.35rem] leading-tight font-semibold text-accent-contrast">
+              <ul className="flex flex-col gap-2">
+                {intentions.map((item, index) => (
+                  <li
+                    key={item.title}
+                    className={
+                      index === 0
+                        ? "rounded-[var(--radius)] bg-accent p-6 text-accent-contrast"
+                        : "rounded-[var(--radius)] bg-surface p-6"
+                    }
+                  >
+                    <h3
+                      className={
+                        index === 0
+                          ? "text-[1.25rem] font-bold text-accent-contrast"
+                          : "text-[1.25rem] font-bold text-foreground"
+                      }
+                    >
                       {item.title}
                     </h3>
-                    <p className="mt-2 max-w-2xl text-[1rem] leading-7 text-accent-contrast/75">
+                    <p
+                      className={
+                        index === 0
+                          ? "mt-2 max-w-2xl text-[0.9375rem] leading-6 text-accent-contrast/75"
+                          : "mt-2 max-w-2xl text-[0.9375rem] leading-6 text-foreground-subtle"
+                      }
+                    >
                       {item.detail}
                     </p>
                   </li>
                 ))}
               </ul>
+              <p className="mt-5 text-[0.875rem] leading-6 text-foreground-faint">
+                These are intended capabilities, not a released feature set. The page will change
+                when the application is available.
+              </p>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="bg-background py-16 sm:py-20 lg:py-24">
+      <section className="bg-background section-pad">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <h2 className="h2 max-w-[10ch]">Questions</h2>
-              <p className="lead mt-6 max-w-[30ch] text-foreground-subtle">
+              <h2 className="h2 max-w-[12ch]">Intended capability.</h2>
+              <p className="lead mt-5 max-w-[28ch] text-foreground-subtle">
+                What TillProof is being built to do. These are not released features.
+              </p>
+            </div>
+            <div className="lg:col-span-8">
+              <ul className="grid gap-x-10 sm:grid-cols-2">
+                {[
+                  "Inventory and stock tracking",
+                  "Multi-shop monitoring",
+                  "Branch-level stock visibility",
+                  "Product identification and search",
+                  "Audit trails for recorded actions",
+                  "Owner oversight across locations",
+                ].map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-start gap-3 border-t border-line py-4 text-[0.9375rem] leading-6 text-foreground-subtle"
+                  >
+                    <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold" />
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-5 text-[0.875rem] leading-6 text-foreground-faint">
+                Intended capability is described at the level of process. A feature is only claimed
+                as available when it is present in a released application.
+              </p>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-surface-2 section-pad">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-4">
+              <h2 className="h2 max-w-[12ch]">Who it is for.</h2>
+              <p className="lead mt-5 max-w-[28ch] text-foreground-subtle">
+                The roles the intended product is designed around.
+              </p>
+            </div>
+            <div className="lg:col-span-8">
+              <dl className="flex flex-col gap-2">
+                {[
+                  {
+                    role: "Owner-operators",
+                    detail:
+                      "Owners who run more than one shop and cannot see every shelf, price change and cash movement in person.",
+                  },
+                  {
+                    role: "Shop staff",
+                    detail:
+                      "People recording sales, transfers and stock movements who need one clear process rather than a notebook and a message thread.",
+                  },
+                  {
+                    role: "Electrical wholesalers",
+                    detail:
+                      "Businesses carrying high-value, individually identifiable stock across a store room and a shop floor.",
+                  },
+                ].map((item) => (
+                  <div
+                    key={item.role}
+                    className="grid gap-2 rounded-[var(--radius)] bg-surface px-5 py-5 sm:grid-cols-12 sm:gap-6 sm:px-6"
+                  >
+                    <dt className="text-[1.05rem] font-bold text-foreground sm:col-span-4">{item.role}</dt>
+                    <dd className="text-[0.9375rem] leading-6 text-foreground-subtle sm:col-span-8">
+                      {item.detail}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-surface-2 section-pad">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-4">
+              <h2 className="h2 max-w-[10ch]">Questions.</h2>
+              <p className="lead mt-5 max-w-[28ch] text-foreground-subtle">
                 TillProof, answered plainly while it is still being built.
               </p>
             </div>
             <div className="lg:col-span-8">
-              <div>
+              <div className="flex flex-col gap-2">
                 {faqs.map((faq) => (
-                  <details key={faq.question} className="group py-5">
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-[1.05rem] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
+                  <details
+                    key={faq.question}
+                    className="group rounded-[var(--radius)] bg-surface px-5 py-4"
+                  >
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-[1.05rem] font-bold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
                       {faq.question}
                       <span
                         aria-hidden="true"
@@ -191,12 +314,12 @@ export default function TillProofPage() {
         </Container>
       </section>
 
-      <section className="bg-gold py-16 text-[#15170f] sm:py-20">
-        <Container>
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
+      <section className="bg-background pb-3">
+        <div className="page-frame">
+          <div className="grid gap-8 rounded-[var(--radius)] bg-gold p-6 text-gold-contrast sm:p-9 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-8">
-              <h2 className="h2 max-w-[20ch]">Built carefully, released when it is ready</h2>
-              <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-[#15170f]/75">
+              <h2 className="h2 max-w-[18ch]">Built carefully, released when it is ready.</h2>
+              <p className="mt-4 max-w-2xl text-[1rem] leading-7 opacity-80">
                 TillProof is not available for public use. We will publish the application here when
                 it is ready, and we are not announcing a date before the work is complete.
               </p>
@@ -205,18 +328,18 @@ export default function TillProofPage() {
               <ButtonLink
                 href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("TillProof interest")}`}
                 size="lg"
-                className="!bg-[#15170f] !text-[#f7f4ec] hover:!bg-[#084235]"
+                className="!bg-accent !text-accent-contrast hover:!bg-accent-strong"
               >
                 Register interest
               </ButtonLink>
             </div>
           </div>
-        </Container>
+        </div>
       </section>
 
-      <section className="bg-background py-16 sm:py-20">
+      <section className="bg-background section-pad-sm">
         <Container>
-          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
             <p className="lead max-w-xl text-foreground-subtle">
               Two other products are available today.
             </p>

@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { ContactForm } from "@/components/ContactForm";
 import { Container, PageHero, Prose } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
@@ -78,7 +78,7 @@ export default function ContactPage() {
               <dl className="mt-7">
                 {details.map((item) => (
                   <div key={item.label} className="py-5">
-                    <dt className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                    <dt className="text-[0.8125rem] font-semibold text-foreground-faint">
                       {item.label}
                     </dt>
                     <dd className="mt-1.5">
@@ -106,7 +106,7 @@ export default function ContactPage() {
               </div>
 
               <div className="mt-8 bg-muted p-5">
-                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                   Registered details
                 </p>
                 <dl className="mt-4 flex flex-col gap-3 text-[0.9375rem] leading-6">
@@ -134,7 +134,7 @@ export default function ContactPage() {
               </div>
 
               <div className="mt-6 bg-background p-5">
-                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                   Public profiles
                 </p>
                 <ul className="mt-3 flex flex-col gap-2">
@@ -208,3 +208,4 @@ export default function ContactPage() {
     </>
   );
 }
+

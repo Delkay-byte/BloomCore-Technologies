@@ -2,11 +2,12 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import portrait from "@/assets/founder-portrait.jpg";
-import { HeroConsole } from "@/components/HeroConsole";
-import { ArrowLink, Container, StatusBadge } from "@/components/Page";
-import { ProductTabs } from "@/components/ProductTabs";
+import { HeroStage } from "@/components/stage/HeroStage";
+import { ProductFragment } from "@/components/ProductFragments";
 import { QuickEnquiry } from "@/components/QuickEnquiry";
+import { Reveal } from "@/components/Reveal";
 import { SchemeKnitDemo } from "@/components/SchemeKnitDemo";
+import { ArrowLink, Container, Eyebrow, StatusBadge } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
 import { RESOURCES } from "@/lib/resources";
@@ -36,6 +37,12 @@ const productHrefs: Record<string, string> = {
   schemeknit: ROUTES.productsSchemeKnit,
   "maacash": ROUTES.productsMaacash,
   tillproof: ROUTES.productsTillProof,
+};
+
+const shortCategories: Record<string, string> = {
+  schemeknit: "Education technology",
+  "maacash": "Business operations",
+  tillproof: "Retail technology",
 };
 
 const capabilities = [
@@ -81,474 +88,589 @@ const stages = [
     name: "Listen",
     detail:
       "A conversation with the people doing the work. What happens today, including the workarounds, because the workaround is usually the real requirement.",
+    tone: "forest",
   },
   {
     name: "Scope",
     detail:
       "A written statement of what the first version will do, what it will not do, and what evidence will show it worked. You keep that document.",
+    tone: "brass",
   },
   {
     name: "Build",
     detail:
       "Small, reviewable changes. Progress is visible before the end, so a wrong direction is corrected early rather than defended.",
+    tone: "surface",
   },
   {
     name: "Release",
     detail:
       "The system is released, documented and demonstrated to the people who will use it. Maintenance terms are agreed in writing.",
+    tone: "muted",
   },
 ];
+
+const stageTones: Record<string, string> = {
+  forest: "bg-accent text-accent-contrast",
+  brass: "bg-gold text-gold-contrast",
+  surface: "bg-surface text-foreground",
+  muted: "bg-surface-3 text-foreground",
+};
 
 export default function HomePage() {
   return (
     <>
-      <section className="bg-background">
-        <Container width="wide">
-          <div className="pt-10 sm:pt-14 lg:pt-16">
-            <div className="flex flex-wrap items-baseline justify-between gap-3 text-[0.8125rem] font-medium tracking-[0.14em] text-foreground-faint uppercase">
-              <p>{BRAND.name}</p>
-              <p>Software products and engineering · Ghana</p>
-            </div>
-            <h1 className="display mt-7 max-w-[14ch] sm:mt-9">Work, made visible.</h1>
-          </div>
-
-          <div className="mt-10 grid gap-10 py-10 sm:mt-12 lg:grid-cols-12 lg:items-start lg:gap-8 lg:py-14">
-            <div className="lg:col-span-3">
-              <p className="lead max-w-[34ch] text-foreground">
-                We build software products and deliver digital systems for Ghanaian businesses and
-                institutions.
-              </p>
-              <p className="mt-4 max-w-[38ch] text-[0.9375rem] leading-6 text-foreground-subtle">
-                Designed for mobile money, WhatsApp-centred communication, intermittent
-                connectivity and small operating teams.
-              </p>
-              <div className="mt-7 flex flex-col gap-2.5">
-                <ButtonLink href={ROUTES.products} size="md">
-                  See the products
-                </ButtonLink>
-                <ButtonLink href={ROUTES.contact} variant="outline" size="md">
-                  Start a project
-                </ButtonLink>
-              </div>
-            </div>
-
-            <div className="flex justify-center lg:col-span-6">
-              <HeroConsole />
-            </div>
-
-            <div className="lg:col-span-3 lg:pl-4">
-              <p className="text-[0.8125rem] font-medium tracking-[0.14em] text-foreground-faint uppercase">
-                In the catalogue
-              </p>
-              <ul className="mt-4 flex flex-col">
-                {PRODUCTS.map((product) => (
-                  <li key={product.slug}>
-                    <Link
-                      href={productHrefs[product.slug]}
-                      className="group flex items-center justify-between gap-3 py-3 text-[1.05rem] font-medium text-foreground"
-                    >
-                      <span className="underline-offset-4 group-hover:underline">
-                        {product.name}
-                      </span>
-                      <span className="shrink-0 text-[0.8125rem] text-foreground-faint">
-                        {product.statusLabel}
-                      </span>
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-5 max-w-[30ch] text-[0.8125rem] leading-5 text-foreground-faint">
-                Product interfaces shown here are representative, built from documented
-                capabilities. No customer, staff or financial records are displayed.
-              </p>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      <section className="bg-surface py-20 sm:py-24 lg:py-32">
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
-            <div className="lg:col-span-5">
-              <h2 className="h2 max-w-[16ch]">
-                A short product list, with a reason for every entry
-              </h2>
-            </div>
-            <div className="lg:col-span-7">
-              <div className="grid gap-8 sm:grid-cols-2">
-                <div>
-                  <h3 className="text-[1.1rem] font-semibold text-foreground">
-                    Built here, for here
-                  </h3>
-                  <p className="mt-3 text-[1rem] leading-7 text-foreground-subtle">
-                    BloomCore Technologies designs for how work is actually done in Ghana. Each
-                    product answers a specific, recurring operating problem rather than promising
-                    everything at once.
-                  </p>
-                </div>
-                <div>
-                  <h3 className="text-[1.1rem] font-semibold text-foreground">
-                    Products and engineering
-                  </h3>
-                  <p className="mt-3 text-[1rem] leading-7 text-foreground-subtle">
-                    We build and operate our own software, and we deliver custom applications, web
-                    platforms and integrations for organisations whose workflows do not fit
-                    off-the-shelf tools.
-                  </p>
-                </div>
-              </div>
-              <p className="mt-8 max-w-2xl text-[1rem] leading-7 text-foreground-subtle">
-                We are not a large company and do not present ourselves as one. Three products,
-                two available today, and a preference for shipping working software over making
-                announcements.
-              </p>
-              <div className="mt-7">
-                <ArrowLink href={ROUTES.about}>About the company</ArrowLink>
-              </div>
-            </div>
-          </div>
-        </Container>
-      </section>
-
-      <section className="bg-background py-20 sm:py-24 lg:py-32">
-        <Container width="wide">
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-12">
-            <div className="lg:col-span-7">
-              <div className="flex flex-wrap items-center gap-3">
-                <p className="text-[0.8125rem] font-medium tracking-[0.14em] text-foreground-faint uppercase">
-                  SchemeKnit
+      <section className="bg-background pt-2.5">
+        <div className="page-frame">
+          <div className="grid gap-2.5 lg:grid-cols-12">
+            <div className="hero-rise flex min-h-[540px] flex-col justify-between rounded-[var(--radius)] bg-surface p-6 sm:p-9 lg:col-span-6 lg:p-10">
+              <div>
+                <p className="text-[0.875rem] font-semibold text-foreground-faint">
+                  {BRAND.name} · Akatsi, Ghana
                 </p>
-                <StatusBadge label="Available" />
+                <h1 className="display mt-6 max-w-[12ch] text-[clamp(3.6rem,6.4vw,6.6rem)]">
+                  Technology that works.
+                </h1>
+                <p className="mt-7 max-w-[46ch] text-[1.05rem] leading-7 text-foreground-subtle">
+                  We build software products and deliver digital systems for Ghanaian businesses and
+                  institutions, designed for mobile money, WhatsApp-centred work and small operating
+                  teams.
+                </p>
               </div>
-              <h2 className="h2 mt-5 max-w-[20ch]">
-                From a scheme of learning to a plan you can teach
-              </h2>
+
+              <div className="mt-8">
+                <div className="flex flex-col gap-2.5 sm:flex-row">
+                  <ButtonLink href={ROUTES.work} size="lg">
+                    Explore our work
+                  </ButtonLink>
+                  <ButtonLink href={ROUTES.products} variant="outline" size="lg">
+                    View products
+                  </ButtonLink>
+                </div>
+                <p className="mt-4 text-[0.875rem] text-foreground-faint">
+                  Three products. Two available today. One in active development.
+                </p>
+                <dl className="mt-5 hidden grid-cols-3 gap-2 rounded-[8px] bg-surface-2 p-3 sm:grid">
+                  {[
+                    { term: "Based in", detail: "Akatsi, Volta Region" },
+                    { term: "Registered", detail: "BN428031125" },
+                    { term: "Building since", detail: "2025" },
+                  ].map((item) => (
+                    <div key={item.term}>
+                      <dt className="text-[0.6875rem] font-semibold text-foreground-faint">
+                        {item.term}
+                      </dt>
+                      <dd className="mt-1 text-[0.8125rem] leading-4 font-semibold text-foreground">
+                        {item.detail}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
             </div>
-            <div className="lg:col-span-5">
-              <p className="lead text-foreground-subtle">
-                A scheme sets out the term. The weekly plan is where the work happens. SchemeKnit
-                removes the repetition between the two.
-              </p>
-              <div className="mt-5 flex flex-wrap items-center gap-5">
-                <ArrowLink href={ROUTES.productsSchemeKnit}>How SchemeKnit works</ArrowLink>
-                <a
-                  href="https://schemeknit.bloomcoretech.com/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  data-analytics="product_outbound_click"
-                  data-product="SchemeKnit"
-                  data-location="homepage_demo"
-                  data-destination="product_application"
-                  className="text-[0.9375rem] font-medium text-foreground underline decoration-1 underline-offset-4"
-                >
-                  Visit SchemeKnit
-                  <span className="sr-only"> (opens in a new tab)</span>
-                </a>
-              </div>
+
+            <div className="hero-rise hero-rise-2 min-h-[540px] lg:col-span-6">
+              <HeroStage />
             </div>
           </div>
 
-          <div className="mt-10 sm:mt-14">
-            <SchemeKnitDemo />
+          <div className="mt-2.5 grid grid-cols-2 gap-2.5 lg:grid-cols-4">
+            {PRODUCTS.map((product, index) => (
+              <Link
+                key={product.slug}
+                href={productHrefs[product.slug]}
+                className="hero-rise group flex min-h-[132px] flex-col justify-between rounded-[var(--radius)] bg-surface p-5 transition-colors hover:bg-surface-2"
+                style={{ animationDelay: `${160 + index * 40}ms` }}
+              >
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                  <span className="text-[1.05rem] font-bold text-foreground">{product.name}</span>
+                  <span
+                    className={
+                      product.status === "live"
+                        ? "self-start rounded-full bg-gold px-2 py-0.5 text-[0.6875rem] font-bold text-gold-contrast"
+                        : "self-start rounded-full bg-surface-2 px-2 py-0.5 text-[0.6875rem] font-semibold text-foreground-subtle"
+                    }
+                  >
+                    {product.statusLabel}
+                  </span>
+                </div>
+                <div className="flex items-end justify-between gap-3">
+                  <span className="text-[0.8125rem] leading-5 text-foreground-faint">
+                    {shortCategories[product.slug]}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="text-[1rem] text-foreground-faint transition-transform duration-200 group-hover:translate-x-1"
+                  >
+                    →
+                  </span>
+                </div>
+              </Link>
+            ))}
+            <Link
+              href={ROUTES.contact}
+              className="hero-rise group flex min-h-[132px] flex-col justify-between rounded-[var(--radius)] bg-gold p-5 text-gold-contrast transition-colors hover:bg-gold-strong"
+              style={{ animationDelay: "280ms" }}
+            >
+              <span className="text-[1.05rem] font-bold">Start a project</span>
+              <span className="flex items-end justify-between gap-3">
+                <span className="text-[0.8125rem] leading-5 opacity-80">
+                  Tell us what the work needs to do.
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="text-[1rem] transition-transform duration-200 group-hover:translate-x-1"
+                >
+                  →
+                </span>
+              </span>
+            </Link>
           </div>
-          <p className="mt-4 max-w-2xl text-[0.875rem] leading-6 text-foreground-faint">
-            A working example, not a customer record. Edit the lines on the left and the plan
-            preview responds. Nothing you type leaves this browser.
+        </div>
+      </section>
+
+      <section className="bg-background section-pad">
+        <Container width="wide">
+          <Reveal>
+            <h2 className="h2 max-w-[18ch]">A small product company with a long attention span.</h2>
+            <p className="mt-6 max-w-[64ch] text-[clamp(1.15rem,1.6vw,1.45rem)] leading-[1.45] text-foreground-subtle">
+              BloomCore Technologies designs software for how work is actually done in Ghana. Each
+              product answers one recurring operating problem, and each engagement is scoped to what
+              a small team can support properly.
+            </p>
+          </Reveal>
+
+          <div className="mt-12 grid gap-x-8 gap-y-9 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                lead: "Who we are",
+                body: "A Ghanaian software company, registered in 2025, building its own products and delivering systems for organisations.",
+              },
+              {
+                lead: "What we build",
+                body: "SchemeKnit for lesson planning, MaaCash for multi-location operations, and TillProof for electrical retail.",
+              },
+              {
+                lead: "Where we work",
+                body: "From Akatsi in the Volta Region, for schools, institutions and businesses operating across Ghana.",
+              },
+              {
+                lead: "How to reach us",
+                body: "Email, a call or WhatsApp. We answer with a plain assessment of fit, not a sales sequence.",
+              },
+            ].map((item, index) => (
+              <Reveal key={item.lead} delay={index * 0.05}>
+                <p className="text-[0.9375rem] leading-6 text-foreground-subtle">
+                  <strong className="font-bold text-foreground">{item.lead}.</strong> {item.body}
+                </p>
+              </Reveal>
+            ))}
+          </div>
+        </Container>
+      </section>
+
+      <section id="products" className="bg-surface-2 section-pad">
+        <Container width="wide">
+          <Reveal>
+            <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+              <div className="lg:col-span-7">
+                <Eyebrow>Products</Eyebrow>
+                <h2 className="h2 mt-4 max-w-[15ch]">Products, in use.</h2>
+              </div>
+              <div className="lg:col-span-5">
+                <p className="lead text-foreground-subtle">
+                  Status is stated exactly. A product is described as available only when it is
+                  running for real users.
+                </p>
+                <div className="mt-4">
+                  <ArrowLink href={ROUTES.products}>The product directory</ArrowLink>
+                </div>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal>
+            <article className="mt-10 overflow-hidden rounded-[var(--radius)] bg-surface p-4 sm:p-6 lg:p-8">
+              <div className="flex flex-wrap items-start justify-between gap-4">
+                <div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h3 className="font-display text-[2.4rem] leading-none text-foreground">
+                      SchemeKnit
+                    </h3>
+                    <StatusBadge label="Available" />
+                  </div>
+                  <p className="mt-3 max-w-[58ch] text-[1rem] leading-7 text-foreground-subtle">
+                    A teacher works from a scheme of learning. SchemeKnit turns that term document
+                    into structured, indicator-focused lesson plans that can be reviewed, edited and
+                    exported.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-4">
+                  <ArrowLink href={ROUTES.productsSchemeKnit}>Product details</ArrowLink>
+                  <a
+                    href="https://schemeknit.bloomcoretech.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-analytics="product_outbound_click"
+                    data-product="SchemeKnit"
+                    data-location="homepage_feature"
+                    data-destination="product_application"
+                    className="text-[0.9375rem] font-semibold text-foreground underline decoration-1 underline-offset-4 hover:text-accent"
+                  >
+                    Open application
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </div>
+              </div>
+              <div className="mt-6">
+                <SchemeKnitDemo />
+              </div>
+            </article>
+          </Reveal>
+
+          <div className="mt-2.5 grid gap-2.5 lg:grid-cols-2">
+            <Reveal>
+              <article className="flex h-full flex-col justify-between rounded-[var(--radius)] bg-accent p-6 text-accent-contrast sm:p-7">
+                <div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h3 className="font-display text-[2rem] leading-none">
+                      MaaCash
+                    </h3>
+                    <StatusBadge label="Available" />
+                  </div>
+                  <p className="mt-3 max-w-[46ch] text-[0.9375rem] leading-6 text-accent-contrast/75">
+                    Multi-location administration, staff roles, mobile-money operations and susu
+                    collection workflows in one operational workspace.
+                  </p>
+                </div>
+                <div className="mt-6">
+                  <ProductFragment kind="maacash" />
+                </div>
+                <div className="mt-5 flex flex-wrap items-center gap-5">
+                  <ArrowLink
+                    href={ROUTES.productsMaacash}
+                    className="text-accent-contrast decoration-accent-contrast"
+                  >
+                    Product details
+                  </ArrowLink>
+                  <a
+                    href="https://maacash.bloomcoretech.com/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    data-analytics="product_outbound_click"
+                    data-product="MaaCash"
+                    data-location="homepage_feature"
+                    data-destination="product_application"
+                    className="text-[0.9375rem] font-semibold text-accent-contrast underline decoration-1 underline-offset-4"
+                  >
+                    Open application
+                    <span className="sr-only"> (opens in a new tab)</span>
+                  </a>
+                </div>
+              </article>
+            </Reveal>
+
+            <Reveal delay={0.08}>
+              <article className="flex h-full flex-col justify-between rounded-[var(--radius)] bg-surface p-6 sm:p-7">
+                <div>
+                  <div className="flex flex-wrap items-center gap-3">
+                    <h3 className="font-display text-[2rem] leading-none">
+                      TillProof
+                    </h3>
+                    <span className="rounded-full bg-surface-2 px-2.5 py-1 text-[0.75rem] font-semibold text-foreground-subtle">
+                      In development
+                    </span>
+                  </div>
+                  <p className="mt-3 max-w-[46ch] text-[0.9375rem] leading-6 text-foreground-subtle">
+                    Retail oversight for electrical shops: remote owner visibility, controlled
+                    pricing, accountable cash handling and traceable stock. Not yet available.
+                  </p>
+                </div>
+                <div className="mt-6">
+                  <ProductFragment kind="tillproof" />
+                </div>
+                <div className="mt-5">
+                  <ArrowLink href={ROUTES.productsTillProof}>Product details</ArrowLink>
+                </div>
+              </article>
+            </Reveal>
+          </div>
+          <p className="mt-4 max-w-3xl text-[0.8125rem] leading-5 text-foreground-faint">
+            Product interfaces shown here are representative, built from documented capabilities. No
+            customer, staff or financial records are displayed.
           </p>
         </Container>
       </section>
 
-      <section className="bg-surface-2 py-20 sm:py-24 lg:py-32">
-        <Container width="wide">
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-12">
-            <div className="lg:col-span-7">
-              <h2 className="h2 max-w-[18ch]">Three products. Three operating problems.</h2>
-            </div>
-            <div className="lg:col-span-5">
-              <p className="lead text-foreground-subtle">
-                Status labels are deliberate. A product is described as available only when it is
-                running for real users.
-              </p>
-              <div className="mt-5">
-                <ArrowLink href={ROUTES.products}>The product directory</ArrowLink>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-10 sm:mt-14">
-            <ProductTabs />
-          </div>
-        </Container>
-      </section>
-
-      <section className="bg-accent py-20 text-accent-contrast sm:py-24 lg:py-32">
+      <section className="bg-background section-pad">
         <Container>
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-14">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <div className="lg:sticky lg:top-28">
-                <h2 className="h2 max-w-[12ch] text-accent-contrast">
-                  Engineering, when the product is not the answer
-                </h2>
-                <p className="lead mt-6 max-w-[32ch] text-accent-contrast/75">
+              <Reveal>
+                <Eyebrow>Engineering</Eyebrow>
+                <h2 className="h2 mt-4 max-w-[12ch]">When the product is not the answer.</h2>
+                <p className="lead mt-6 max-w-[32ch] text-foreground-subtle">
                   We take on work where a workflow does not fit anything already built, and where
                   the result has to keep running after handover.
                 </p>
-                <div className="mt-7">
-                  <Link
-                    href={ROUTES.services}
-                    className="inline-flex items-center gap-3 text-[1rem] font-medium text-accent-contrast underline decoration-1 underline-offset-4"
-                  >
-                    Services and engagement
-                    <svg width="17" height="12" viewBox="0 0 17 12" fill="none" aria-hidden="true">
-                      <path d="M1 6h14M10.5 1.5 15 6l-4.5 4.5" stroke="currentColor" strokeWidth="1.6" />
-                    </svg>
-                  </Link>
+                <div className="mt-6">
+                  <ArrowLink href={ROUTES.services}>Services and engagement</ArrowLink>
                 </div>
-              </div>
+              </Reveal>
             </div>
 
             <div className="lg:col-span-8">
-              <ul className="grid gap-x-10 sm:grid-cols-2">
-                {capabilities.map((item) => (
-                  <li key={item.title} className="py-5">
-                    <h3 className="text-[1.1rem] font-semibold text-accent-contrast">
-                      {item.title}
-                    </h3>
-                    <p className="mt-2 text-[0.9375rem] leading-6 text-accent-contrast/70">
-                      {item.detail}
-                    </p>
-                  </li>
-                ))}
-              </ul>
+              <Reveal>
+                <div className="grid gap-x-10 sm:grid-cols-2">
+                  {capabilities.map((item) => (
+                    <div key={item.title} className="border-t border-line py-5">
+                      <h3 className="text-[1.1rem] font-bold text-foreground">{item.title}</h3>
+                      <p className="mt-2 text-[0.9375rem] leading-6 text-foreground-subtle">
+                        {item.detail}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+              </Reveal>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="bg-background py-20 sm:py-24 lg:py-32">
-        <Container>
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-12">
-            <div className="lg:col-span-7">
-              <h2 className="h2 max-w-[16ch]">Four stages. Each leaves you something.</h2>
-            </div>
-            <div className="lg:col-span-5">
-              <p className="lead text-foreground-subtle">
-                The process stays light because the team is small. What it insists on is smallness
-                of change, a second pair of eyes, and reversibility.
-              </p>
-            </div>
-          </div>
-
-          <ol className="mt-12 flex flex-col">
-            {stages.map((stage) => (
-              <li
-                key={stage.name}
-                className="grid gap-3 py-7 sm:grid-cols-12 sm:items-baseline sm:gap-8"
-              >
-                <p className="h3 text-foreground sm:col-span-4">{stage.name}</p>
-                <p className="text-[1rem] leading-7 text-foreground-subtle sm:col-span-8">
-                  {stage.detail}
+      <section className="bg-surface-2 section-pad">
+        <Container width="wide">
+          <Reveal>
+            <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+              <div className="lg:col-span-7">
+                <Eyebrow>Process</Eyebrow>
+                <h2 className="h2 mt-4 max-w-[16ch]">Four stages. Each leaves you something.</h2>
+              </div>
+              <div className="lg:col-span-5">
+                <p className="lead text-foreground-subtle">
+                  The process stays light because the team is small. It insists on smallness of
+                  change, a second pair of eyes, and reversibility.
                 </p>
-              </li>
-            ))}
-          </ol>
-        </Container>
-      </section>
-
-      <section className="bg-gold py-16 text-[#15170f] sm:py-20">
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
-            <div className="lg:col-span-7">
-              <p className="text-[0.8125rem] font-medium tracking-[0.14em] uppercase opacity-75">
-                What is actually here
-              </p>
-              <h2 className="h2 mt-4 max-w-[22ch]">
-                Two products available. One in development. No invented proof.
-              </h2>
-              <p className="mt-5 max-w-2xl text-[1rem] leading-7 text-[#15170f]/75">
-                We do not publish client names, revenue figures, awards or testimonials we cannot
-                evidence. What appears on this site is software BloomCore Technologies has built,
-                described with its real status.
-              </p>
-            </div>
-            <div className="lg:col-span-5">
-              <dl className="grid grid-cols-3 gap-4">
-                {[
-                  { term: "Products", detail: "3" },
-                  { term: "Available", detail: "2" },
-                  { term: "In build", detail: "1" },
-                ].map((item) => (
-                  <div key={item.term}>
-                    <dt className="text-[0.8125rem] font-medium tracking-[0.1em] uppercase opacity-75">
-                      {item.term}
-                    </dt>
-                    <dd className="mt-2 text-[clamp(2.6rem,4vw,3.6rem)] leading-none font-bold tracking-tight">
-                      {item.detail}
-                    </dd>
-                  </div>
-                ))}
-              </dl>
-              <div className="mt-7">
-                <Link
-                  href={ROUTES.work}
-                  className="inline-flex items-center gap-3 text-[1rem] font-medium underline decoration-1 underline-offset-4"
-                >
-                  See the work
-                  <svg width="17" height="12" viewBox="0 0 17 12" fill="none" aria-hidden="true">
-                    <path d="M1 6h14M10.5 1.5 15 6l-4.5 4.5" stroke="currentColor" strokeWidth="1.6" />
-                  </svg>
-                </Link>
               </div>
             </div>
-          </div>
+          </Reveal>
+
+          <Reveal>
+            <div className="mt-10 flex flex-col gap-2 lg:h-[300px] lg:flex-row">
+              {stages.map((stage) => (
+                <div
+                  key={stage.name}
+                  className={`flex flex-1 flex-col justify-start rounded-[var(--radius)] p-5 sm:p-6 ${stageTones[stage.tone]}`}
+                >
+                  <p className="font-display text-[2rem] leading-none">
+                    {stage.name}
+                  </p>
+                  <p
+                    className={`mt-5 text-[0.9375rem] leading-6 ${
+                      stage.tone === "forest" ? "text-accent-contrast/75" : "opacity-80"
+                    }`}
+                  >
+                    {stage.detail}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </Reveal>
         </Container>
       </section>
 
-      <section className="bg-surface py-20 sm:py-24 lg:py-32">
+      <section className="bg-background section-pad">
         <Container>
-          <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
-            <div className="lg:col-span-4">
-              <div className="relative aspect-[4/5] w-full max-w-[360px] overflow-hidden bg-muted">
+          <Reveal>
+            <div className="grid gap-8 overflow-hidden rounded-[var(--radius)] bg-gold p-6 text-gold-contrast sm:p-9 lg:grid-cols-12 lg:items-center lg:gap-14">
+              <div className="lg:col-span-7">
+                <p className="text-[0.8125rem] font-semibold opacity-75">Evidence</p>
+                <h2 className="h2 mt-4 max-w-[20ch]">Two products available. One in development.</h2>
+                <p className="mt-5 max-w-2xl text-[1rem] leading-7 opacity-80">
+                  We do not publish client names, revenue figures, awards or testimonials we cannot
+                  evidence. What appears here is software BloomCore Technologies has built,
+                  described with its real status.
+                </p>
+                <div className="mt-6">
+                  <Link
+                    href={ROUTES.work}
+                    className="inline-flex items-center gap-3 text-[1rem] font-semibold underline decoration-1 underline-offset-4"
+                  >
+                    See the work
+                    <span aria-hidden="true">→</span>
+                  </Link>
+                </div>
+              </div>
+              <div className="lg:col-span-5">
+                <dl className="grid grid-cols-3 gap-4">
+                  {[
+                    { term: "Products", detail: "3" },
+                    { term: "Available", detail: "2" },
+                    { term: "In build", detail: "1" },
+                  ].map((item) => (
+                    <div key={item.term} className="rounded-[var(--radius)] bg-gold-contrast/10 p-4">
+                      <dt className="text-[0.8125rem] font-semibold opacity-75">{item.term}</dt>
+                      <dd className="mt-2 font-display text-[clamp(2.4rem,3.4vw,3.4rem)] leading-none">
+                        {item.detail}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            </div>
+          </Reveal>
+        </Container>
+      </section>
+
+      <section className="bg-background pb-3">
+        <div className="page-frame">
+          <Reveal>
+            <div className="grid gap-2.5 lg:grid-cols-12">
+              <div className="relative min-h-[360px] overflow-hidden rounded-[var(--radius)] bg-surface-2 lg:col-span-4">
                 <Image
                   src={portrait}
                   alt="Saviour Amegayie, founder of BloomCore Technologies"
                   fill
                   sizes="(min-width: 1024px) 30vw, 90vw"
+                  loading="eager"
+                  placeholder="blur"
                   className="object-cover object-top"
                 />
               </div>
-            </div>
-            <div className="lg:col-span-8">
-              <p className="text-[0.8125rem] font-medium tracking-[0.14em] text-foreground-faint uppercase">
-                Founder
-              </p>
-              <h2 className="h2 mt-4 max-w-[18ch]">
-                Taught in a classroom before building for one
-              </h2>
-              <p className="lead mt-6 max-w-2xl text-foreground-subtle">
-                Saviour Amegayie is a data scientist, IT educator and software developer. Seven years
-                of classroom teaching inform how the company approaches software for schools, and a
-                grounding in data science shapes how it approaches evidence.
-              </p>
-              <div className="mt-7 flex flex-wrap items-center gap-6">
-                <ButtonLink href={ROUTES.founder} variant="outline">
-                  Founder profile
-                </ButtonLink>
-                <ArrowLink href={ROUTES.about}>About BloomCore</ArrowLink>
+              <div className="flex flex-col justify-between rounded-[var(--radius)] bg-surface p-6 sm:p-8 lg:col-span-8 lg:p-10">
+                <div>
+                  <Eyebrow>Founder</Eyebrow>
+                  <h2 className="h2 mt-4 max-w-[17ch]">Taught in a classroom before building for one.</h2>
+                  <p className="lead mt-6 max-w-2xl text-foreground-subtle">
+                    Saviour Amegayie is a data scientist, IT educator and software developer. Seven
+                    years of classroom teaching inform how the company approaches software for
+                    schools, and a grounding in data science shapes how it approaches evidence.
+                  </p>
+                </div>
+                <div className="mt-8 flex flex-wrap items-center gap-5">
+                  <ButtonLink href={ROUTES.founder} variant="outline">
+                    Founder profile
+                  </ButtonLink>
+                  <ArrowLink href={ROUTES.about}>About BloomCore</ArrowLink>
+                </div>
               </div>
             </div>
-          </div>
-        </Container>
+          </Reveal>
+        </div>
       </section>
 
-      <section className="bg-background py-20 sm:py-24 lg:py-32">
+      <section className="bg-surface-2 section-pad">
         <Container>
-          <div className="grid gap-8 lg:grid-cols-12 lg:items-end lg:gap-12">
-            <div className="lg:col-span-7">
-              <h2 className="h2 max-w-[16ch]">Practical guides from the work</h2>
-            </div>
-            <div className="lg:col-span-5">
-              <p className="lead text-foreground-subtle">
-                Plain explanations of the operating problems our products are built around. No
-                gated downloads and no invented statistics.
-              </p>
-              <div className="mt-5">
-                <ArrowLink href={ROUTES.resources}>All resources</ArrowLink>
+          <Reveal>
+            <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
+              <div className="lg:col-span-7">
+                <Eyebrow>Resources</Eyebrow>
+                <h2 className="h2 mt-4 max-w-[15ch]">Practical guides from the work.</h2>
+              </div>
+              <div className="lg:col-span-5">
+                <p className="lead text-foreground-subtle">
+                  Plain explanations of the operating problems our products are built around. No
+                  gated downloads and no invented statistics.
+                </p>
+                <div className="mt-4">
+                  <ArrowLink href={ROUTES.resources}>All resources</ArrowLink>
+                </div>
               </div>
             </div>
-          </div>
+          </Reveal>
 
-          <ul className="mt-10 flex flex-col sm:mt-14">
-            {RESOURCES.map((article) => (
-              <li key={article.slug}>
-                <Link
-                  href={`${ROUTES.resources}/${article.slug}`}
-                  className="group grid gap-3 py-6 sm:grid-cols-12 sm:items-baseline sm:gap-8"
-                >
-                  <p className="text-[0.8125rem] font-medium tracking-[0.1em] text-foreground-faint uppercase sm:col-span-3">
-                    {article.category}
-                  </p>
-                  <div className="sm:col-span-8">
-                    <h3 className="h3 text-foreground underline-offset-4 group-hover:underline">
+          <Reveal>
+            <ul className="mt-8 flex flex-col gap-2">
+              {RESOURCES.map((article) => (
+                <li key={article.slug}>
+                  <Link
+                    href={`${ROUTES.resources}/${article.slug}`}
+                    className="group grid gap-2 rounded-[var(--radius)] bg-surface p-5 transition-colors hover:bg-surface-2 sm:grid-cols-12 sm:items-center sm:gap-6 sm:p-6"
+                  >
+                    <p className="text-[0.8125rem] font-semibold text-foreground-faint sm:col-span-2">
+                      {article.category}
+                    </p>
+                    <h3 className="text-[1.05rem] font-bold text-foreground underline-offset-4 group-hover:underline sm:col-span-7">
                       {article.title}
                     </h3>
-                    <p className="mt-2 max-w-2xl text-[0.9375rem] leading-6 text-foreground-subtle">
-                      {article.description}
+                    <p className="text-[0.8125rem] text-foreground-faint sm:col-span-2 sm:text-right">
+                      {article.readingMinutes} min read
                     </p>
-                  </div>
-                  <p className="text-[0.8125rem] text-foreground-faint sm:col-span-1 sm:text-right">
-                    {article.readingMinutes} min
-                  </p>
-                </Link>
-              </li>
-            ))}
-          </ul>
+                    <span aria-hidden="true" className="hidden text-right text-foreground-faint sm:col-span-1 sm:block">
+                      →
+                    </span>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </Reveal>
         </Container>
       </section>
 
-      <section className="bg-accent py-20 text-accent-contrast sm:py-24 lg:py-32">
-        <Container>
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-14">
-            <div className="lg:col-span-6">
-              <h2 className="h2 max-w-[14ch] text-accent-contrast">
-                Have a technology project in mind?
-              </h2>
-              <p className="lead mt-6 max-w-[36ch] text-accent-contrast/75">
-                Describe the problem you are trying to solve. We will tell you plainly whether it
-                is work we can take on, and what it would involve.
-              </p>
-              <div className="mt-10">
-                <QuickEnquiry />
-              </div>
+      <section className="bg-background pt-2.5 pb-2.5">
+        <div className="page-frame">
+          <div className="grid gap-2.5 lg:grid-cols-12">
+            <div className="rounded-[var(--radius)] bg-accent p-6 text-accent-contrast sm:p-9 lg:col-span-7 lg:p-10">
+              <Reveal>
+                <p className="text-[0.8125rem] font-semibold text-accent-contrast/65">
+                  Start a project
+                </p>
+                <h2 className="h2 mt-4 max-w-[12ch] text-accent-contrast">Start with the problem.</h2>
+                <p className="lead mt-5 max-w-[38ch] text-accent-contrast/75">
+                  Describe the problem you are trying to solve. We will tell you plainly whether it
+                  is work we can take on, and what it would involve.
+                </p>
+                <div className="mt-8">
+                  <QuickEnquiry />
+                </div>
+              </Reveal>
             </div>
 
-            <div className="lg:col-span-5 lg:col-start-8">
-              <p className="text-[0.8125rem] font-medium tracking-[0.14em] text-accent-contrast/60 uppercase">
-                Direct contact
-              </p>
-              <ul className="mt-5 flex flex-col gap-5">
-                <li>
-                  <p className="text-[0.8125rem] text-accent-contrast/60">Email</p>
-                  <a
-                    href={`mailto:${CONTACT.email}`}
-                    className="mt-1 block text-[1.15rem] break-all text-accent-contrast underline-offset-4 hover:underline"
-                  >
-                    {CONTACT.email}
-                  </a>
-                </li>
-                <li>
-                  <p className="text-[0.8125rem] text-accent-contrast/60">Calls and WhatsApp</p>
-                  <a
-                    href={`tel:${CONTACT.phoneCallsWhatsapp}`}
-                    className="mt-1 block text-[1.15rem] text-accent-contrast underline-offset-4 hover:underline"
-                  >
-                    {CONTACT.phoneCallsWhatsapp}
-                  </a>
-                </li>
-                <li>
-                  <p className="text-[0.8125rem] text-accent-contrast/60">Calls only</p>
-                  <a
-                    href={`tel:${CONTACT.phoneCallsOnly}`}
-                    className="mt-1 block text-[1.15rem] text-accent-contrast underline-offset-4 hover:underline"
-                  >
-                    {CONTACT.phoneCallsOnly}
-                  </a>
-                </li>
-                <li>
-                  <p className="text-[0.8125rem] text-accent-contrast/60">Registered address</p>
-                  <p className="mt-1 max-w-[30ch] text-[0.9375rem] leading-6 text-accent-contrast/80">
-                    {CONTACT.address}
-                  </p>
-                </li>
-              </ul>
-              <div className="mt-8">
-                <ButtonLink href={ROUTES.contact} variant="inverse" size="md">
-                  All contact details
-                </ButtonLink>
+            <div className="grid gap-2.5 sm:grid-cols-2 lg:col-span-5">
+              <div className="rounded-[var(--radius)] bg-surface p-6 sm:col-span-2 sm:p-7">
+                <p className="text-[0.8125rem] font-semibold text-foreground-faint">Email</p>
+                <a
+                  href={`mailto:${CONTACT.email}`}
+                  className="mt-2 block text-[0.9375rem] font-semibold break-words text-foreground underline-offset-4 hover:underline"
+                >
+                  {CONTACT.email}
+                </a>
+              </div>
+              <div className="rounded-[var(--radius)] bg-surface p-6 sm:col-span-2 sm:p-7">
+                <p className="text-[0.8125rem] font-semibold text-foreground-faint">
+                  Calls and WhatsApp
+                </p>
+                <a
+                  href={`tel:${CONTACT.phoneCallsWhatsapp}`}
+                  className="mt-2 block text-[1.15rem] font-bold text-foreground underline-offset-4 hover:underline"
+                >
+                  {CONTACT.phoneCallsWhatsapp}
+                </a>
+                <p className="mt-4 text-[0.8125rem] font-semibold text-foreground-faint">
+                  Calls only
+                </p>
+                <a
+                  href={`tel:${CONTACT.phoneCallsOnly}`}
+                  className="mt-1 block text-[1.15rem] font-bold text-foreground underline-offset-4 hover:underline"
+                >
+                  {CONTACT.phoneCallsOnly}
+                </a>
+              </div>
+              <div className="rounded-[var(--radius)] bg-surface-2 p-6 sm:col-span-2 sm:p-7">
+                <p className="text-[0.8125rem] font-semibold text-foreground-faint">
+                  Registered address
+                </p>
+                <p className="mt-2 max-w-[32ch] text-[1rem] leading-6 text-foreground">
+                  {CONTACT.address}
+                </p>
+                <div className="mt-5">
+                  <ButtonLink href={ROUTES.contact} variant="outline">
+                    All contact details
+                  </ButtonLink>
+                </div>
               </div>
             </div>
           </div>
-        </Container>
+        </div>
       </section>
     </>
   );

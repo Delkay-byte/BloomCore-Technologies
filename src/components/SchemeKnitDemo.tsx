@@ -40,31 +40,34 @@ export function SchemeKnitDemo() {
   const active = indicators[Math.min(selected, Math.max(indicators.length - 1, 0))];
 
   return (
-    <div className="grid lg:grid-cols-2">
-      <div className="flex min-h-[70svh] flex-col justify-between bg-accent p-5 text-accent-contrast sm:p-8 lg:min-h-[86svh] lg:p-12">
-        <div className="max-w-[34ch]">
-          <p className="text-[0.9375rem] leading-6 text-accent-contrast/75">
-            This example reads a short scheme of learning. Type one indicator per line, separated by
-            a vertical bar.
+    <div className="overflow-hidden rounded-[var(--radius)] bg-surface">
+      <div className="grid lg:grid-cols-12">
+        <div className="bg-surface-2 p-5 sm:p-7 lg:col-span-5 lg:p-9">
+          <div className="flex items-center justify-between gap-4">
+            <h3 className="text-[1.1rem] font-bold text-foreground">Scheme lines</h3>
+            <span className="rounded-full bg-surface px-2.5 py-1 text-[0.75rem] font-semibold text-foreground-subtle">
+              Live example
+            </span>
+          </div>
+          <p className="mt-3 max-w-[40ch] text-[0.9375rem] leading-6 text-foreground-subtle">
+            Edit one indicator per line. The plan preview responds immediately. Nothing typed here
+            leaves this browser.
           </p>
-          <label
-            htmlFor="scheme-example"
-            className="mt-6 block text-[0.9375rem] font-medium text-accent-contrast"
-          >
+
+          <label htmlFor="scheme-example" className="mt-6 block text-[0.875rem] font-semibold text-foreground">
             Scheme lines
           </label>
           <textarea
             id="scheme-example"
             value={scheme}
             onChange={(event) => setScheme(event.target.value)}
-            rows={6}
+            rows={7}
             spellCheck={false}
             aria-describedby="scheme-example-hint"
-            className="mt-2 w-full resize-y border border-accent-contrast/30 bg-accent-strong/40 p-3 font-[inherit] text-[0.9375rem] leading-6 text-accent-contrast placeholder:text-accent-contrast/60 focus-visible:border-accent-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-contrast"
+            className="mt-2 w-full resize-y rounded-[var(--radius)] border border-line-strong bg-surface p-3.5 font-[family-name:var(--font-sans)] text-[0.9375rem] leading-7 text-foreground placeholder:text-foreground-faint focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
           />
-          <p id="scheme-example-hint" className="mt-2 text-[0.8125rem] leading-5 text-accent-contrast/65">
-            Format: Week | Indicator code | Description. Your text stays in this browser and is not
-            sent anywhere.
+          <p id="scheme-example-hint" className="mt-2 text-[0.8125rem] leading-5 text-foreground-faint">
+            Format: Week | Indicator code | Description.
           </p>
           <div className="mt-4 flex flex-wrap items-center gap-4">
             <button
@@ -73,98 +76,91 @@ export function SchemeKnitDemo() {
                 setScheme(SAMPLE);
                 setSelected(0);
               }}
-              className="border border-accent-contrast/40 px-3 py-2 text-[0.8125rem] font-medium transition-colors hover:bg-accent-contrast hover:text-accent"
+              className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface active:translate-y-px"
             >
-              Reset the example
+              Reset example
             </button>
-            <span className="text-[0.8125rem] text-accent-contrast/70">
+            <span className="text-[0.8125rem] text-foreground-faint">
               {indicators.length} {indicators.length === 1 ? "indicator" : "indicators"} read
             </span>
           </div>
         </div>
 
-        <h2 className="display mt-10 text-[clamp(2.6rem,5.4vw,5.6rem)]">From scheme</h2>
-      </div>
-
-      <div className="flex min-h-[70svh] flex-col justify-between bg-surface p-5 sm:p-8 lg:min-h-[86svh] lg:p-12">
-        <div data-ui className="w-full max-w-[560px] bg-background">
-          <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3">
-            <p className="text-[13px] font-semibold text-foreground">Lesson plan preview</p>
-            <span className="border border-border px-2 py-0.5 text-[10px] text-foreground-subtle">
-              Draft
-            </span>
-          </div>
-
-          {indicators.length > 0 ? (
-            <>
-              <div className="flex flex-wrap gap-1 border-b border-border p-2">
-                {indicators.map((indicator, index) => (
-                  <button
-                    key={`${indicator.code}-${index}`}
-                    type="button"
-                    onClick={() => setSelected(index)}
-                    aria-pressed={index === selected}
-                    className={cn(
-                      "max-w-full truncate px-2 py-1 text-[10px] font-medium transition-colors",
-                      index === selected
-                        ? "bg-[#1c7189] text-white"
-                        : "bg-muted text-foreground-subtle hover:text-foreground",
-                    )}
-                  >
-                    {indicator.code === "—" ? indicator.label : indicator.code}
-                  </button>
-                ))}
-              </div>
-
-              {active && (
-                <div className="p-4">
-                  <p className="text-[10px] text-foreground-faint">{active.week}</p>
-                  <p className="mt-1 text-[15px] leading-tight font-semibold text-foreground">
-                    {active.label}
-                  </p>
-                  <div className="mt-4 flex flex-col gap-2.5">
-                    {[
-                      ["Learning indicator", `${active.code} — ${active.label}`],
-                      ["Content standard", "Demonstrate understanding of the strand content"],
-                      ["Core competencies", "Critical thinking, digital literacy, collaboration"],
-                      ["Phase 1 · Starter", "Recall a familiar example from the learners' environment"],
-                      [
-                        "Phase 2 · New learning",
-                        `Introduce and explain: ${active.label.toLowerCase()}`,
-                      ],
-                      [
-                        "Phase 3 · Assessment",
-                        `Ask learners to demonstrate or describe ${active.label.toLowerCase()}`,
-                      ],
-                    ].map(([label, value]) => (
-                      <div key={label}>
-                        <p className="text-[10px] text-foreground-faint">{label}</p>
-                        <p className="mt-0.5 text-[11px] leading-4 text-foreground">{value}</p>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    <span className="bg-[#1c7189] px-3 py-1.5 text-[10px] font-medium text-white">
-                      Save lesson
-                    </span>
-                    <span className="border border-border px-3 py-1.5 text-[10px] text-foreground-subtle">
-                      Export
-                    </span>
-                  </div>
-                </div>
-              )}
-            </>
-          ) : (
-            <div className="px-4 py-10">
-              <p className="text-[13px] font-medium text-foreground">No indicators read yet</p>
-              <p className="mt-1 text-[11px] leading-4 text-foreground-subtle">
-                Add a line on the left in the format Week | Code | Description.
-              </p>
+        <div className="p-5 sm:p-7 lg:col-span-7 lg:p-9">
+          <div data-ui className="overflow-hidden rounded-[8px] border border-line bg-background">
+            <div className="flex items-center justify-between gap-3 border-b border-line bg-surface px-4 py-3">
+              <p className="text-[13px] font-bold text-foreground">Lesson plan preview</p>
+              <span className="rounded-full bg-gold-soft px-2 py-0.5 text-[10px] font-semibold text-foreground">
+                Draft
+              </span>
             </div>
-          )}
-        </div>
 
-        <h2 className="display mt-10 text-right text-[clamp(2.6rem,5.4vw,5.6rem)]">to plan.</h2>
+            {indicators.length > 0 ? (
+              <>
+                <div className="flex flex-wrap gap-1 border-b border-line p-2">
+                  {indicators.map((indicator, index) => (
+                    <button
+                      key={`${indicator.code}-${index}`}
+                      type="button"
+                      onClick={() => setSelected(index)}
+                      aria-pressed={index === selected}
+                      className={cn(
+                        "max-w-full truncate rounded-[4px] px-2 py-1 text-[10px] font-semibold transition-colors",
+                        index === selected
+                          ? "bg-accent text-accent-contrast"
+                          : "bg-surface-2 text-foreground-subtle hover:text-foreground",
+                      )}
+                    >
+                      {indicator.code === "—" ? indicator.label : indicator.code}
+                    </button>
+                  ))}
+                </div>
+
+                {active && (
+                  <div className="p-4 sm:p-5">
+                    <p className="text-[10px] font-semibold text-foreground-faint">{active.week}</p>
+                    <p className="mt-1 text-[15px] leading-tight font-bold text-foreground">
+                      {active.label}
+                    </p>
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      {[
+                        ["Learning indicator", `${active.code} — ${active.label}`],
+                        ["Content standard", "Demonstrate understanding of the strand content"],
+                        ["Core competencies", "Critical thinking, digital literacy, collaboration"],
+                        ["Phase 1 · Starter", "Recall a familiar example from the learners' environment"],
+                        ["Phase 2 · New learning", `Introduce and explain: ${active.label.toLowerCase()}`],
+                        ["Phase 3 · Assessment", `Ask learners to demonstrate or describe ${active.label.toLowerCase()}`],
+                      ].map(([label, value]) => (
+                        <div key={label} className="rounded-[6px] bg-surface p-2.5">
+                          <p className="text-[10px] font-semibold text-foreground-faint">{label}</p>
+                          <p className="mt-1 text-[11px] leading-4 text-foreground">{value}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-4 flex flex-wrap gap-2">
+                      <span className="rounded-[5px] bg-accent px-3 py-1.5 text-[10px] font-semibold text-accent-contrast">
+                        Preview only
+                      </span>
+                      <span className="rounded-[5px] border border-line-strong px-3 py-1.5 text-[10px] font-semibold text-foreground-subtle">
+                        Editable in the application
+                      </span>
+                    </div>
+                  </div>
+                )}
+              </>
+            ) : (
+              <div className="px-4 py-10">
+                <p className="text-[13px] font-semibold text-foreground">No indicators read yet</p>
+                <p className="mt-1 text-[11px] leading-4 text-foreground-subtle">
+                  Add a line on the left in the format Week | Code | Description.
+                </p>
+              </div>
+            )}
+          </div>
+          <p className="mt-3 text-[0.8125rem] leading-5 text-foreground-faint">
+            Representative plan. The live SchemeKnit application handles real curriculum documents.
+          </p>
+        </div>
       </div>
     </div>
   );

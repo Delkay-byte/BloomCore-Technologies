@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import portrait from "@/assets/founder-portrait.jpg";
@@ -192,7 +192,7 @@ export default function FounderPage() {
               <dl className="mt-8">
                 {facts.map((item) => (
                   <div key={item.term} className="grid gap-1 py-4 sm:grid-cols-12 sm:gap-6">
-                    <dt className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase sm:col-span-3 sm:pt-1">
+                    <dt className="text-[0.8125rem] font-semibold text-foreground-faint sm:col-span-3 sm:pt-1">
                       {item.term}
                     </dt>
                     <dd className="text-[0.9375rem] leading-6 text-foreground-subtle sm:col-span-9">
@@ -235,7 +235,7 @@ export default function FounderPage() {
                 ))}
               </dl>
               <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2">
-                <span className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                <span className="text-[0.8125rem] font-semibold text-foreground-faint">
                   Working tools
                 </span>
                 {tools.map((tool) => (
@@ -319,7 +319,7 @@ export default function FounderPage() {
               <dl className="grid gap-x-10 sm:grid-cols-2">
                 {projects.map((project) => (
                   <div key={project.name} className="py-5">
-                    <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                    <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                       {project.field}
                     </p>
                     <dt className="mt-2 text-[1.05rem] font-semibold text-foreground">
@@ -402,3 +402,4 @@ export default function FounderPage() {
     </>
   );
 }
+

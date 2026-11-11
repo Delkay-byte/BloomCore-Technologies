@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { OPEN_HELP_EVENT } from "@/components/AssistantTrigger";
 import { cn } from "@/lib/utils";
 import { BRAND, CONTACT, ROUTES } from "@/lib/brand";
 import {
@@ -46,7 +47,35 @@ export function HelpChat() {
   const [typing, setTyping] = useState(false);
   const [input, setInput] = useState("");
   const listRef = useRef<HTMLDivElement | null>(null);
+  const closeRef = useRef<HTMLButtonElement | null>(null);
+  const lastFocus = useRef<HTMLElement | null>(null);
   const typingTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    const openPanel = () => {
+      lastFocus.current = document.activeElement as HTMLElement | null;
+      setOpen(true);
+    };
+    window.addEventListener(OPEN_HELP_EVENT, openPanel);
+    return () => window.removeEventListener(OPEN_HELP_EVENT, openPanel);
+  }, []);
+
+  useEffect(() => {
+    if (open) {
+      closeRef.current?.focus();
+    } else {
+      lastFocus.current?.focus();
+    }
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [open]);
 
   useEffect(() => {
     return () => {
@@ -109,12 +138,12 @@ export function HelpChat() {
   };
 
   return (
-    <div className="pointer-events-none fixed bottom-4 right-4 z-40 sm:bottom-6 sm:right-6">
+    <div className="fixed bottom-4 left-4 z-50 w-[min(22rem,calc(100vw-2rem))] sm:bottom-6 sm:left-6">
       {open && (
         <div
           role="dialog"
           aria-label={`${BRAND.name} assistant`}
-          className="bc-panel-in pointer-events-auto absolute right-0 bottom-full mb-2 flex w-[min(22rem,calc(100vw-2rem))] flex-col overflow-hidden bg-[#08241f] text-[#f7f4ec] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)]"
+          className="bc-panel-in flex h-[min(560px,80dvh)] flex-col overflow-hidden rounded-[var(--radius)] bg-[#08241f] text-[#f7f4ec] shadow-[0_24px_60px_-20px_rgba(0,0,0,0.55)]"
         >
           <div className="flex items-center gap-3 border-b border-white/15 px-4 py-3">
             <span aria-hidden="true" className="block h-2 w-2 shrink-0 bg-gold" />
@@ -127,10 +156,11 @@ export function HelpChat() {
               </p>
             </div>
             <button
+              ref={closeRef}
               type="button"
               aria-label="Close chat"
-              onClick={toggleOpen}
-              className="p-1.5 text-[#f7f4ec]/50 transition-colors hover:bg-white/10 hover:text-[#f7f4ec] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f4ec]"
+              onClick={() => setOpen(false)}
+              className="rounded-[5px] p-1.5 text-[#f7f4ec]/60 transition-colors hover:bg-white/10 hover:text-[#f7f4ec] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#f7f4ec]"
             >
               <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
                 <path
@@ -145,7 +175,7 @@ export function HelpChat() {
 
           <div
             ref={listRef}
-            className="flex max-h-[min(380px,52vh)] flex-col gap-3 overflow-y-auto px-4 py-4"
+            className="flex min-h-0 flex-1 flex-col gap-3 overflow-y-auto px-4 py-4"
           >
             {messages.map((message, index) => (
               <div
@@ -274,24 +304,6 @@ export function HelpChat() {
           </div>
         </div>
       )}
-
-      <button
-        type="button"
-        onClick={toggleOpen}
-        aria-label={open ? "Close help chat" : "Open help chat"}
-        aria-expanded={open}
-        className="pointer-events-auto inline-flex h-12 items-center gap-2 bg-accent px-4 text-accent-contrast shadow-[0_12px_28px_-14px_rgba(0,0,0,0.6)] transition-colors hover:bg-accent-strong focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground"
-      >
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-          <path
-            d="M2 3.5h12v7H8.5L5 13.5v-3H2v-7Z"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinejoin="round"
-          />
-        </svg>
-        <span className="text-[0.9375rem] font-medium">{open ? "Close" : "Ask"}</span>
-      </button>
     </div>
   );
 }

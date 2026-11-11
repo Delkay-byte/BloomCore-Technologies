@@ -3,6 +3,7 @@ import Image from "next/image";
 import logo from "@/assets/brand/bloomcore-logo-white.png";
 import { CurrentYear } from "@/components/CurrentYear";
 import { AnalyticsSettingsButton } from "@/components/AnalyticsSettingsButton";
+import { AssistantTrigger } from "@/components/AssistantTrigger";
 import { BRAND, CONTACT, PRODUCTS, ROUTES, SOCIAL } from "@/lib/brand";
 
 const companyLinks = [
@@ -33,14 +34,14 @@ function FooterLink({ href, children }: { href: string; children: React.ReactNod
 
 export function Footer() {
   return (
-    <footer className="bg-background p-1.5 sm:p-3">
-      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-12">
-        <div className="flex min-h-[190px] flex-col justify-between bg-accent p-5 text-accent-contrast sm:col-span-2 sm:p-7 lg:col-span-5">
-          <Link href="/" aria-label={`${BRAND.name} — home`} className="inline-flex">
-            <Image src={logo} alt={BRAND.name} sizes="260px" className="h-10 w-auto sm:h-12" />
+    <footer className="bg-background p-2.5">
+      <div className="mx-auto grid max-w-[1480px] grid-cols-1 gap-2.5 sm:grid-cols-2 lg:grid-cols-12">
+        <div className="flex min-h-[220px] flex-col justify-between rounded-[var(--radius)] bg-[#0c3b30] p-6 text-[#f8f5ec] sm:col-span-2 sm:p-7 lg:col-span-5">
+          <Link href="/" aria-label={`${BRAND.name} — home`} className="inline-flex w-max">
+            <Image src={logo} alt={BRAND.name} sizes="260px" className="h-10 w-auto sm:h-11" />
           </Link>
           <div className="mt-8">
-            <p className="max-w-md text-[1.35rem] leading-tight font-medium sm:text-[1.6rem]">
+            <p className="max-w-md font-display text-[1.9rem] leading-[1.05] sm:text-[2.2rem]">
               Software products and engineering, built in Ghana for the work that actually happens.
             </p>
             <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
@@ -50,7 +51,7 @@ export function Footer() {
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[0.875rem] text-accent-contrast/80 underline underline-offset-4 transition-colors hover:text-accent-contrast"
+                  className="text-[0.875rem] text-[#f8f5ec]/75 underline underline-offset-4 transition-colors hover:text-[#f8f5ec]"
                 >
                   {item.label}
                   <span className="sr-only"> (opens in a new tab)</span>
@@ -62,9 +63,9 @@ export function Footer() {
 
         <nav
           aria-label="Footer products"
-          className="flex min-h-[190px] flex-col bg-surface p-5 sm:p-7 lg:col-span-3"
+          className="flex min-h-[220px] flex-col rounded-[var(--radius)] bg-surface p-6 sm:p-7 lg:col-span-3"
         >
-          <h2 className="text-[0.9375rem] font-semibold text-foreground">Products</h2>
+          <h2 className="text-[0.9375rem] font-bold text-foreground">Products</h2>
           <ul className="mt-4 flex flex-col gap-2.5">
             {PRODUCTS.map((product) => (
               <li key={product.slug}>
@@ -79,9 +80,9 @@ export function Footer() {
 
         <nav
           aria-label="Footer company"
-          className="flex min-h-[190px] flex-col bg-surface p-5 sm:p-7 lg:col-span-2"
+          className="flex min-h-[220px] flex-col rounded-[var(--radius)] bg-surface p-6 sm:p-7 lg:col-span-2"
         >
-          <h2 className="text-[0.9375rem] font-semibold text-foreground">Company</h2>
+          <h2 className="text-[0.9375rem] font-bold text-foreground">Company</h2>
           <ul className="mt-4 flex flex-col gap-2.5">
             {companyLinks.map((link) => (
               <li key={link.href}>
@@ -91,44 +92,35 @@ export function Footer() {
           </ul>
         </nav>
 
-        <div className="flex min-h-[190px] flex-col justify-between bg-surface-2 p-5 sm:p-7 lg:col-span-2">
+        <div className="flex min-h-[220px] flex-col justify-between rounded-[var(--radius)] bg-surface-2 p-6 sm:p-7 lg:col-span-2">
           <div>
-            <h2 className="text-[0.9375rem] font-semibold text-foreground">Contact</h2>
+            <h2 className="text-[0.9375rem] font-bold text-foreground">Contact</h2>
             <ul className="mt-4 flex flex-col gap-2.5 text-[0.9375rem] text-foreground-subtle">
               <li>
-                <a
-                  href={`mailto:${CONTACT.email}`}
-                  className="break-all transition-colors hover:text-foreground"
-                >
-                  {CONTACT.email}
+                <a href={`mailto:${CONTACT.email}`} className="font-semibold transition-colors hover:text-foreground">
+                  Email BloomCore
                 </a>
               </li>
               <li>
-                <a
-                  href={`tel:${CONTACT.phoneCallsWhatsapp}`}
-                  className="transition-colors hover:text-foreground"
-                >
+                <a href={`tel:${CONTACT.phoneCallsWhatsapp}`} className="transition-colors hover:text-foreground">
                   {CONTACT.phoneCallsWhatsapp}
                 </a>
+                <span className="mt-0.5 block text-[0.8125rem] text-foreground-faint">
+                  Calls and WhatsApp
+                </span>
               </li>
-              <li className="text-foreground-faint">Calls and WhatsApp</li>
               <li>
-                <a
-                  href={`tel:${CONTACT.phoneCallsOnly}`}
-                  className="transition-colors hover:text-foreground"
-                >
+                <a href={`tel:${CONTACT.phoneCallsOnly}`} className="transition-colors hover:text-foreground">
                   {CONTACT.phoneCallsOnly}
                 </a>
+                <span className="mt-0.5 block text-[0.8125rem] text-foreground-faint">Calls only</span>
               </li>
-              <li className="text-foreground-faint">Calls only</li>
             </ul>
           </div>
-          <p className="mt-6 text-[0.8125rem] leading-5 text-foreground-faint">
-            {CONTACT.address}
-          </p>
+          <p className="mt-6 text-[0.8125rem] leading-5 text-foreground-faint">{CONTACT.address}</p>
         </div>
 
-        <div className="relative flex min-h-[180px] items-end overflow-hidden bg-accent p-5 sm:col-span-2 sm:p-7 lg:col-span-8">
+        <div className="relative flex min-h-[180px] items-end overflow-hidden rounded-[var(--radius)] bg-[#0c3b30] p-6 sm:col-span-2 sm:p-7 lg:col-span-8">
           <Link href="/" aria-label={`${BRAND.name} — home`} className="block w-full">
             <Image
               src={logo}
@@ -141,17 +133,13 @@ export function Footer() {
 
         <Link
           href={ROUTES.contact}
-          className="group flex min-h-[180px] flex-col justify-between bg-gold p-5 text-[#15170f] sm:p-7 lg:col-span-4"
+          className="group flex min-h-[180px] flex-col justify-between rounded-[var(--radius)] bg-gold p-6 text-gold-contrast sm:p-7 lg:col-span-4"
         >
-          <span className="text-[1.45rem] leading-tight font-semibold uppercase sm:text-[1.8rem]">
-            Start a
-            <br />
-            project
+          <span className="font-display text-[2rem] leading-none sm:text-[2.4rem]">
+            Start a project
           </span>
           <span className="flex items-end justify-between gap-4">
-            <span className="text-[0.9375rem] leading-6">
-              Tell us what the work needs to do.
-            </span>
+            <span className="text-[0.9375rem] leading-6">Tell us what the work needs to do.</span>
             <svg width="38" height="24" viewBox="0 0 38 24" fill="none" aria-hidden="true">
               <path
                 d="M1 12h34M25 2l10 10-10 10"
@@ -163,7 +151,7 @@ export function Footer() {
           </span>
         </Link>
 
-        <div className="flex flex-col gap-3 bg-surface p-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between sm:p-7 lg:col-span-12">
+        <div className="flex flex-col gap-3 rounded-[var(--radius)] bg-surface p-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between sm:p-6 lg:col-span-12">
           <p className="text-[0.8125rem] leading-5 text-foreground-faint">
             © <CurrentYear fallback={2026} /> {BRAND.name}. All rights reserved.
           </p>
@@ -172,9 +160,11 @@ export function Footer() {
               Privacy notice
             </Link>
             <AnalyticsSettingsButton />
-            <span>
-              {CONTACT.registration} · Registered in Ghana
-            </span>
+            <AssistantTrigger
+              showLabel
+              className="text-[0.8125rem] text-foreground-faint transition-colors hover:text-foreground"
+            />
+            <span>{CONTACT.registration} · Registered in Ghana</span>
           </div>
         </div>
       </div>

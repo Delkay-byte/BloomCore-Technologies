@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { ArrowLink, Container, DefinitionList, PageHero, Prose } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, ROUTES } from "@/lib/brand";
@@ -108,7 +108,7 @@ export default function AboutPage() {
     <>
       <PageHero
         eyebrow="About the company"
-        title="A technology business built in Ghana, for the way business here actually works"
+        title="Built in Ghana, for how work happens here."
         lead="BloomCore Technologies develops its own software products and delivers digital technology solutions to businesses and institutions. The company is deliberately small, deliberately focused, and honest about what it has and has not built."
       >
         <div className="mt-8 flex flex-wrap gap-3">
@@ -357,3 +357,4 @@ export default function AboutPage() {
     </>
   );
 }
+

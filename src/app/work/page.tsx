@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLink, Container, PageHero, StatusBadge } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
@@ -88,7 +88,7 @@ export default function WorkPage() {
     <>
       <PageHero
         eyebrow="Work"
-        title="Products built and operated by BloomCore Technologies"
+        title="Products built and operated here."
         lead="The portfolio is small on purpose. Each entry is software the company has built, described with the problem it addresses and its actual status."
       >
         <div className="mt-8 flex flex-wrap gap-3">
@@ -99,6 +99,20 @@ export default function WorkPage() {
             Services
           </ButtonLink>
         </div>
+        <dl className="mt-8 grid max-w-2xl grid-cols-3 gap-2">
+          {[
+            ["Products", "3"],
+            ["Available", "2"],
+            ["In build", "1"],
+          ].map(([term, value]) => (
+            <div key={term} className="rounded-[8px] bg-surface-2 px-4 py-3">
+              <dt className="text-[0.75rem] font-semibold text-foreground-faint">{term}</dt>
+              <dd className="mt-1 font-display text-[1.8rem] leading-none text-foreground">
+                {value}
+              </dd>
+            </div>
+          ))}
+        </dl>
       </PageHero>
 
       <div className="bg-surface">
@@ -110,7 +124,7 @@ export default function WorkPage() {
                 <div className="grid gap-6 lg:grid-cols-12 lg:gap-12">
                   <div className="lg:col-span-4">
                     <div className="flex flex-wrap items-center gap-3">
-                      <p className="text-[0.8125rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                      <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                         {entry.industry}
                       </p>
                       <StatusBadge
@@ -135,7 +149,7 @@ export default function WorkPage() {
                   </div>
 
                   <div className="lg:col-span-4">
-                    <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                    <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                       The problem
                     </p>
                     <p className="mt-2 text-[1rem] leading-7 text-foreground-subtle">
@@ -143,7 +157,7 @@ export default function WorkPage() {
                     </p>
                   </div>
                   <div className="lg:col-span-4">
-                    <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                    <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                       What was built
                     </p>
                     <p className="mt-2 text-[1rem] leading-7 text-foreground-subtle">
@@ -268,3 +282,5 @@ export default function WorkPage() {
     </>
   );
 }
+
+

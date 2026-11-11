@@ -263,14 +263,14 @@ export function ContactForm() {
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <button
           type="submit"
-          className="inline-flex h-12 items-center justify-center bg-accent px-6 text-[0.9375rem] font-medium tracking-tight text-accent-contrast transition-colors hover:bg-accent-strong focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground"
+          className="inline-flex h-12 items-center justify-center rounded-[7px] bg-accent px-6 text-[0.9375rem] font-semibold text-accent-contrast transition-colors hover:bg-accent-strong active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground"
         >
-          Prepare email
+          {preparedHref ? "Reopen prepared email" : "Prepare email"}
         </button>
         <button
           type="reset"
           onClick={resetForm}
-          className="inline-flex h-12 items-center justify-center px-6 text-[0.9375rem] font-medium tracking-tight text-foreground-subtle transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground"
+          className="inline-flex h-12 items-center justify-center rounded-[7px] px-6 text-[0.9375rem] font-semibold text-foreground-subtle transition-colors hover:bg-surface-2 hover:text-foreground active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground"
         >
           Clear form
         </button>

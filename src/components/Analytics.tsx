@@ -77,31 +77,34 @@ export function Analytics() {
     <div
       role="region"
       aria-label="Analytics settings"
-      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-md border border-border bg-background p-4 shadow-lg sm:left-6 sm:right-auto sm:mx-0"
+      className="bc-panel-in fixed inset-x-3 bottom-3 z-50 mx-auto max-w-[27rem] rounded-[var(--radius)] border border-line bg-surface p-5 shadow-[0_24px_60px_-28px_rgba(8,20,15,0.45)] sm:right-auto sm:left-6 sm:mx-0 sm:p-6"
     >
-      <p className="text-sm font-medium text-foreground">Optional analytics</p>
-      <p className="mt-1.5 text-xs leading-5 text-foreground-subtle">
-        We use Google Tag Manager and Google Analytics 4 to measure which pages and product links
-        are useful. Analytics is off unless you allow it. No form content or contact details are
-        sent.{" "}
-        <Link href={ROUTES.privacy} className="underline underline-offset-4 hover:text-foreground">
-          Privacy notice
+      <p className="text-[1.05rem] font-bold text-foreground">Optional analytics</p>
+      <p className="mt-2 text-[0.875rem] leading-6 text-foreground-subtle">
+        Help us understand which BloomCore pages and product links are useful. Analytics stays off
+        until you allow it. We do not send enquiry messages, names, email addresses or phone numbers
+        to Google Analytics.{" "}
+        <Link
+          href={ROUTES.privacy}
+          className="font-semibold text-foreground underline decoration-1 underline-offset-4 hover:text-accent"
+        >
+          Read the privacy notice
         </Link>
         .
       </p>
 
       {current && (
-        <p className="mt-2 text-xs leading-5 text-foreground-faint">
+        <p className="mt-3 text-[0.8125rem] text-foreground-faint">
           Current choice: analytics is {current}.
         </p>
       )}
 
-      <div className="mt-3 flex flex-wrap gap-2">
+      <div className="mt-4 flex flex-wrap items-center gap-2">
         {consent !== "granted" && (
           <button
             type="button"
             onClick={() => choose("granted")}
-            className="inline-flex h-9 items-center justify-center bg-foreground px-4 text-xs font-medium text-background transition-colors hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground dark:hover:bg-neutral-200"
+            className="inline-flex h-11 items-center justify-center rounded-[7px] bg-accent px-4 text-[0.875rem] font-semibold text-accent-contrast transition-colors hover:bg-accent-strong active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
           >
             Allow analytics
           </button>
@@ -110,7 +113,7 @@ export function Analytics() {
           <button
             type="button"
             onClick={() => choose("denied")}
-            className="inline-flex h-9 items-center justify-center border border-border px-4 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="inline-flex h-11 items-center justify-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2 active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
           >
             Withdraw analytics consent
           </button>
@@ -119,7 +122,7 @@ export function Analytics() {
           <button
             type="button"
             onClick={() => choose("denied")}
-            className="inline-flex h-9 items-center justify-center border border-border px-4 text-xs font-medium text-foreground-subtle transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="inline-flex h-11 items-center justify-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground-subtle transition-colors hover:bg-surface-2 hover:text-foreground active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
           >
             Keep off
           </button>
@@ -128,7 +131,7 @@ export function Analytics() {
           <button
             type="button"
             onClick={() => setSettingsOpen(false)}
-            className="inline-flex h-9 items-center justify-center px-3 text-xs font-medium text-foreground-subtle transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="inline-flex h-11 items-center justify-center rounded-[7px] px-3 text-[0.875rem] font-semibold text-foreground-subtle transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
           >
             Close
           </button>
