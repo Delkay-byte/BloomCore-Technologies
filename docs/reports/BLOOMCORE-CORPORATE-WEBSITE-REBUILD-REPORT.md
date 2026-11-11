@@ -341,6 +341,9 @@ Verified against `https://bloomcoretech.com` after deployment:
 | GA4 page view | one |
 | Product outbound click | one `product_outbound_click` with correct parameters |
 
-No critical or high defects remained in the final independent review. The final
-review scored hero 8, typography 8, colour 8, mobile 7, product pages 8, overall
-8/10.
+No critical defect remained in the final independent review. That review listed
+five high-severity polish items (development overlay in captures, mobile badge
+width, quick-enquiry placeholder clip, single-crumb breadcrumb, status-chip
+consistency); all five were corrected before the production screenshots and
+deployment. The final review scored hero 8, typography 8, colour 8, mobile 7,
+product pages 8, overall 8/10.
