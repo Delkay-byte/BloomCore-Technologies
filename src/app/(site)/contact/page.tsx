@@ -57,14 +57,14 @@ export default function ContactPage() {
       <PageHero
         eyebrow="Contact"
         title="Tell us what the work needs to do"
-        lead="Use the form to prepare an email, or contact the company directly. Nothing is submitted to a server: the message is written in your own email application."
+        lead="Send the enquiry from this page, or contact the company directly. The enquiry is recorded so the team can respond, and a confirmation is sent to the email address you provide."
       />
 
       <section className="bg-surface py-16 sm:py-20 lg:py-24">
         <Container>
           <div className="grid gap-14 lg:grid-cols-12 lg:gap-16">
             <div className="lg:col-span-7">
-              <h2 className="h2 max-w-[12ch]">Prepare a message</h2>
+              <h2 className="h2 max-w-[12ch]">Send a message</h2>
               <p className="lead mt-5 max-w-xl text-foreground-subtle">
                 Include what the workflow does today, who it affects and any deadline you are
                 working to. A short, specific message gets a more useful reply.
@@ -168,8 +168,9 @@ export default function ContactPage() {
               <div className="mt-5">
                 <Prose className="!text-accent-contrast/75">
                   <p>
-                    No message is stored on this website, and there is no automated confirmation.
-                    What you send arrives by email at the address above.
+                    Your enquiry is stored securely and the team is notified straight away. You
+                    receive a confirmation email with a reference you can quote. A reply comes from
+                    a person, not a queue.
                   </p>
                 </Prose>
               </div>

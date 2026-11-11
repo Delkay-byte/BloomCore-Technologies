@@ -30,7 +30,7 @@ const sections = [
     title: "What this website collects",
     body: [
       "This website has no user accounts, no advertising tracker and no profiling cookie. Reading a page does not require you to provide any personal data.",
-      "The enquiry form does not send anything by itself. It prepares a message and opens your own email application, where you review it and press Send. BloomCore Technologies receives only what you choose to send.",
+      "When you send the enquiry form, the details you enter — your name, email address and anything else you choose to provide — are transmitted to BloomCore Technologies over HTTPS and stored in the company's own enquiry records so the team can respond. An automated acknowledgement is sent to your email address, and the company is notified of the new enquiry. You can also contact the company by email, telephone or WhatsApp instead.",
       "Optional analytics. The site uses Google Tag Manager with Google Analytics 4. A small panel asks whether analytics may load, and nothing is requested from Google until you choose Allow analytics. When allowed, it records page views and aggregate interactions such as product link clicks. The site does not send your name, email address, telephone number, message content or other form field values to analytics. You can keep it off and still use every page.",
       "The site is served over HTTPS. The hosting provider processes standard technical request data, such as the requested page, the time of the request and the network address it came from, in order to deliver the page and keep the service secure. That processing is carried out by the hosting provider under its own terms.",
       "The site stores two preferences in your browser: your light or dark theme choice, and your analytics choice. Neither is sent to BloomCore Technologies. Analytics cookies are set only after you allow analytics; choosing Keep off leaves them unset. You can change or withdraw your choice at any time through Analytics settings in the footer. Withdrawing consent stops further measurement and clears the analytics cookies this site can remove. If this changes, this notice will be updated before the change takes effect.",
@@ -40,7 +40,7 @@ const sections = [
     id: "enquiries",
     title: "When you contact us",
     body: [
-      "If you send an email or a WhatsApp message, we receive what you choose to send: your name, contact details, the content of the message and any attachments.",
+      "If you send the website enquiry form, an email or a WhatsApp message, we receive what you choose to send: your name, contact details, the content of the message and any attachments. For the website form, we also record the page you sent it from and standard campaign labels if you arrived through a link that carries them. We do not record browser fingerprints.",
       "We use that information to answer your enquiry, to assess whether the work is something the company can take on, and to keep a record of the conversation. We do not add you to a marketing list, and we do not sell or rent contact details.",
       "Where an enquiry leads to a contract, the information needed to deliver and invoice the work is kept for as long as the engagement and any statutory record-keeping obligation require.",
     ],
@@ -179,7 +179,7 @@ export default function PrivacyPage() {
                   <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                     Effective date
                   </p>
-                  <p className="mt-1 text-[0.9375rem] text-foreground-subtle">9 November 2026</p>
+                  <p className="mt-1 text-[0.9375rem] text-foreground-subtle">11 November 2026</p>
                 </div>
               </div>
             </aside>

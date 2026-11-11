@@ -8,6 +8,27 @@
     "directory": ".open-next/assets",
     "binding": "ASSETS"
   },
+  "d1_databases": [
+    {
+      "binding": "LEADS_DB",
+      // Production D1 database, created by the owner in the Cloudflare dashboard.
+      // Replace database_id with the real id from `wrangler d1 list` once it exists.
+      "database_name": "bloomcore-leads-prod",
+      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "migrations_dir": "migrations"
+    }
+  ],
+  "vars": {
+    "LEADS_ENVIRONMENT": "production",
+    "DASHBOARD_ORIGIN": "https://bloomcoretech.com",
+    "LEAD_NOTIFICATION_EMAIL": "bloomcoretechnologies@gmail.com",
+    "EMAIL_FROM": "BloomCore Technologies <enquiries@bloomcoretech.com>",
+    "EMAIL_REPLY_TO": "bloomcoretechnologies@gmail.com",
+    "INTERNAL_ALLOWED_EMAILS": "bloomcoretechnologies@gmail.com",
+    // Filled in when the Cloudflare Access application is created. See the report.
+    "CF_ACCESS_TEAM_DOMAIN": "",
+    "CF_ACCESS_AUD": ""
+  },
   "services": [
     {
       // Self-reference service binding. The service name must match "name".

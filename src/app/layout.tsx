@@ -1,14 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
-import { Analytics } from "@/components/Analytics";
-import { BackToTop } from "@/components/BackToTop";
-import { Footer } from "@/components/Footer";
-import { Header } from "@/components/Header";
-import { HelpChat } from "@/components/HelpChat";
-import { JsonLd } from "@/components/JsonLd";
 import { BRAND } from "@/lib/brand";
-import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
 const sourceSerif = localFont({
@@ -110,22 +103,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               '(function(){try{var t=localStorage.getItem("bloomcore-theme");if(t==="light"||t==="dark"){document.documentElement.setAttribute("data-theme",t);}}catch(e){}})();',
           }}
         />
-        <a
-          href="#main"
-          className="sr-only rounded-md bg-foreground px-4 py-2 text-background focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50"
-        >
-          Skip to content
-        </a>
-        <Header />
-        <main id="main" className="flex flex-1 flex-col">
-          {children}
-        </main>
-        <Footer />
-        <BackToTop />
-        <HelpChat />
-        <Analytics />
-        <JsonLd data={organizationSchema()} />
-        <JsonLd data={websiteSchema()} />
+        {children}
       </body>
     </html>
   );

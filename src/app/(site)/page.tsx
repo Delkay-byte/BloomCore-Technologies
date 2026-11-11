@@ -620,7 +620,7 @@ export default function HomePage() {
                   is work we can take on, and what it would involve.
                 </p>
                 <div className="mt-8">
-                  <QuickEnquiry />
+                  <QuickEnquiry formType="homepage_quick_enquiry" sourcePage="/" />
                 </div>
               </Reveal>
             </div>

@@ -1,5 +1,6 @@
 ﻿import Link from "next/link";
 import { Container } from "@/components/Page";
+import { SiteChrome } from "@/components/SiteChrome";
 import { ButtonLink } from "@/components/ui/Button";
 import { ROUTES } from "@/lib/brand";
 
@@ -13,7 +14,8 @@ const links = [
 
 export default function NotFound() {
   return (
-    <section className="flex flex-1 items-center bg-background py-20 sm:py-28">
+    <SiteChrome>
+      <section className="flex flex-1 items-center bg-background py-20 sm:py-28">
       <Container width="wide">
         <div className="grid gap-10 lg:grid-cols-12 lg:items-end lg:gap-14">
           <div className="lg:col-span-7">
@@ -53,8 +55,9 @@ export default function NotFound() {
             ))}
           </ul>
         </nav>
-      </Container>
-    </section>
+        </Container>
+      </section>
+    </SiteChrome>
   );
 }
 

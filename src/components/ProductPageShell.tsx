@@ -5,7 +5,7 @@ import { JsonLd } from "@/components/JsonLd";
 import { ProductFragment } from "@/components/ProductFragments";
 import { ViewTracker } from "@/components/ViewTracker";
 import { ButtonLink } from "@/components/ui/Button";
-import { CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
+import { PRODUCTS, ROUTES } from "@/lib/brand";
 import { breadcrumbSchema, faqSchema, HOME_CRUMB, softwareApplicationSchema } from "@/lib/seo";
 import { cn } from "@/lib/utils";
 
@@ -65,7 +65,7 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
               <div className="mt-7 flex flex-wrap items-center gap-4">
                 <StatusBadge label={detail.statusLabel} tone={detail.statusTone} />
                 <ButtonLink
-                  href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${product.name}`)}`}
+                  href={`/contact?product=${detail.slug}&type=product_enquiry`}
                   data-analytics="product_cta_click"
                   data-product={product.name}
                   data-location="hero_enquiry"
@@ -361,13 +361,13 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
               </div>
               <div className="flex flex-col gap-3 sm:flex-row lg:col-span-4 lg:justify-end">
                 <ButtonLink
-                  href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${product.name}`)}`}
+                  href={`/contact?product=${detail.slug}&type=product_enquiry`}
                   size="lg"
                   data-analytics="product_cta_click"
                   data-product={product.name}
                   data-location="product_footer_enquiry"
                 >
-                  Email BloomCore
+                  Enquire about this product
                 </ButtonLink>
                 <ButtonLink href={ROUTES.contact} variant="outline" size="lg">
                   Contact details
