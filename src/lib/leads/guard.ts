@@ -1,6 +1,6 @@
 import { errorResponse } from "@/lib/http";
 import { getLeadEnv, type LeadEnv } from "./db";
-import { getStaffIdentity, type StaffIdentity } from "./auth";
+import { getStaffIdentity, type AccessSlot, type StaffIdentity } from "./auth";
 
 export type GuardResult =
   | { ok: true; env: LeadEnv; identity: StaffIdentity }
@@ -10,8 +10,14 @@ export type GuardResult =
  * Gate every internal API route. Cloudflare Access should already have
  * blocked anonymous traffic at the edge; this re-checks the signed identity
  * server-side so a direct Worker hostname cannot bypass the policy.
+ *
+ * API routes always validate against the internal API audience, so a token
+ * minted for the dashboard cannot be replayed here.
  */
-export async function requireStaff(request: Request): Promise<GuardResult> {
+export async function requireStaff(
+  request: Request,
+  slot: AccessSlot = "api",
+): Promise<GuardResult> {
   let env: LeadEnv;
   try {
     env = await getLeadEnv();
@@ -19,7 +25,7 @@ export async function requireStaff(request: Request): Promise<GuardResult> {
     return { ok: false, response: errorResponse("Service unavailable.", 503) };
   }
 
-  const identity = await getStaffIdentity(request, env);
+  const identity = await getStaffIdentity(request, env, slot);
   if (!identity) {
     return {
       ok: false,

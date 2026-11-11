@@ -10,6 +10,12 @@
 **Date:** 11 November 2026
 **Stack:** Next.js 16.4.6 App Router, React 19.3.0, Tailwind CSS v4, OpenNext Cloudflare, Cloudflare D1, Cloudflare Access, Resend
 
+> **Revision — Access audience correction.** The original build validated a single
+> `CF_ACCESS_AUD` for both surfaces. Two Access applications have two different AUD tags, so
+> this revision splits the configuration into `CF_ACCESS_AUD_INTERNAL` (dashboard) and
+> `CF_ACCESS_AUD_API` (internal API), removes the `INTERNAL_DEV_BYPASS` development bypass
+> entirely, and adds `tests/access-auth.test.ts`. See §4.8, §6 and §7.2.
+
 ## 1. Objective
 
 Give BloomCore a first-party enquiry system: capture public enquiries durably, notify the
@@ -97,11 +103,36 @@ ordinary `{"ok":true,"spam":true}` and nothing is stored.
 
 ### 4.8 Auth — `src/lib/leads/auth.ts`, `guard.ts`, `session.ts`
 
-Verifies `Cf-Access-Jwt-Assertion` with WebCrypto: RS256 signature against the team's
-published certs, issuer equals the team domain, audience equals the Access app `AUD`, and
-`exp`/`nbf` are in range. An optional `INTERNAL_ALLOWED_EMAILS` allowlist is a second gate.
-**Fails closed**: with no Access configuration and no explicit `INTERNAL_DEV_BYPASS`, every
-internal route returns 401 and every console page renders "Sign in required".
+Two Access applications front the system, and each has its own Application Audience (AUD)
+tag. The verifier never shares one audience across both surfaces:
+
+| Surface | Routes | Env var | Audience validated |
+| --- | --- | --- | --- |
+| Dashboard | `/internal` and descendants | `CF_ACCESS_AUD_INTERNAL` | the dashboard application |
+| Internal API | `/api/internal` and descendants | `CF_ACCESS_AUD_API` | the internal API application |
+
+`getStaffIdentity(request, env, slot)` takes the slot (`"internal"` or `"api"`),
+`accessAudience(env, slot)` resolves the matching env var, and
+`verifyAccessJwt(token, teamDomain, audience, options?)` verifies the token. `guard.ts`
+(`requireStaff`) and `session.ts` (`currentStaff`) pass the correct slot, so a dashboard
+token cannot authorise an API route and an API token cannot authorise the dashboard.
+
+JWT validation with WebCrypto:
+
+1. Structure: three segments; header `alg` must be exactly `RS256` (`alg: none` is rejected).
+2. Signature: RS256 against the team's published certs (`/cdn-cgi/access/certs`). When the
+   token names a `kid`, only the matching key is accepted.
+3. Issuer: `iss` normalized and required to equal `CF_ACCESS_TEAM_DOMAIN`.
+4. Audience: `aud` (string or array) must contain the surface's AUD.
+5. Time claims: `exp` is **mandatory**; `exp <= now` is rejected with no backward leeway.
+   `nbf` and `iat`, when present, must not be more than 60 s ahead of now.
+6. Identity: an optional `INTERNAL_ALLOWED_EMAILS` allowlist is a second gate.
+
+**Fails closed**: with no team domain or no audience for the surface, every internal route
+returns 401 and every console page renders "Sign in required". **There is no development
+bypass** — `INTERNAL_DEV_BYPASS` and the `source: "dev"` identity were removed, and the same
+verification path runs locally and in production. `verifyAccessJwt` accepts injected signing
+keys so tests can verify real signatures without network access.
 
 ### 4.9 Private API
 
@@ -156,12 +187,13 @@ All commands run locally on Windows against local Miniflare D1.
 | --- | --- | --- |
 | Types | `npx tsc --noEmit` | clean |
 | Lint | `npm run lint` | clean |
-| Unit tests | `npm run test` | 10 passed, 0 failed |
+| Unit tests | `npm run test` | 28 passed, 0 failed (10 domain + 18 Access) |
 | Next build | `npm run build` | public routes static, `/internal/*` and `/api/*` dynamic |
 | Worker build | `npx opennextjs-cloudflare build` | `Worker saved in .open-next\worker.js` |
 | Migration | `npx wrangler d1 migrations apply LEADS_DB --local` | `0001_init.sql` applied |
 
-Integration (via `wrangler dev --local`, dev bypass on):
+Integration (earlier pass, via `wrangler dev --local` while a dev bypass still existed; that
+bypass has since been removed):
 
 - Valid submit → `{"ok":true,"duplicate":false,"leadNumber":"BC-2026-000001",...}`.
 - Same idempotency key → `duplicate:true`, one lead row.
@@ -175,7 +207,7 @@ Integration (via `wrangler dev --local`, dev bypass on):
 - Per-IP rate limit triggered after repeated submissions → HTTP 429.
 - Challenge-only `GET /api/enquiries` → HTTP 405.
 
-Fail-closed auth (dev bypass removed, `.dev.vars` renamed):
+Fail-closed auth (no bypass exists; `.dev.vars` has empty team domain and audiences):
 
 | Endpoint | Expected | Observed |
 | --- | --- | --- |
@@ -185,6 +217,28 @@ Fail-closed auth (dev bypass removed, `.dev.vars` renamed):
 | `GET /api/internal/notifications` | 401 | 401 |
 | `POST /api/internal/notifications/retry` | 401 | 401 |
 | `GET /internal/leads` | sign-in prompt, no data | `signInRequired=True leaksLead=False leaksEmail=False` |
+
+Access audience and JWT suite (`tests/access-auth.test.ts`, real RSA keys, injected into the
+verifier) — the 16 required cases:
+
+| # | Case | Result |
+| --- | --- | --- |
+| 1 | Dashboard token rejected on an API route | pass |
+| 2 | API token rejected on the dashboard | pass |
+| 3 | Correct dashboard token authorises only the dashboard | pass |
+| 4 | Correct API token authorises only the API | pass |
+| 5 | Missing audience configuration fails closed | pass |
+| 6 | Invalid signature (forged key, tampered signature, `alg: none`) rejected | pass |
+| 7 | Invalid issuer rejected | pass |
+| 8 | Invalid audience rejected | pass |
+| 9 | Expired JWT rejected | pass |
+| 10 | Missing/`nbf`/`iat` time claims handled securely | pass |
+| 11 | Anonymous access denied on every internal API route | pass |
+| 12 | Base and descendant routes both guarded | pass |
+| 13 | Public site pages stay public | pass |
+| 14 | Public enquiry endpoint stays public | pass |
+| 15 | No development bypass present anywhere in `src` | pass |
+| 16 | Auth errors contain no lead information | pass |
 
 `generate_lead` placement was confirmed by inspection: the call sits inside
 `if (response.ok && data.ok)` in both `ContactForm.tsx` and `QuickEnquiry.tsx`, guarded by
@@ -213,14 +267,18 @@ These are the only remaining steps to go live. The code is complete and committe
    set up the Cloudflare identity provider. Confirm the owner can sign in with
    `bloomcoretechnologies@gmail.com` (the Cloudflare account email shown by
    `wrangler whoami`).
-2. Create two self-hosted Access applications on `bloomcoretech.com`:
-   - `/internal` (covers `/internal/*`)
-   - `/api/internal` (covers `/api/internal/*`)
-3. For each, add an **Allow** policy for the single owner email. Deny everyone else. Set a
-   finite session duration and require the account's MFA.
+2. Create **two** self-hosted Access applications on `bloomcoretech.com`. Enter **both** the
+   bare path and the wildcard so the base route and descendants are covered:
+   - Dashboard: domain `bloomcoretech.com`, path `/internal` **and** `/internal/*`
+   - Internal API: domain `bloomcoretech.com`, path `/api/internal` **and** `/api/internal/*`
+3. For each application, add an **Allow** policy for the single owner email
+   (`bloomcoretechnologies@gmail.com`), deny everyone else, set a finite session duration
+   (for example 8–24 h), and require MFA on the owner's Cloudflare identity.
 4. Copy each application's **Application Audience (AUD) tag** and set the Worker vars:
-   - `CF_ACCESS_TEAM_DOMAIN` = the team domain
-   - `CF_ACCESS_AUD` = the AUD tag
+   - `CF_ACCESS_TEAM_DOMAIN` = the team domain, e.g. `https://<team>.cloudflareaccess.com`
+   - `CF_ACCESS_AUD_INTERNAL` = the **dashboard** application's AUD tag
+   - `CF_ACCESS_AUD_API` = the **internal API** application's AUD tag
+   The two AUD values are different. Do not reuse one value for both.
 5. Optionally disable the `*.workers.dev` route, or add an Access application for it too.
    (The Worker already returns 401 there without a valid JWT, so this is defence in depth.)
 
@@ -252,10 +310,10 @@ system is **Cloudflare-only**. Never build a production Cloudflare deploy with `
 
 | Area | Status | Note |
 | --- | --- | --- |
-| Code, schema, tests, builds | GREEN | Type, lint, unit, Next and Worker builds all pass. |
-| Local end-to-end behaviour | GREEN | Verified against local D1, including fail-closed auth. |
+| Code, schema, tests, builds | GREEN | Type, lint, unit (28), Next and Worker builds all pass. |
+| Local end-to-end behaviour | GREEN | Verified against local D1 and the Worker preview, including fail-closed auth. |
 | Production D1 | AMBER | Code complete; owner must create the database and paste the id. |
-| Cloudflare Access | AMBER | Code complete and fail-closed; owner must create the app, policy and vars. |
+| Cloudflare Access | AMBER | Two-audience code complete and fail-closed; owner must create **both** apps, policies and the two AUD vars. |
 | Resend email | AMBER | Code complete and durable; owner must verify the domain, add DNS and set the key. |
 | Public site, SEO, analytics | GREEN | Routes unchanged; GTM/GA4 and consent behaviour untouched. |
 
@@ -280,7 +338,7 @@ No production change has been made. No DNS, subscription or purchase action was 
 `src/components/internal/LeadActions.tsx`, `src/components/internal/NotificationActions.tsx`.
 
 **Added — shell and tests:** `src/components/SiteChrome.tsx`, `src/app/(site)/layout.tsx`,
-`tests/domain.test.ts`, `docs/plans/lead-management-foundation.md`.
+`tests/domain.test.ts`, `tests/access-auth.test.ts`, `docs/plans/lead-management-foundation.md`.
 
 **Moved:** all public pages under `src/app/(site)/` (URLs unchanged).
 

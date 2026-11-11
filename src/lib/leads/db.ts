@@ -43,9 +43,11 @@ export type LeadEnv = {
   DASHBOARD_ORIGIN?: string;
   SITE_URL?: string;
   CF_ACCESS_TEAM_DOMAIN?: string;
-  CF_ACCESS_AUD?: string;
+  /** Audience of the dashboard Access application (`/internal`). */
+  CF_ACCESS_AUD_INTERNAL?: string;
+  /** Audience of the internal API Access application (`/api/internal`). */
+  CF_ACCESS_AUD_API?: string;
   INTERNAL_ALLOWED_EMAILS?: string;
-  INTERNAL_DEV_BYPASS?: string;
 };
 
 export async function getLeadEnv(): Promise<LeadEnv> {

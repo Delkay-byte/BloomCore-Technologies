@@ -48,7 +48,6 @@ export default async function InternalLayout({ children }: { children: React.Rea
             {identity ? (
               <span className="max-w-[240px] truncate" title={identity.email}>
                 {identity.email}
-                {identity.source === "dev" && " (dev)"}
               </span>
             ) : (
               <span>Not signed in</span>

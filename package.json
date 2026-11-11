@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "node --test tests/domain.test.ts",
+    "test": "node --test tests/domain.test.ts tests/access-auth.test.ts",
     "db:migrate:local": "wrangler d1 migrations apply LEADS_DB --local",
     "db:migrate:remote": "wrangler d1 migrations apply LEADS_DB --remote",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",

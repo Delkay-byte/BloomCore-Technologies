@@ -8,6 +8,6 @@ export type CurrentStaff = { env: LeadEnv; identity: StaffIdentity | null };
 export async function currentStaff(): Promise<CurrentStaff> {
   const requestHeaders = await headers();
   const env = await getLeadEnv();
-  const identity = await getStaffIdentity({ headers: requestHeaders }, env);
+  const identity = await getStaffIdentity({ headers: requestHeaders }, env, "internal");
   return { env, identity };
 }

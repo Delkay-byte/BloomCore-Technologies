@@ -25,9 +25,11 @@
     "EMAIL_FROM": "BloomCore Technologies <enquiries@bloomcoretech.com>",
     "EMAIL_REPLY_TO": "bloomcoretechnologies@gmail.com",
     "INTERNAL_ALLOWED_EMAILS": "bloomcoretechnologies@gmail.com",
-    // Filled in when the Cloudflare Access application is created. See the report.
+    // Filled in when the Cloudflare Access applications are created. See the report.
+    // One audience per Access application: dashboard vs internal API.
     "CF_ACCESS_TEAM_DOMAIN": "",
-    "CF_ACCESS_AUD": ""
+    "CF_ACCESS_AUD_INTERNAL": "",
+    "CF_ACCESS_AUD_API": ""
   },
   "services": [
     {
