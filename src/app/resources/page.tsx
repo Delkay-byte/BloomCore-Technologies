@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { JsonLd } from "@/components/JsonLd";
-import { ArrowLink, Container, Eyebrow, PageHero } from "@/components/Page";
-import { Reveal } from "@/components/Reveal";
+import { ArrowLink, Container, PageHero } from "@/components/Page";
 import { BRAND, ROUTES } from "@/lib/brand";
 import { RESOURCE_CATEGORIES, RESOURCES } from "@/lib/resources";
 import { breadcrumbSchema, HOME_CRUMB } from "@/lib/seo";
@@ -49,40 +48,40 @@ export default function ResourcesPage() {
         breadcrumbs={breadcrumbs}
       />
 
-      <section className="border-b border-border bg-muted py-12">
+      <section className="bg-surface-2 py-8">
         <Container>
-          <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3">
+            <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
               Topics
             </p>
             {RESOURCE_CATEGORIES.map((category) => (
-              <span key={category} className="text-sm text-foreground-subtle">
+              <span key={category} className="text-[0.9375rem] text-foreground-subtle">
                 {category}
               </span>
             ))}
-            <span className="text-sm text-foreground-faint">
+            <span className="text-[0.9375rem] text-foreground-faint">
               {RESOURCES.length} published {RESOURCES.length === 1 ? "guide" : "guides"}
             </span>
           </div>
         </Container>
       </section>
 
-      <section className="bg-background py-16 sm:py-20">
+      <section className="bg-surface py-16 sm:py-20 lg:py-24">
         <Container>
-          <div className="grid gap-8">
-            {RESOURCES.map((article, index) => (
-              <Reveal key={article.slug} delay={index * 0.05}>
-                <article className="grid gap-5 border-b border-border pb-8 last:border-b-0 last:pb-0 lg:grid-cols-12 lg:gap-10">
+          <ul>
+            {RESOURCES.map((article) => (
+              <li key={article.slug}>
+                <article className="grid gap-4 py-8 lg:grid-cols-12 lg:gap-10">
                   <div className="lg:col-span-3">
-                    <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
+                    <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
                       {article.category}
                     </p>
-                    <p className="mt-2 text-xs text-foreground-faint">
+                    <p className="mt-2 text-[0.8125rem] text-foreground-faint">
                       {formatDate(article.published)} · {article.readingMinutes} min read
                     </p>
                   </div>
                   <div className="lg:col-span-9">
-                    <h2 className="text-2xl font-semibold tracking-tight text-balance">
+                    <h2 className="h3 text-balance">
                       <Link
                         href={`${ROUTES.resources}/${article.slug}`}
                         className="underline-offset-4 hover:underline"
@@ -90,7 +89,7 @@ export default function ResourcesPage() {
                         {article.title}
                       </Link>
                     </h2>
-                    <p className="mt-3 max-w-3xl text-base leading-7 text-foreground-subtle">
+                    <p className="mt-3 max-w-3xl text-[1rem] leading-7 text-foreground-subtle">
                       {article.description}
                     </p>
                     <div className="mt-4">
@@ -100,21 +99,20 @@ export default function ResourcesPage() {
                     </div>
                   </div>
                 </article>
-              </Reveal>
+              </li>
             ))}
-          </div>
+          </ul>
 
-          <div className="mt-14 rounded-lg border border-border bg-muted p-6 sm:p-8">
-            <Eyebrow>How this section works</Eyebrow>
-            <h2 className="mt-3 text-xl font-semibold tracking-tight sm:text-2xl">
-              Quality before volume
-            </h2>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-foreground-subtle">
-              We publish when there is something specific to explain, not on a fixed schedule. Each
-              guide is tied to a real product workflow and states its limits. Where a product is not
-              released, the guide says so.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-4">
+          <div className="mt-12 grid gap-8 bg-background p-6 sm:p-10 lg:grid-cols-12 lg:items-center lg:gap-12">
+            <div className="lg:col-span-8">
+              <h2 className="h3">Quality before volume</h2>
+              <p className="mt-3 max-w-2xl text-[1rem] leading-7 text-foreground-subtle">
+                We publish when there is something specific to explain, not on a fixed schedule.
+                Each guide is tied to a real product workflow and states its limits. Where a product
+                is not released, the guide says so.
+              </p>
+            </div>
+            <div className="flex flex-col gap-4 lg:col-span-4 lg:items-end">
               <ArrowLink href={ROUTES.products}>Explore the products</ArrowLink>
               <ArrowLink href={ROUTES.contact}>Ask a question</ArrowLink>
             </div>

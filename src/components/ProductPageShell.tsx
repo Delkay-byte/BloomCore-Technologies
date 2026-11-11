@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { ArrowLink, Container, Eyebrow, PageHero, StatusBadge } from "@/components/Page";
+import { ArrowLink, Container, PageHero, StatusBadge } from "@/components/Page";
 import { JsonLd } from "@/components/JsonLd";
-import { ProductMockup } from "@/components/ProductMockup";
-import { Reveal } from "@/components/Reveal";
+import { ProductFragment } from "@/components/ProductFragments";
 import { ViewTracker } from "@/components/ViewTracker";
 import { ButtonLink } from "@/components/ui/Button";
 import { CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
@@ -51,17 +50,18 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
         })}
       />
       <ViewTracker event="product_page_view" params={{ product_name: product.name }} />
+
       <PageHero
-        eyebrow={`${detail.category}`}
+        eyebrow={detail.category}
         title={product.name}
         lead={detail.lead}
         breadcrumbs={breadcrumbs}
       >
-        <div className="mt-8 flex flex-wrap items-center gap-4">
+        <div className="mt-8 flex flex-wrap items-center gap-5">
           <StatusBadge label={detail.statusLabel} tone={detail.statusTone} />
           <ButtonLink
             href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${product.name}`)}`}
-            size="sm"
+            size="md"
             data-analytics="product_cta_click"
             data-product={product.name}
             data-location="hero_enquiry"
@@ -72,74 +72,59 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
         </div>
       </PageHero>
 
-      <section className="border-b border-border bg-background py-14 sm:py-16">
-        <Container>
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+      <section className="bg-surface py-16 sm:py-20 lg:py-24">
+        <Container width="wide">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-start lg:gap-14">
             <div className="lg:col-span-5">
-              <Eyebrow>Overview</Eyebrow>
-              <div className="mt-4 flex flex-col gap-4 text-base leading-7 text-foreground-subtle">
+              <h2 className="h2 max-w-[14ch]">What it does</h2>
+              <div className="mt-7 flex flex-col gap-4 text-[1.0625rem] leading-7 text-foreground-subtle">
                 {detail.overview.map((paragraph) => (
                   <p key={paragraph.slice(0, 40)}>{paragraph}</p>
                 ))}
               </div>
-              <dl className="mt-8 divide-y divide-border border-y border-border">
+              <dl className="mt-9">
                 {detail.meta.map((item) => (
-                  <div key={item.term} className="flex items-start justify-between gap-4 py-3">
-                    <dt className="font-mono text-[10px] tracking-[0.12em] text-foreground-faint uppercase">
+                  <div
+                    key={item.term}
+                    className="grid grid-cols-[minmax(0,0.7fr)_minmax(0,1fr)] items-baseline gap-4 py-3.5"
+                  >
+                    <dt className="text-[0.8125rem] font-medium tracking-[0.1em] text-foreground-faint uppercase">
                       {item.term}
                     </dt>
-                    <dd className="text-right text-sm text-foreground-subtle">{item.detail}</dd>
+                    <dd className="text-[0.9375rem] text-foreground-subtle">{item.detail}</dd>
                   </div>
                 ))}
               </dl>
             </div>
             <div className="lg:col-span-7">
-              <Reveal>
-                <ProductMockup kind={detail.slug} />
-              </Reveal>
+              <ProductFragment kind={detail.slug} />
+              <p className="mt-3 text-[0.8125rem] leading-5 text-foreground-faint">
+                Representative interface built from documented capabilities. Not a screenshot of a
+                customer environment.
+              </p>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="border-b border-border bg-muted py-14 sm:py-16">
-        <Container>
-          <div className="max-w-3xl">
-            <Eyebrow>Capabilities</Eyebrow>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-              What the product does
-            </h2>
-          </div>
-          <div className="mt-10 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-            {detail.capabilities.map((capability, index) => (
-              <div key={capability.title} className="bg-background p-5">
-                <span className="font-mono text-[10px] text-foreground-faint">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-2 text-sm font-semibold text-foreground">{capability.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-foreground-subtle">{capability.detail}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <section className="border-b border-border bg-background py-14 sm:py-16">
+      <section className="bg-background py-16 sm:py-20 lg:py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
-            <div className="lg:col-span-5">
-              <Eyebrow>Who it serves</Eyebrow>
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Roles the product is designed around
-              </h2>
+            <div className="lg:col-span-4">
+              <h2 className="h2 max-w-[12ch]">Capabilities</h2>
+              <p className="lead mt-6 max-w-[30ch] text-foreground-subtle">
+                The parts of the product this page is prepared to describe.
+              </p>
             </div>
-            <div className="lg:col-span-7">
-              <ul className="divide-y divide-border border-y border-border">
-                {detail.audience.map((item) => (
-                  <li key={item.role} className="grid gap-1 py-4 sm:grid-cols-3 sm:gap-4">
-                    <p className="text-sm font-semibold text-foreground">{item.role}</p>
-                    <p className="text-sm leading-6 text-foreground-subtle sm:col-span-2">
-                      {item.detail}
+            <div className="lg:col-span-8">
+              <ul className="grid gap-x-10 sm:grid-cols-2">
+                {detail.capabilities.map((capability) => (
+                  <li key={capability.title} className="py-5">
+                    <h3 className="text-[1.1rem] font-semibold text-foreground">
+                      {capability.title}
+                    </h3>
+                    <p className="mt-2 text-[0.9375rem] leading-6 text-foreground-subtle">
+                      {capability.detail}
                     </p>
                   </li>
                 ))}
@@ -149,31 +134,52 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
         </Container>
       </section>
 
-      <section className="border-b border-border bg-muted py-14 sm:py-16">
+      <section className="bg-surface-2 py-16 sm:py-20 lg:py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
-            <div className="lg:col-span-5">
-              <Eyebrow>Boundaries</Eyebrow>
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                What we do not claim
-              </h2>
-              <p className="mt-4 text-sm leading-6 text-foreground-subtle">
+            <div className="lg:col-span-4">
+              <h2 className="h2 max-w-[14ch]">Who it serves</h2>
+              <p className="lead mt-6 max-w-[30ch] text-foreground-subtle">
+                The roles the product is designed around, not a target market.
+              </p>
+            </div>
+            <div className="lg:col-span-8">
+              <dl>
+                {detail.audience.map((item) => (
+                  <div
+                    key={item.role}
+                    className="grid gap-1 py-5 sm:grid-cols-12 sm:gap-6"
+                  >
+                    <dt className="text-[1.05rem] font-semibold text-foreground sm:col-span-4">
+                      {item.role}
+                    </dt>
+                    <dd className="text-[0.9375rem] leading-6 text-foreground-subtle sm:col-span-8">
+                      {item.detail}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-accent py-16 text-accent-contrast sm:py-20 lg:py-24">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-4">
+              <h2 className="h2 max-w-[12ch] text-accent-contrast">What we do not claim</h2>
+              <p className="mt-6 max-w-[30ch] text-[1rem] leading-7 text-accent-contrast/70">
                 Stating limits plainly is part of the product. These are the boundaries we hold
                 ourselves to when describing this software.
               </p>
             </div>
-            <div className="lg:col-span-7">
-              <ul className="flex flex-col gap-3">
+            <div className="lg:col-span-8">
+              <ul className="flex flex-col gap-6">
                 {detail.limits.map((limit) => (
-                  <li
-                    key={limit.slice(0, 40)}
-                    className="flex items-start gap-3 rounded-lg border border-border bg-background p-4"
-                  >
-                    <span
-                      aria-hidden="true"
-                      className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-foreground-faint"
-                    />
-                    <span className="text-sm leading-6 text-foreground-subtle">{limit}</span>
+                  <li key={limit.slice(0, 40)} className="flex items-start gap-4">
+                    <span aria-hidden="true" className="mt-3 h-1.5 w-1.5 shrink-0 bg-gold" />
+                    <span className="text-[1rem] leading-7 text-accent-contrast/85">{limit}</span>
                   </li>
                 ))}
               </ul>
@@ -183,68 +189,62 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
       </section>
 
       {detail.launch && (
-        <section className="border-b border-border bg-surface py-14 text-[#F5F5F5] sm:py-16">
+        <section className="bg-gold py-16 text-[#15170f] sm:py-20">
           <Container>
-            <div className="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between sm:gap-10">
-              <div className="max-w-2xl">
-                <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-neutral-400 uppercase">
-                  Open the application
-                </p>
-                <h2 className="mt-4 text-2xl font-semibold tracking-tight text-balance text-neutral-50 sm:text-3xl">
-                  {product.name} runs as a separate web application
-                </h2>
-                <p className="mt-3 text-sm leading-6 text-neutral-400">
+            <div className="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
+              <div className="lg:col-span-8">
+                <h2 className="h2 max-w-[20ch]">{product.name} runs as a separate application</h2>
+                <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-[#15170f]/75">
                   Continue to the live product in a new tab. This page stays open in your current
                   tab, so you can return to the product information at any time.
                 </p>
               </div>
-              <ButtonLink
-                href={detail.launch.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                size="lg"
-                aria-label={`${detail.launch.label} (opens in a new tab)`}
-                className="shrink-0 !bg-white !text-neutral-900 hover:!bg-neutral-200"
-                data-analytics="product_outbound_click"
-                data-product={product.name}
-                data-location="product_launch"
-                data-destination="product_application"
-              >
-                {detail.launch.label}
-                <span aria-hidden="true">&rarr;</span>
-              </ButtonLink>
+              <div className="lg:col-span-4 lg:text-right">
+                <ButtonLink
+                  href={detail.launch.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  size="lg"
+                  aria-label={`${detail.launch.label} (opens in a new tab)`}
+                  className="!bg-[#15170f] !text-[#f7f4ec] hover:!bg-[#084235]"
+                  data-analytics="product_outbound_click"
+                  data-product={product.name}
+                  data-location="product_launch"
+                  data-destination="product_application"
+                >
+                  {detail.launch.label}
+                  <span aria-hidden="true">&rarr;</span>
+                </ButtonLink>
+              </div>
             </div>
           </Container>
         </section>
       )}
 
-      <section className="border-b border-border bg-background py-14 sm:py-16">
+      <section className="bg-background py-16 sm:py-20 lg:py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <Eyebrow>Questions</Eyebrow>
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Answers before you enquire
-              </h2>
-              <p className="mt-4 text-sm leading-6 text-foreground-subtle">
+              <h2 className="h2 max-w-[10ch]">Questions</h2>
+              <p className="lead mt-6 max-w-[30ch] text-foreground-subtle">
                 If your question is not covered here, send it directly. A specific question gets a
                 specific answer.
               </p>
             </div>
             <div className="lg:col-span-8">
-              <div className="divide-y divide-border border-y border-border">
+              <div>
                 {detail.faqs.map((faq) => (
-                  <details key={faq.question} className="group py-4">
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
+                  <details key={faq.question} className="group py-5">
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-[1.05rem] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
                       {faq.question}
                       <span
                         aria-hidden="true"
-                        className="mt-0.5 shrink-0 font-mono text-foreground-faint transition-transform duration-200 group-open:rotate-45"
+                        className="mt-0.5 shrink-0 text-[1.2rem] leading-none text-foreground-faint transition-transform duration-200 group-open:rotate-45"
                       >
                         +
                       </span>
                     </summary>
-                    <p className="mt-3 max-w-3xl text-sm leading-6 text-foreground-subtle">
+                    <p className="mt-3 max-w-3xl text-[0.9375rem] leading-6 text-foreground-subtle">
                       {faq.answer}
                     </p>
                   </details>
@@ -255,31 +255,45 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
         </Container>
       </section>
 
-      <section className="border-b border-border bg-background py-14 sm:py-16">
+      <section className="bg-surface-2 py-16 sm:py-20">
         <Container>
-          <Eyebrow>Other products</Eyebrow>
-          <div className="mt-6 grid gap-6 sm:grid-cols-2">
-            {others.map((product) => (
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
+            <h2 className="h2 max-w-[14ch]">The other products</h2>
+            <ArrowLink href={ROUTES.products}>All products</ArrowLink>
+          </div>
+          <div className="mt-10 grid gap-6 sm:grid-cols-2">
+            {others.map((other) => (
               <Link
-                key={product.slug}
-                href={hrefs[product.slug]}
-                className="group flex flex-col justify-between rounded-lg border border-border p-6 transition-colors hover:border-foreground/25"
+                key={other.slug}
+                href={hrefs[other.slug]}
+                className="group flex flex-col justify-between gap-8 bg-background p-6 sm:p-8"
               >
                 <div>
-                  <span className="font-mono text-[10px] tracking-[0.12em] text-foreground-faint uppercase">
-                    {product.category}
-                  </span>
-                  <h3 className="mt-3 text-lg font-semibold text-foreground">{product.name}</h3>
-                  <p className="mt-2 text-sm leading-6 text-foreground-subtle">{product.short}</p>
+                  <div className="flex flex-wrap items-center justify-between gap-3">
+                    <p className="text-[0.8125rem] font-medium tracking-[0.1em] text-foreground-faint uppercase">
+                      {other.category}
+                    </p>
+                    <span className="text-[0.8125rem] text-foreground-faint">
+                      {other.statusLabel}
+                    </span>
+                  </div>
+                  <h3 className="h3 mt-4 text-foreground underline-offset-4 group-hover:underline">
+                    {other.name}
+                  </h3>
+                  <p className="mt-3 text-[0.9375rem] leading-6 text-foreground-subtle">
+                    {other.short}
+                  </p>
                 </div>
-                <span className="mt-5 inline-flex items-center gap-2 text-sm font-medium text-foreground">
+                <span className="inline-flex items-center gap-3 text-[0.9375rem] font-medium text-foreground">
                   View product
-                  <span
-                    aria-hidden="true"
-                    className="transition-transform duration-200 group-hover:translate-x-1"
-                  >
-                    &rarr;
-                  </span>
+                  <svg width="17" height="12" viewBox="0 0 17 12" fill="none" aria-hidden="true">
+                    <path
+                      d="M1 6h14M10.5 1.5 15 6l-4.5 4.5"
+                      stroke="currentColor"
+                      strokeWidth="1.6"
+                      className="transition-transform duration-200 group-hover:translate-x-1"
+                    />
+                  </svg>
                 </span>
               </Link>
             ))}
@@ -287,22 +301,16 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
         </Container>
       </section>
 
-      <section className="bg-surface py-16 text-[#F5F5F5] sm:py-20">
-        <Container width="narrow" className="text-center">
-          <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-neutral-400 uppercase">
-            Enquiries
-          </p>
-          <h2 className="mt-4 text-2xl font-semibold tracking-tight text-balance text-neutral-50 sm:text-3xl">
-            Ask us whether this fits your situation
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-sm leading-6 text-neutral-400">
+      <section className="bg-background py-20 sm:py-24">
+        <Container width="narrow">
+          <h2 className="h2 max-w-[18ch]">Ask us whether this fits your situation</h2>
+          <p className="lead mt-6 max-w-xl text-foreground-subtle">
             We would rather tell you a product is the wrong fit than sell it to you. Send a short
             description of what you need it to do.
           </p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row">
             <ButtonLink
               href={`mailto:${CONTACT.email}?subject=${encodeURIComponent(`Enquiry about ${product.name}`)}`}
-              className="!bg-white !text-neutral-900 hover:!bg-neutral-200"
               size="lg"
               data-analytics="product_cta_click"
               data-product={product.name}
@@ -310,12 +318,7 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
             >
               Email BloomCore Technologies
             </ButtonLink>
-            <ButtonLink
-              href={ROUTES.contact}
-              variant="outline"
-              size="lg"
-              className="!border-neutral-700 !text-neutral-100 hover:!bg-neutral-900"
-            >
+            <ButtonLink href={ROUTES.contact} variant="outline" size="lg">
               All contact details
             </ButtonLink>
           </div>

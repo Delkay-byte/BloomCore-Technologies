@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
-import { ArrowLink, Container, DefinitionList, Eyebrow, PageHero, Prose } from "@/components/Page";
-import { Reveal } from "@/components/Reveal";
+import { ArrowLink, Container, DefinitionList, PageHero, Prose } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, ROUTES } from "@/lib/brand";
 
@@ -85,15 +84,34 @@ const engineering = [
   },
 ];
 
+const industries = [
+  {
+    sector: "Education",
+    body: "Curriculum-aligned planning tools for teachers, and reporting built from school performance data.",
+  },
+  {
+    sector: "Business operations",
+    body: "Multi-location administration, staff roles, mobile-money records and savings collection workflows.",
+  },
+  {
+    sector: "Retail",
+    body: "Stock visibility, controlled pricing and cash accountability for shops operating across locations.",
+  },
+  {
+    sector: "Small enterprises",
+    body: "Custom tools for workflows that do not fit general-purpose products, built to be maintained.",
+  },
+];
+
 export default function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow="About BloomCore Technologies"
+        eyebrow="About the company"
         title="A technology business built in Ghana, for the way business here actually works"
         lead="BloomCore Technologies develops its own software products and delivers digital technology solutions to businesses and institutions. The company is deliberately small, deliberately focused, and honest about what it has and has not built."
       >
-        <div className="mt-10 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <ButtonLink href={ROUTES.products}>See the products</ButtonLink>
           <ButtonLink href={ROUTES.contact} variant="outline">
             Contact the company
@@ -101,14 +119,11 @@ export default function AboutPage() {
         </div>
       </PageHero>
 
-      <section className="border-b border-border bg-background py-16 sm:py-20">
+      <section className="bg-surface py-16 sm:py-20 lg:py-24">
         <Container>
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <Eyebrow>Purpose</Eyebrow>
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Why the company exists
-              </h2>
+              <h2 className="h2 max-w-[10ch]">Why the company exists</h2>
             </div>
             <div className="lg:col-span-8">
               <Prose>
@@ -134,38 +149,36 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      <section className="border-b border-border bg-surface py-16 text-[#F5F5F5] sm:py-20">
+      <section className="bg-accent py-16 text-accent-contrast sm:py-20 lg:py-24">
         <Container>
-          <div className="grid gap-10 lg:grid-cols-12 lg:gap-16">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-neutral-400 uppercase">
-                Mission and vision
-              </p>
+              <h2 className="h2 max-w-[12ch] text-accent-contrast">Mission and vision</h2>
             </div>
             <div className="lg:col-span-8">
               <div className="grid gap-10 sm:grid-cols-2">
                 <div>
-                  <h2 className="text-lg font-semibold text-neutral-50">Mission</h2>
-                  <p className="mt-3 text-sm leading-6 text-neutral-400">
+                  <h3 className="text-[1.2rem] font-semibold text-accent-contrast">Mission</h3>
+                  <p className="mt-3 text-[1rem] leading-7 text-accent-contrast/75">
                     To build and operate practical software products for African businesses and
                     institutions, beginning in Ghana — pricing them so the customers who need them
                     can afford them, and running the company so it can keep serving them.
                   </p>
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-neutral-50">Vision</h2>
-                  <p className="mt-3 text-sm leading-6 text-neutral-400">
+                  <h3 className="text-[1.2rem] font-semibold text-accent-contrast">Vision</h3>
+                  <p className="mt-3 text-[1rem] leading-7 text-accent-contrast/75">
                     A Ghana where any business or school — whatever its size — can run on software
                     that is reliable, affordable and made with its reality in mind. We build toward
                     that picture one product at a time.
                   </p>
                 </div>
               </div>
-              <div className="mt-10 border-t border-surface-border pt-8">
-                <h2 className="text-lg font-semibold text-neutral-50">
+              <div className="mt-10">
+                <h3 className="text-[1.2rem] font-semibold text-accent-contrast">
                   How we judge ourselves
-                </h2>
-                <p className="mt-3 max-w-2xl text-sm leading-6 text-neutral-400">
+                </h3>
+                <p className="mt-3 max-w-2xl text-[1rem] leading-7 text-accent-contrast/75">
                   The company is succeeding when customers renew and recommend the products, when
                   the products stay dependable, when the team stays intact and growing in skill, and
                   when the finances remain solvent and understood. Those are commitments, not
@@ -177,79 +190,67 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      <section className="border-b border-border bg-background py-16 sm:py-20">
+      <section className="bg-background py-16 sm:py-20 lg:py-24">
         <Container>
-          <Reveal>
-            <div className="max-w-3xl">
-              <Eyebrow>Values</Eyebrow>
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Standards used when decisions are hard
-              </h2>
-              <p className="mt-4 text-base leading-7 text-foreground-subtle">
-                These are operating standards rather than decoration. When values conflict, the
-                order of consideration is legality and safety first, honesty always, customer trust
-                next, then commercial interest.
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-4">
+              <h2 className="h2 max-w-[10ch]">Values</h2>
+              <p className="lead mt-6 max-w-[30ch] text-foreground-subtle">
+                Operating standards rather than decoration. When they conflict, the order is
+                legality and safety first, honesty always, customer trust next, then commercial
+                interest.
               </p>
             </div>
-          </Reveal>
-
-          <div className="mt-12 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2 lg:grid-cols-3">
-            {values.map((value, index) => (
-              <div key={value.name} className="bg-background p-6">
-                <span className="font-mono text-[10px] text-foreground-faint">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-3 text-base font-semibold text-foreground">{value.name}</h3>
-                <p className="mt-2 text-sm leading-6 text-foreground-subtle">{value.detail}</p>
-              </div>
-            ))}
+            <div className="lg:col-span-8">
+              <dl className="grid gap-x-10 sm:grid-cols-2">
+                {values.map((value) => (
+                  <div key={value.name} className="py-5">
+                    <dt className="text-[1.1rem] font-semibold text-foreground">{value.name}</dt>
+                    <dd className="mt-2 text-[0.9375rem] leading-6 text-foreground-subtle">
+                      {value.detail}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
         </Container>
       </section>
 
-      <section className="border-b border-border bg-muted py-16 sm:py-20">
+      <section className="bg-surface-2 py-16 sm:py-20 lg:py-24">
         <Container>
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <Eyebrow>Engineering approach</Eyebrow>
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                How a change moves from idea to production
-              </h2>
-              <p className="mt-4 text-sm leading-6 text-foreground-subtle">
+              <h2 className="h2 max-w-[14ch]">How a change reaches production</h2>
+              <p className="lead mt-6 max-w-[30ch] text-foreground-subtle">
                 The process stays light because the team is small. What it insists on is smallness
                 of change, a second pair of eyes, and reversibility.
               </p>
             </div>
             <div className="lg:col-span-8">
-              <ol className="divide-y divide-border border-y border-border">
-                {engineering.map((item, index) => (
-                  <li key={item.step} className="grid gap-2 py-5 sm:grid-cols-12 sm:gap-6">
-                    <div className="sm:col-span-4">
-                      <span className="font-mono text-[10px] text-foreground-faint">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <p className="mt-1 text-sm font-semibold text-foreground">{item.step}</p>
-                    </div>
-                    <p className="text-sm leading-6 text-foreground-subtle sm:col-span-8">
+              <dl>
+                {engineering.map((item) => (
+                  <div key={item.step} className="grid gap-1 py-5 sm:grid-cols-12 sm:gap-6">
+                    <dt className="text-[1.05rem] font-semibold text-foreground sm:col-span-4">
+                      {item.step}
+                    </dt>
+                    <dd className="text-[0.9375rem] leading-6 text-foreground-subtle sm:col-span-8">
                       {item.detail}
-                    </p>
-                  </li>
+                    </dd>
+                  </div>
                 ))}
-              </ol>
+              </dl>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="border-b border-border bg-background py-16 sm:py-20">
+      <section className="bg-background py-16 sm:py-20 lg:py-24">
         <Container>
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <Eyebrow>Problem solving</Eyebrow>
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                We listen before we build
-              </h2>
-              <p className="mt-4 text-sm leading-6 text-foreground-subtle">
+              <h2 className="h2 max-w-[12ch]">We listen before we build</h2>
+              <p className="lead mt-6 max-w-[30ch] text-foreground-subtle">
                 The people closest to a problem already understand it. Our work is to write it down
                 clearly, then build the smallest thing that removes it.
               </p>
@@ -284,55 +285,34 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      <section className="bg-background py-16 sm:py-20">
+      <section className="bg-surface py-16 sm:py-20 lg:py-24">
         <Container>
-          <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <Eyebrow>Industries</Eyebrow>
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                Where our work is applied
-              </h2>
+              <h2 className="h2 max-w-[12ch]">Where the work is applied</h2>
             </div>
             <div className="lg:col-span-8">
-              <div className="grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-2">
-                {[
-                  {
-                    sector: "Education",
-                    body: "Curriculum-aligned planning tools for teachers, and reporting built from school performance data.",
-                  },
-                  {
-                    sector: "Business operations",
-                    body: "Multi-location administration, staff roles, mobile-money records and savings collection workflows.",
-                  },
-                  {
-                    sector: "Retail",
-                    body: "Stock visibility, controlled pricing and cash accountability for shops operating across locations.",
-                  },
-                  {
-                    sector: "Small enterprises",
-                    body: "Custom tools for workflows that do not fit general-purpose products, built to be maintained.",
-                  },
-                ].map((item) => (
-                  <div key={item.sector} className="bg-background p-6">
-                    <h3 className="text-base font-semibold text-foreground">{item.sector}</h3>
-                    <p className="mt-2 text-sm leading-6 text-foreground-subtle">{item.body}</p>
+              <dl className="grid gap-x-10 sm:grid-cols-2">
+                {industries.map((item) => (
+                  <div key={item.sector} className="py-5">
+                    <dt className="text-[1.1rem] font-semibold text-foreground">{item.sector}</dt>
+                    <dd className="mt-2 text-[0.9375rem] leading-6 text-foreground-subtle">
+                      {item.body}
+                    </dd>
                   </div>
                 ))}
-              </div>
+              </dl>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="border-t border-border bg-muted py-16 sm:py-20">
-        <Container width="narrow">
-          <div className="rounded-lg border border-border bg-background p-6 sm:p-10">
-            <Eyebrow>What this page does not claim</Eyebrow>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight">
-              No history we cannot evidence
-            </h2>
-            <div className="mt-4">
-              <Prose>
+      <section className="bg-gold py-16 text-[#15170f] sm:py-20 lg:py-24">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-7">
+              <h2 className="h2 max-w-[20ch]">No history we cannot evidence</h2>
+              <div className="mt-6 flex flex-col gap-4 text-[1rem] leading-7 text-[#15170f]/80">
                 <p>
                   BloomCore Technologies is an evolving software and technology business. We have
                   not published a founding date, an office network, staff numbers, awards,
@@ -344,18 +324,34 @@ export default function AboutPage() {
                   than working, we say so. This is the same standard we apply to the software we
                   ship.
                 </p>
-              </Prose>
+              </div>
             </div>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <ButtonLink href={ROUTES.contact}>Talk to us</ButtonLink>
-              <ButtonLink href={ROUTES.privacy} variant="ghost">
-                Privacy notice
-              </ButtonLink>
+            <div className="lg:col-span-5 lg:pl-6">
+              <div className="mt-6 flex flex-col items-start gap-3">
+                <ButtonLink
+                  href={ROUTES.contact}
+                  size="lg"
+                  className="!bg-[#15170f] !text-[#f7f4ec] hover:!bg-[#084235]"
+                >
+                  Talk to us
+                </ButtonLink>
+                <ButtonLink
+                  href={ROUTES.privacy}
+                  variant="ghost"
+                  size="lg"
+                  className="!text-[#15170f] hover:!bg-[#15170f]/10"
+                >
+                  Privacy notice
+                </ButtonLink>
+              </div>
+              <p className="mt-8 text-[0.9375rem] text-[#15170f]/75">
+                Prefer to browse first?{" "}
+                <ArrowLink href={ROUTES.work} className="text-[#15170f]">
+                  Open the portfolio
+                </ArrowLink>
+              </p>
             </div>
           </div>
-          <p className="mt-8 text-center text-sm text-foreground-subtle">
-            Prefer to browse first? <ArrowLink href={ROUTES.work}>Open the portfolio</ArrowLink>
-          </p>
         </Container>
       </section>
     </>

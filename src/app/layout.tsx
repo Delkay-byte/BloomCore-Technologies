@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, IBM_Plex_Mono } from "next/font/google";
+import { Jost } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@/components/Analytics";
 import { BackToTop } from "@/components/BackToTop";
@@ -11,16 +11,10 @@ import { BRAND } from "@/lib/brand";
 import { organizationSchema, websiteSchema } from "@/lib/seo";
 import { SITE_URL } from "@/lib/site";
 
-const inter = Inter({
-  variable: "--font-inter",
+const jost = Jost({
+  variable: "--font-jost",
   subsets: ["latin"],
-  display: "swap",
-});
-
-const ibmPlexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
@@ -83,8 +77,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#080808" },
+    { media: "(prefers-color-scheme: light)", color: "#f4f0e7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0a0c0a" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -95,7 +89,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${ibmPlexMono.variable} h-full antialiased`}
+      className={`${jost.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
         <script

@@ -77,7 +77,7 @@ export function Analytics() {
     <div
       role="region"
       aria-label="Analytics settings"
-      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-md rounded-lg border border-border bg-background p-4 shadow-lg sm:left-6 sm:right-auto sm:mx-0"
+      className="fixed inset-x-3 bottom-3 z-50 mx-auto max-w-md border border-border bg-background p-4 shadow-lg sm:left-6 sm:right-auto sm:mx-0"
     >
       <p className="text-sm font-medium text-foreground">Optional analytics</p>
       <p className="mt-1.5 text-xs leading-5 text-foreground-subtle">
@@ -101,7 +101,7 @@ export function Analytics() {
           <button
             type="button"
             onClick={() => choose("granted")}
-            className="inline-flex h-9 items-center justify-center rounded-md bg-foreground px-4 text-xs font-medium text-background transition-colors hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground dark:hover:bg-neutral-200"
+            className="inline-flex h-9 items-center justify-center bg-foreground px-4 text-xs font-medium text-background transition-colors hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground dark:hover:bg-neutral-200"
           >
             Allow analytics
           </button>
@@ -110,7 +110,7 @@ export function Analytics() {
           <button
             type="button"
             onClick={() => choose("denied")}
-            className="inline-flex h-9 items-center justify-center rounded-md border border-border px-4 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="inline-flex h-9 items-center justify-center border border-border px-4 text-xs font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
           >
             Withdraw analytics consent
           </button>
@@ -119,7 +119,7 @@ export function Analytics() {
           <button
             type="button"
             onClick={() => choose("denied")}
-            className="inline-flex h-9 items-center justify-center rounded-md border border-border px-4 text-xs font-medium text-foreground-subtle transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="inline-flex h-9 items-center justify-center border border-border px-4 text-xs font-medium text-foreground-subtle transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
           >
             Keep off
           </button>
@@ -128,7 +128,7 @@ export function Analytics() {
           <button
             type="button"
             onClick={() => setSettingsOpen(false)}
-            className="inline-flex h-9 items-center justify-center rounded-md px-3 text-xs font-medium text-foreground-subtle transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="inline-flex h-9 items-center justify-center px-3 text-xs font-medium text-foreground-subtle transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
           >
             Close
           </button>

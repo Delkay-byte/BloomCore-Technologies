@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ArrowLink, Container, Eyebrow, PageHero } from "@/components/Page";
+import { ArrowLink, Container, PageHero } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, ROUTES } from "@/lib/brand";
 
@@ -122,15 +122,14 @@ export default function PrivacyPage() {
         eyebrow="Privacy"
         title="How BloomCore Technologies handles personal data"
         lead="This notice covers this website and direct enquiries to the company. It is written to be read, not to hide behind legal phrasing."
-        bordered={false}
       />
 
-      <section className="border-b border-border bg-background pb-16 sm:pb-20">
+      <section className="bg-surface pb-16 sm:pb-20 lg:pb-24">
         <Container>
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
             <aside className="lg:col-span-3">
-              <div className="lg:sticky lg:top-24">
-                <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
+              <div className="lg:sticky lg:top-28">
+                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
                   On this page
                 </p>
                 <nav aria-label="Privacy notice sections" className="mt-4">
@@ -139,7 +138,7 @@ export default function PrivacyPage() {
                       <li key={section.id}>
                         <a
                           href={`#${section.id}`}
-                          className="text-sm text-foreground-subtle underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                          className="text-[0.9375rem] text-foreground-subtle underline-offset-4 transition-colors hover:text-foreground hover:underline"
                         >
                           {section.title}
                         </a>
@@ -147,39 +146,38 @@ export default function PrivacyPage() {
                     ))}
                   </ul>
                 </nav>
-                <div className="mt-6 border-t border-border pt-4">
-                  <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
+                <div className="mt-6">
+                  <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
                     Effective date
                   </p>
-                  <p className="mt-1 text-sm text-foreground-subtle">9 November 2026</p>
+                  <p className="mt-1 text-[0.9375rem] text-foreground-subtle">9 November 2026</p>
                 </div>
               </div>
             </aside>
 
             <div className="lg:col-span-9">
-              <div className="rounded-lg border border-border bg-muted p-5 sm:p-6">
-                <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
+              <div className="border-l-4 border-gold bg-muted p-5 sm:p-6">
+                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
                   Status of this notice
                 </p>
-                <p className="mt-3 text-sm leading-6 text-foreground-subtle">
+                <p className="mt-3 text-[0.9375rem] leading-6 text-foreground-subtle">
                   This notice describes the company&apos;s current practice. It has not yet been
-                  reviewed by a Ghanaian legal practitioner, and it should not be read as a statement
-                  that every requirement of Act 843 has been formally satisfied. The company intends
-                  to obtain that review and to update this page when it is complete.
+                  reviewed by a Ghanaian legal practitioner, and it should not be read as a
+                  statement that every requirement of Act 843 has been formally satisfied. The
+                  company intends to obtain that review and to update this page when it is
+                  complete.
                 </p>
               </div>
 
               <div className="mt-10 flex flex-col gap-10">
                 {sections.map((section) => (
-                  <section key={section.id} id={section.id} className="scroll-mt-24">
-                    <h2 className="text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                      {section.title}
-                    </h2>
+                  <section key={section.id} id={section.id} className="scroll-mt-28">
+                    <h2 className="h3 text-foreground">{section.title}</h2>
                     <div className="mt-3 flex flex-col gap-3">
                       {section.body.map((paragraph) => (
                         <p
                           key={paragraph.slice(0, 40)}
-                          className="text-base leading-7 text-foreground-subtle"
+                          className="text-[1rem] leading-7 text-foreground-subtle"
                         >
                           {paragraph}
                         </p>
@@ -189,17 +187,16 @@ export default function PrivacyPage() {
                 ))}
               </div>
 
-              <div className="mt-12 rounded-lg border border-border p-6">
-                <Eyebrow>Questions</Eyebrow>
-                <h2 className="mt-3 text-xl font-semibold tracking-tight">
-                  Ask before you assume
-                </h2>
-                <p className="mt-3 text-sm leading-6 text-foreground-subtle">
-                  If something here is unclear, or you want to know what data the company holds about
-                  you, write to {CONTACT.email}. A specific question gets a specific answer.
+              <div className="mt-12 bg-background p-6">
+                <h2 className="h3">Ask before you assume</h2>
+                <p className="mt-3 max-w-xl text-[0.9375rem] leading-6 text-foreground-subtle">
+                  If something here is unclear, or you want to know what data the company holds
+                  about you, write to {CONTACT.email}. A specific question gets a specific answer.
                 </p>
                 <div className="mt-6 flex flex-wrap gap-3">
-                  <ButtonLink href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("Privacy enquiry")}`}>
+                  <ButtonLink
+                    href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("Privacy enquiry")}`}
+                  >
                     Email a privacy question
                   </ButtonLink>
                   <ButtonLink href={ROUTES.contact} variant="outline">
@@ -208,9 +205,9 @@ export default function PrivacyPage() {
                 </div>
               </div>
 
-              <p className="mt-8 text-sm text-foreground-subtle">
+              <div className="mt-8">
                 <ArrowLink href={ROUTES.about}>About BloomCore Technologies</ArrowLink>
-              </p>
+              </div>
             </div>
           </div>
         </Container>

@@ -4,7 +4,7 @@ import type { Crumb } from "@/lib/seo";
 export function Breadcrumbs({ items }: { items: ReadonlyArray<Crumb> }) {
   return (
     <nav aria-label="Breadcrumb" className="mb-8">
-      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 font-mono text-[10px] tracking-[0.12em] text-foreground-faint uppercase">
+      <ol className="flex flex-wrap items-center gap-x-2 gap-y-1 text-[0.8125rem] text-foreground-faint">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           return (

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLink, Container, Eyebrow, PageHero, StatusBadge } from "@/components/Page";
-import { Reveal } from "@/components/Reveal";
+import { ArrowLink, Container, PageHero, StatusBadge } from "@/components/Page";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, CONTACT, PRODUCTS, ROUTES } from "@/lib/brand";
 
@@ -92,7 +91,7 @@ export default function WorkPage() {
         title="Products built and operated by BloomCore Technologies"
         lead="The portfolio is small on purpose. Each entry is software the company has built, described with the problem it addresses and its actual status."
       >
-        <div className="mt-10 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <ButtonLink href={ROUTES.products} size="lg">
             Product directory
           </ButtonLink>
@@ -102,157 +101,168 @@ export default function WorkPage() {
         </div>
       </PageHero>
 
-      <section className="border-b border-border bg-background py-16 sm:py-20">
-        <Container>
-          <div className="flex flex-col gap-8">
-            {PRODUCTS.map((product, index) => {
-              const entry = detail[product.slug];
-              return (
-                <Reveal key={product.slug} delay={index * 0.05}>
-                  <article className="rounded-lg border border-border bg-background">
-                    <div className="grid gap-8 p-6 sm:p-8 lg:grid-cols-12 lg:gap-12">
-                      <div className="lg:col-span-4">
-                        <div className="flex flex-wrap items-center gap-3">
-                          <span className="font-mono text-[10px] tracking-[0.12em] text-foreground-faint uppercase">
-                            {entry.industry}
-                          </span>
-                          <StatusBadge
-                            label={product.statusLabel}
-                            tone={product.status === "live" ? "default" : "muted"}
-                          />
-                        </div>
-                        <h2 className="mt-4 text-2xl font-semibold tracking-tight">
-                          <Link
-                            href={hrefs[product.slug]}
-                            className="underline-offset-4 hover:underline"
-                          >
-                            {product.name}
-                          </Link>
-                        </h2>
-                        <p className="mt-3 text-sm leading-6 text-foreground-faint">
-                          {entry.statusNote}
-                        </p>
-                        <div className="mt-6">
-                          <ButtonLink href={hrefs[product.slug]} variant="outline" size="sm">
-                            Read the product page
-                          </ButtonLink>
-                        </div>
-                      </div>
-
-                      <div className="lg:col-span-8">
-                        <dl className="flex flex-col gap-5">
-                          <div>
-                            <dt className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
-                              The problem
-                            </dt>
-                            <dd className="mt-2 text-sm leading-6 text-foreground-subtle">
-                              {entry.problem}
-                            </dd>
-                          </div>
-                          <div>
-                            <dt className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
-                              What was built
-                            </dt>
-                            <dd className="mt-2 text-sm leading-6 text-foreground-subtle">
-                              {entry.built}
-                            </dd>
-                          </div>
-                        </dl>
-                      </div>
+      <div className="bg-surface">
+        {PRODUCTS.map((product) => {
+          const entry = detail[product.slug];
+          return (
+            <section key={product.slug} className="py-12 sm:py-16">
+              <Container width="wide">
+                <div className="grid gap-6 lg:grid-cols-12 lg:gap-12">
+                  <div className="lg:col-span-4">
+                    <div className="flex flex-wrap items-center gap-3">
+                      <p className="text-[0.8125rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                        {entry.industry}
+                      </p>
+                      <StatusBadge
+                        label={product.statusLabel}
+                        tone={product.status === "live" ? "default" : "muted"}
+                      />
                     </div>
-                  </article>
-                </Reveal>
-              );
-            })}
-          </div>
-        </Container>
-      </section>
+                    <h2 className="h2 mt-3">
+                      <Link
+                        href={hrefs[product.slug]}
+                        className="underline-offset-4 hover:underline"
+                      >
+                        {product.name}
+                      </Link>
+                    </h2>
+                    <p className="mt-3 text-[0.9375rem] text-foreground-faint">
+                      {entry.statusNote}
+                    </p>
+                    <div className="mt-5">
+                      <ArrowLink href={hrefs[product.slug]}>Read the product page</ArrowLink>
+                    </div>
+                  </div>
 
-      <section className="border-b border-border bg-surface py-16 text-[#F5F5F5] sm:py-20">
+                  <div className="lg:col-span-4">
+                    <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                      The problem
+                    </p>
+                    <p className="mt-2 text-[1rem] leading-7 text-foreground-subtle">
+                      {entry.problem}
+                    </p>
+                  </div>
+                  <div className="lg:col-span-4">
+                    <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                      What was built
+                    </p>
+                    <p className="mt-2 text-[1rem] leading-7 text-foreground-subtle">
+                      {entry.built}
+                    </p>
+                  </div>
+                </div>
+              </Container>
+            </section>
+          );
+        })}
+      </div>
+
+      <section className="bg-accent py-16 text-accent-contrast sm:py-20 lg:py-24">
         <Container>
-          <div className="max-w-3xl">
-            <p className="font-mono text-[11px] font-medium tracking-[0.16em] text-neutral-400 uppercase">
-              Engineering
-            </p>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight text-balance text-neutral-50 sm:text-3xl">
-              Built to be maintained after handover
-            </h2>
-            <p className="mt-4 text-sm leading-6 text-neutral-400">
-              Each product is written as a maintained system rather than a demonstration: changes
-              reviewed before merge, staged before release, and verified after.
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-px overflow-hidden rounded-lg border border-surface-border bg-surface-border sm:grid-cols-3">
-            {[
-              {
-                title: "Recorded decisions",
-                detail: "Commit messages and short specifications record what changed and why.",
-              },
-              {
-                title: "Small releases",
-                detail: "Changes stay small enough to review and reverse without a rebuild.",
-              },
-              {
-                title: "Verified after release",
-                detail:
-                  "Money, stock and personal data receive specific checks before and after deployment.",
-              },
-            ].map((item) => (
-              <div key={item.title} className="bg-surface p-6">
-                <h3 className="text-sm font-semibold text-neutral-100">{item.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-neutral-400">{item.detail}</p>
-              </div>
-            ))}
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-5">
+              <h2 className="h2 max-w-[16ch] text-accent-contrast">
+                Built to be maintained after handover
+              </h2>
+              <p className="lead mt-6 max-w-[34ch] text-accent-contrast/75">
+                Each product is written as a maintained system rather than a demonstration:
+                changes reviewed before merge, staged before release, and verified after.
+              </p>
+            </div>
+            <div className="lg:col-span-7">
+              <dl className="grid gap-x-10 sm:grid-cols-3">
+                {[
+                  {
+                    title: "Recorded decisions",
+                    detail:
+                      "Commit messages and short specifications record what changed and why.",
+                  },
+                  {
+                    title: "Small releases",
+                    detail: "Changes stay small enough to review and reverse without a rebuild.",
+                  },
+                  {
+                    title: "Verified after release",
+                    detail:
+                      "Money, stock and personal data receive specific checks before and after deployment.",
+                  },
+                ].map((item) => (
+                  <div key={item.title}>
+                    <dt className="text-[1.05rem] font-semibold text-accent-contrast">
+                      {item.title}
+                    </dt>
+                    <dd className="mt-2 text-[0.9375rem] leading-6 text-accent-contrast/70">
+                      {item.detail}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
         </Container>
       </section>
 
-      <section className="border-b border-border bg-background py-16 sm:py-20">
+      <section className="bg-background py-16 sm:py-20 lg:py-24">
         <Container>
-          <div className="max-w-3xl">
-            <Eyebrow>Publishing standards</Eyebrow>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-              Why the portfolio looks the way it does
-            </h2>
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-4">
+              <h2 className="h2 max-w-[14ch]">Why the portfolio looks the way it does</h2>
+            </div>
+            <div className="lg:col-span-8">
+              <dl>
+                {principles.map((item) => (
+                  <div key={item.title} className="grid gap-1 py-5 sm:grid-cols-12 sm:gap-6">
+                    <dt className="text-[1.05rem] font-semibold text-foreground sm:col-span-4">
+                      {item.title}
+                    </dt>
+                    <dd className="text-[0.9375rem] leading-6 text-foreground-subtle sm:col-span-8">
+                      {item.detail}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+              <p className="mt-4 max-w-2xl text-[0.9375rem] leading-6 text-foreground-subtle">
+                Client project work is not listed here. It is described only with the client&apos;s
+                written permission, and that permission has not been sought for this site.
+              </p>
+            </div>
           </div>
-          <div className="mt-10 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
-            {principles.map((item) => (
-              <div key={item.title} className="bg-background p-6">
-                <h3 className="text-base font-semibold text-foreground">{item.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-foreground-subtle">{item.detail}</p>
-              </div>
-            ))}
-          </div>
-          <p className="mt-8 max-w-2xl text-sm leading-6 text-foreground-subtle">
-            Client project work is not listed here. It is described only with the client&apos;s
-            written permission, and that permission has not been sought for this site.
-          </p>
         </Container>
       </section>
 
-      <section className="bg-muted py-16 sm:py-20">
-        <Container width="narrow" className="text-center">
-          <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-            A problem close to one of these?
-          </h2>
-          <p className="mx-auto mt-4 max-w-xl text-base leading-7 text-foreground-subtle">
-            Tell us how your organisation handles it today. We will say whether the work is a fit.
-          </p>
-          <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-            <ButtonLink
-              href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("Project enquiry — BloomCore Technologies")}`}
-              size="lg"
-            >
-              Email BloomCore Technologies
-            </ButtonLink>
-            <ButtonLink href={ROUTES.contact} variant="outline" size="lg">
-              Contact details
-            </ButtonLink>
+      <section className="bg-gold py-16 text-[#15170f] sm:py-20">
+        <Container>
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
+            <div className="lg:col-span-8">
+              <h2 className="h2 max-w-[18ch]">A problem close to one of these?</h2>
+              <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-[#15170f]/75">
+                Tell us how your organisation handles it today. We will say whether the work is a
+                fit.
+              </p>
+            </div>
+            <div className="flex flex-col gap-3 lg:col-span-4 lg:items-end">
+              <ButtonLink
+                href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("Project enquiry — BloomCore Technologies")}`}
+                size="lg"
+                className="!bg-[#15170f] !text-[#f7f4ec] hover:!bg-[#084235]"
+              >
+                Email BloomCore Technologies
+              </ButtonLink>
+              <ButtonLink
+                href={ROUTES.contact}
+                variant="outline"
+                size="lg"
+                className="!border-[#15170f] !text-[#15170f] hover:!bg-[#15170f] hover:!text-[#f7f4ec]"
+              >
+                Contact details
+              </ButtonLink>
+            </div>
           </div>
-          <p className="mt-8 text-sm text-foreground-subtle">
-            <ArrowLink href={ROUTES.founder}>Who leads the company</ArrowLink>
-          </p>
+          <div className="mt-8">
+            <ArrowLink href={ROUTES.founder} className="text-[#15170f]">
+              Who leads the company
+            </ArrowLink>
+          </div>
         </Container>
       </section>
     </>

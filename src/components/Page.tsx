@@ -13,24 +13,45 @@ export function Container({
   width?: "default" | "narrow" | "wide";
 }) {
   const widths = {
-    narrow: "max-w-3xl",
-    default: "max-w-6xl",
+    narrow: "max-w-[820px]",
+    default: "max-w-[1240px]",
     wide: "max-w-[1440px]",
   };
 
   return (
-    <div className={cn("mx-auto w-full px-4 sm:px-6 lg:px-8", widths[width], className)}>
+    <div className={cn("mx-auto w-full px-5 sm:px-8 lg:px-12", widths[width], className)}>
       {children}
     </div>
   );
 }
 
+/** Sentence-case label. Kept for pages that still need a written category. */
 export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
-    <p className="flex items-center gap-2 font-mono text-[11px] font-medium tracking-[0.16em] text-foreground-faint uppercase">
-      <span aria-hidden="true" className="h-1.5 w-1.5 shrink-0 bg-accent" />
-      {children}
-    </p>
+    <p className="text-[0.9375rem] leading-6 font-medium text-foreground-subtle">{children}</p>
+  );
+}
+
+export function SectionHeading({
+  title,
+  lead,
+  align = "left",
+  className,
+}: {
+  title: React.ReactNode;
+  lead?: React.ReactNode;
+  align?: "left" | "right";
+  className?: string;
+}) {
+  return (
+    <div className={cn("max-w-3xl", align === "right" && "ml-auto text-right", className)}>
+      <h2 className="h2">{title}</h2>
+      {lead && (
+        <p className={cn("lead mt-6 max-w-2xl text-foreground-subtle", align === "right" && "ml-auto")}>
+          {lead}
+        </p>
+      )}
+    </div>
   );
 }
 
@@ -40,33 +61,28 @@ export function PageHero({
   lead,
   children,
   breadcrumbs,
-  bordered = true,
 }: {
-  eyebrow: string;
-  title: string;
-  lead?: string;
+  eyebrow?: string;
+  title: React.ReactNode;
+  lead?: React.ReactNode;
   children?: React.ReactNode;
   breadcrumbs?: ReadonlyArray<Crumb>;
-  bordered?: boolean;
 }) {
   return (
-    <section
-      className={cn(
-        "bg-background pt-16 pb-14 sm:pt-20 sm:pb-16 lg:pt-24 lg:pb-20",
-        bordered && "border-b border-border",
-      )}
-    >
+    <section className={cn("bg-background pt-10 pb-14 sm:pt-14 sm:pb-20 lg:pt-16 lg:pb-24")}>
       <Container width="wide">
         {breadcrumbs && <Breadcrumbs items={breadcrumbs} />}
-        <Eyebrow>{eyebrow}</Eyebrow>
-        <h1 className="mt-5 max-w-4xl text-4xl font-semibold tracking-tight text-balance sm:text-5xl lg:text-6xl">
-          {title}
-        </h1>
-        {lead && (
-          <p className="mt-6 max-w-2xl text-base leading-7 text-foreground-subtle sm:text-lg">
-            {lead}
-          </p>
-        )}
+        <div className="grid gap-8 pt-8 lg:grid-cols-12 lg:items-end lg:gap-12 lg:pt-12">
+          <div className="lg:col-span-8">
+            {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+            <h1 className={cn("h1 max-w-5xl", eyebrow && "mt-4")}>{title}</h1>
+          </div>
+          {lead && (
+            <div className="lg:col-span-4 lg:pb-2">
+              <p className="lead max-w-xl text-foreground-subtle">{lead}</p>
+            </div>
+          )}
+        </div>
         {children}
       </Container>
     </section>
@@ -83,11 +99,11 @@ export function Prose({
   return (
     <div
       className={cn(
-        "flex flex-col gap-5 text-base leading-7 text-foreground-subtle",
-        "[&_h2]:mt-4 [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-foreground",
-        "[&_h3]:mt-2 [&_h3]:text-lg [&_h3]:font-semibold [&_h3]:text-foreground",
+        "flex flex-col gap-5 text-[1.0625rem] leading-[1.65] text-foreground-subtle",
+        "[&_h2]:mt-4 [&_h2]:text-[1.65rem] [&_h2]:leading-tight [&_h2]:font-semibold [&_h2]:tracking-tight [&_h2]:text-foreground",
+        "[&_h3]:mt-2 [&_h3]:text-[1.2rem] [&_h3]:font-semibold [&_h3]:text-foreground",
         "[&_strong]:font-semibold [&_strong]:text-foreground",
-        "[&_a]:text-foreground [&_a]:underline [&_a]:underline-offset-4",
+        "[&_a]:text-foreground [&_a]:underline [&_a]:decoration-1 [&_a]:underline-offset-4",
         className,
       )}
     >
@@ -102,13 +118,14 @@ export function DefinitionList({
   items: ReadonlyArray<{ term: string; detail: string }>;
 }) {
   return (
-    <dl className="divide-y divide-border border-y border-border">
+    <dl className="flex flex-col gap-3">
       {items.map((item) => (
-        <div key={item.term} className="grid gap-2 py-5 sm:grid-cols-3 sm:gap-6">
-          <dt className="font-mono text-[11px] font-medium tracking-[0.14em] text-foreground-faint uppercase sm:pt-1">
-            {item.term}
-          </dt>
-          <dd className="text-sm leading-6 text-foreground-subtle sm:col-span-2">{item.detail}</dd>
+        <div
+          key={item.term}
+          className="grid gap-2 bg-surface px-5 py-5 sm:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)] sm:gap-8 sm:px-6"
+        >
+          <dt className="h3 text-[1.1rem] text-foreground">{item.term}</dt>
+          <dd className="body-copy text-foreground-subtle">{item.detail}</dd>
         </div>
       ))}
     </dl>
@@ -128,17 +145,21 @@ export function ArrowLink({
     <Link
       href={href}
       className={cn(
-        "group inline-flex items-center gap-2 text-sm font-medium text-foreground underline-offset-4 hover:underline",
+        "group inline-flex items-center gap-3 text-[1rem] font-medium text-foreground underline-offset-4 hover:underline",
         className,
       )}
     >
       {children}
-      <span
+      <svg
+        width="17"
+        height="12"
+        viewBox="0 0 17 12"
+        fill="none"
         aria-hidden="true"
-        className="text-accent transition-transform duration-200 group-hover:translate-x-0.5"
+        className="transition-transform duration-200 group-hover:translate-x-1"
       >
-        &rarr;
-      </span>
+        <path d="M1 6h14M10.5 1.5 15 6l-4.5 4.5" stroke="currentColor" strokeWidth="1.6" />
+      </svg>
     </Link>
   );
 }
@@ -151,19 +172,18 @@ export function StatusBadge({
   tone?: "default" | "invert" | "muted";
 }) {
   const tones = {
-    default: "border-accent/35 text-accent",
-    invert: "border-neutral-700 bg-neutral-900 text-neutral-100",
-    muted: "border-border text-foreground-subtle",
+    default: "bg-gold text-[#15170f]",
+    invert: "bg-background text-foreground",
+    muted: "bg-transparent text-foreground-subtle ring-1 ring-inset ring-border",
   };
 
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 font-mono text-[10px] font-medium tracking-[0.1em] uppercase",
+        "inline-flex items-center px-2.5 py-1 text-[0.8125rem] leading-none font-medium",
         tones[tone],
       )}
     >
-      <span aria-hidden="true" className="h-1 w-1 rounded-full bg-current" />
       {label}
     </span>
   );

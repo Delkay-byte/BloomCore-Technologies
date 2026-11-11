@@ -1,77 +1,239 @@
 @import "tailwindcss";
 
+/*
+ * BloomCore Technologies design tokens.
+ * One ground, one ink, one accent. Surfaces are separated by tone steps, not
+ * by hairlines or shadows. Interface fragments use their own control borders.
+ */
 :root {
   color-scheme: light;
-  --background: #ffffff;
-  --foreground: #080808;
-  --foreground-subtle: #525252;
-  --foreground-faint: #6B6B6B;
-  --muted: #F5F5F5;
-  --muted-border: #E5E5E5;
-  --surface: #161616;
-  --surface-border: #262626;
-  --border: #E5E5E5;
-  --ink: #F5F5F5;
-  --accent: #0B5D4B;
-  --accent-soft: #EAF2EF;
-  --accent-contrast: #FFFFFF;
-  --tracking-tight: -0.02em;
+  --background: #f4f0e7;
+  --surface: #fbf8f1;
+  --surface-2: #e8e2d5;
+  --foreground: #15170f;
+  --foreground-subtle: #4c5147;
+  --foreground-faint: #5e6458;
+  --muted: #ece6da;
+  --border: #d7d0c2;
+  --accent: #0d3b31;
+  --accent-strong: #08241f;
+  --accent-contrast: #f7f4ec;
+  --gold: #d9a33c;
+  --gold-soft: #f1dfc0;
+  --field: #fbf8f1;
+  --tracking-tight: -0.03em;
 }
 
-/* Explicit dark choice. */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #080808;
-  --foreground: #F5F5F5;
-  --foreground-subtle: #A1A1A1;
-  --foreground-faint: #8F8F8F;
-  --muted: #161616;
-  --muted-border: #262626;
-  --border: #262626;
-  --ink: #080808;
-  --accent: #5AC9A9;
-  --accent-soft: #10231E;
-  --accent-contrast: #080808;
+  --background: #0a0c0a;
+  --surface: #121612;
+  --surface-2: #1b211b;
+  --foreground: #f2efe6;
+  --foreground-subtle: #b9beb2;
+  --foreground-faint: #919888;
+  --muted: #171d17;
+  --border: #2a322a;
+  --accent: #8ad6bc;
+  --accent-strong: #a8e5cf;
+  --accent-contrast: #08241f;
+  --gold: #e7b75c;
+  --gold-soft: #33280f;
+  --field: #121612;
 }
 
-/* System preference applies only while the visitor has not chosen a theme. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --background: #080808;
-    --foreground: #F5F5F5;
-    --foreground-subtle: #A1A1A1;
-    --foreground-faint: #8F8F8F;
-    --muted: #161616;
-    --muted-border: #262626;
-    --border: #262626;
-    --ink: #080808;
-    --accent: #5AC9A9;
-    --accent-soft: #10231E;
-    --accent-contrast: #080808;
+    --background: #0a0c0a;
+    --surface: #121612;
+    --surface-2: #1b211b;
+    --foreground: #f2efe6;
+    --foreground-subtle: #b9beb2;
+    --foreground-faint: #919888;
+    --muted: #171d17;
+    --border: #2a322a;
+    --accent: #8ad6bc;
+    --accent-strong: #a8e5cf;
+    --accent-contrast: #08241f;
+    --gold: #e7b75c;
+    --gold-soft: #33280f;
+    --field: #121612;
   }
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
   --color-foreground-subtle: var(--foreground-subtle);
   --color-foreground-faint: var(--foreground-faint);
   --color-muted: var(--muted);
-  --color-muted-border: var(--muted-border);
-  --color-surface: var(--surface);
-  --color-surface-border: var(--surface-border);
   --color-border: var(--border);
   --color-accent: var(--accent);
-  --color-accent-soft: var(--accent-soft);
+  --color-accent-strong: var(--accent-strong);
   --color-accent-contrast: var(--accent-contrast);
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+  --color-gold: var(--gold);
+  --color-gold-soft: var(--gold-soft);
+  --color-field: var(--field);
+  --font-sans: var(--font-jost), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
     "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  --font-mono: var(--font-ibm-plex-mono), ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
-    "Liberation Mono", "Courier New", monospace;
+  --font-mono: var(--font-jost), ui-sans-serif, system-ui, sans-serif;
 }
 
-/* Theme toggle icon follows the active scheme. */
+* {
+  border-color: var(--border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  font-size: 1.0625rem;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::selection {
+  background: var(--gold);
+  color: #15170f;
+}
+
+:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 3px;
+}
+
+/* Type roles. Five visible sizes plus the interface's own true-size text. */
+.display {
+  font-family: var(--font-sans);
+  font-size: clamp(2.7rem, 7.1vw, 7.4rem);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.045em;
+  text-transform: uppercase;
+}
+
+.h1 {
+  font-size: clamp(2.4rem, 5.2vw, 5.2rem);
+  font-weight: 700;
+  line-height: 0.94;
+  letter-spacing: -0.04em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.h2 {
+  font-size: clamp(2rem, 3.6vw, 3.6rem);
+  font-weight: 700;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.h3 {
+  font-size: clamp(1.3rem, 1.8vw, 1.85rem);
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.lead {
+  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+}
+
+.body-copy {
+  font-size: 1.0625rem;
+  line-height: 1.62;
+}
+
+.small-copy {
+  font-size: 0.875rem;
+  line-height: 1.55;
+}
+
+.link-quiet {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition: color 160ms ease, text-decoration-thickness 160ms ease;
+}
+
+.link-quiet:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Page frame. */
+.page-frame {
+  width: 100%;
+  max-width: 1440px;
+  margin-inline: auto;
+  padding-inline: clamp(20px, 4vw, 64px);
+}
+
+.section-pad {
+  padding-block: clamp(88px, 11vw, 168px);
+}
+
+.section-pad-sm {
+  padding-block: clamp(64px, 7vw, 112px);
+}
+
+/* Interface fragments. Inside data-ui the product's own conventions apply. */
+[data-ui] {
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+[data-ui] input,
+[data-ui] select,
+[data-ui] button,
+[data-ui] textarea {
+  font: inherit;
+}
+
+/* Form controls. Functional borders are allowed; decorative rules are not. */
+.field {
+  width: 100%;
+  min-height: 3.25rem;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  background: var(--field);
+  color: var(--foreground);
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  transition: border-color 160ms ease, background-color 160ms ease;
+}
+
+.field::placeholder {
+  color: var(--foreground-faint);
+}
+
+.field:hover {
+  border-color: var(--foreground-subtle);
+}
+
+.field:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 1px;
+  border-color: var(--foreground);
+}
+
+textarea.field {
+  min-height: 9rem;
+  resize: vertical;
+}
+
+/* Theme-toggle icon follows the active scheme. */
 .theme-icon-sun {
   display: none;
 }
@@ -94,13 +256,6 @@
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
 @keyframes hero-card-in {
   from {
     opacity: 0;
@@ -116,8 +271,7 @@ body {
   animation: hero-card-in 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-/* Floating assistant mascot — parked bottom-left so the back-to-top control on
-   the right stays reachable. Idle float, hover wiggle, nudge and panel entrances. */
+/* Assistant. Kept functional; the mascot is parked bottom-left. */
 @keyframes bc-mascot-float {
   100% {
     transform: translateY(-3px);
@@ -212,9 +366,7 @@ body {
   animation: bc-typing-blink 1.1s ease-in-out infinite;
 }
 
-/* Founder-page projects button. Fixed black with white text in both themes, so
-   toggling light/dark never changes its colour or its contrast. Declared outside
-   Tailwind's utility layer so the theme-driven button utilities cannot win. */
+/* Founder-page projects button. Fixed black with white text in both themes. */
 .bc-projects-button {
   background-color: #000000;
   color: #ffffff;
@@ -226,8 +378,6 @@ body {
   color: #ffffff;
 }
 
-/* Attention pulse for the founder-page projects button. Follows the theme's
-   foreground so the ring stays visible in light and dark mode alike. */
 @keyframes bc-attention-pulse {
   0% {
     box-shadow: 0 0 0 0 color-mix(in srgb, var(--foreground) 55%, transparent);
@@ -256,7 +406,6 @@ body {
     bc-attention-breathe 2.2s ease-in-out infinite;
 }
 
-/** Reduced motion. All page-level transitions and reveal effects are disabled. */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

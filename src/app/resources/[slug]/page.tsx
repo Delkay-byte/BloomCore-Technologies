@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { JsonLd } from "@/components/JsonLd";
-import { ArrowLink, Container, Eyebrow, PageHero } from "@/components/Page";
+import { ArrowLink, Container, PageHero } from "@/components/Page";
 import { ViewTracker } from "@/components/ViewTracker";
 import { ButtonLink } from "@/components/ui/Button";
 import { BRAND, PRODUCTS, ROUTES } from "@/lib/brand";
@@ -61,14 +61,10 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 function Block({ block }: { block: ResourceBlock }) {
   switch (block.type) {
     case "heading":
-      return (
-        <h2 className="mt-4 text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">
-          {block.text}
-        </h2>
-      );
+      return <h2 className="h3 mt-6 text-foreground">{block.text}</h2>;
     case "subheading":
       return (
-        <h3 className="mt-2 text-lg font-semibold tracking-tight text-foreground">
+        <h3 className="mt-3 text-[1.2rem] font-semibold tracking-tight text-foreground">
           {block.text}
         </h3>
       );
@@ -76,11 +72,8 @@ function Block({ block }: { block: ResourceBlock }) {
       return (
         <ul className="flex flex-col gap-2.5">
           {block.items.map((item) => (
-            <li key={item} className="flex items-start gap-3 text-base leading-7 text-foreground-subtle">
-              <span
-                aria-hidden="true"
-                className="mt-2.5 h-1.5 w-1.5 shrink-0 rounded-full bg-accent"
-              />
+            <li key={item} className="flex items-start gap-3 text-[1.0625rem] leading-7 text-foreground-subtle">
+              <span aria-hidden="true" className="mt-3 h-1.5 w-1.5 shrink-0 bg-gold" />
               <span>{item}</span>
             </li>
           ))}
@@ -88,26 +81,23 @@ function Block({ block }: { block: ResourceBlock }) {
       );
     case "steps":
       return (
-        <ol className="grid gap-4 sm:grid-cols-2">
-          {block.items.map((item, index) => (
-            <li key={item.title} className="rounded-lg border border-border bg-muted p-5">
-              <span className="font-mono text-[10px] text-foreground-faint">
-                {String(index + 1).padStart(2, "0")}
-              </span>
-              <h3 className="mt-2 text-sm font-semibold text-foreground">{item.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-foreground-subtle">{item.detail}</p>
+        <ol className="grid gap-6 sm:grid-cols-2">
+          {block.items.map((item) => (
+            <li key={item.title} className="bg-muted p-5">
+              <h3 className="text-[1.05rem] font-semibold text-foreground">{item.title}</h3>
+              <p className="mt-2 text-[0.9375rem] leading-6 text-foreground-subtle">{item.detail}</p>
             </li>
           ))}
         </ol>
       );
     case "note":
       return (
-        <aside className="rounded-lg border border-border bg-muted p-5">
-          <p className="text-sm leading-6 text-foreground-subtle">{block.text}</p>
+        <aside className="border-l-4 border-gold bg-muted p-5">
+          <p className="text-[0.9375rem] leading-6 text-foreground-subtle">{block.text}</p>
         </aside>
       );
     default:
-      return <p className="text-base leading-7 text-foreground-subtle">{block.text}</p>;
+      return <p className="text-[1.0625rem] leading-7 text-foreground-subtle">{block.text}</p>;
   }
 }
 
@@ -144,12 +134,12 @@ export default async function ResourceArticlePage({ params }: PageProps) {
         lead={article.description}
         breadcrumbs={breadcrumbs}
       >
-        <p className="mt-6 font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
+        <p className="mt-6 text-[0.8125rem] text-foreground-faint">
           By {BRAND.name} · {formatDate(article.published)} · {article.readingMinutes} min read
         </p>
       </PageHero>
 
-      <section className="border-b border-border bg-background py-14 sm:py-16">
+      <section className="bg-surface py-14 sm:py-16 lg:py-20">
         <Container>
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
             <article className="lg:col-span-8">
@@ -159,12 +149,14 @@ export default async function ResourceArticlePage({ params }: PageProps) {
                 ))}
               </div>
 
-              <div className="mt-12 rounded-lg border border-border p-6 sm:p-8">
-                <Eyebrow>Related product</Eyebrow>
-                <h2 className="mt-3 text-xl font-semibold tracking-tight sm:text-2xl">
-                  {product.name}
-                </h2>
-                <p className="mt-3 text-sm leading-6 text-foreground-subtle">{product.short}</p>
+              <div className="mt-12 bg-background p-6 sm:p-8">
+                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
+                  Related product
+                </p>
+                <h2 className="h3 mt-3">{product.name}</h2>
+                <p className="mt-3 max-w-xl text-[0.9375rem] leading-6 text-foreground-subtle">
+                  {product.short}
+                </p>
                 <div className="mt-6 flex flex-wrap gap-3">
                   <ButtonLink href={productHrefs[product.slug]}>
                     View {product.name}
@@ -183,8 +175,8 @@ export default async function ResourceArticlePage({ params }: PageProps) {
             </article>
 
             <aside className="lg:col-span-4">
-              <div className="lg:sticky lg:top-24">
-                <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
+              <div className="lg:sticky lg:top-28">
+                <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
                   In this guide
                 </p>
                 <nav aria-label="Guide sections" className="mt-4">
@@ -195,7 +187,7 @@ export default async function ResourceArticlePage({ params }: PageProps) {
                           block.type === "heading",
                       )
                       .map((block) => (
-                        <li key={block.text} className="text-sm leading-6 text-foreground-subtle">
+                        <li key={block.text} className="text-[0.9375rem] leading-6 text-foreground-subtle">
                           {block.text}
                         </li>
                       ))}
@@ -203,8 +195,8 @@ export default async function ResourceArticlePage({ params }: PageProps) {
                 </nav>
 
                 {related.length > 0 && (
-                  <div className="mt-8 border-t border-border pt-5">
-                    <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
+                  <div className="mt-8">
+                    <p className="text-[0.75rem] font-medium tracking-[0.12em] text-foreground-faint uppercase">
                       More guides
                     </p>
                     <ul className="mt-3 flex flex-col gap-3">
@@ -212,7 +204,7 @@ export default async function ResourceArticlePage({ params }: PageProps) {
                         <li key={item.slug}>
                           <Link
                             href={`${ROUTES.resources}/${item.slug}`}
-                            className="text-sm leading-6 text-foreground-subtle underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                            className="text-[0.9375rem] leading-6 text-foreground-subtle underline-offset-4 transition-colors hover:text-foreground hover:underline"
                           >
                             {item.title}
                           </Link>
@@ -222,7 +214,7 @@ export default async function ResourceArticlePage({ params }: PageProps) {
                   </div>
                 )}
 
-                <div className="mt-8 border-t border-border pt-5">
+                <div className="mt-8">
                   <ArrowLink href={ROUTES.resources}>All resources</ArrowLink>
                 </div>
               </div>

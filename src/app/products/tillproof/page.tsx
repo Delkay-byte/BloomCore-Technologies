@@ -1,14 +1,12 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import tillproofLogo from "@/assets/products/tillproof-logo.png";
-import tillproofMark from "@/assets/products/tillproof-mark.png";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
-import { ArrowLink, Container, Eyebrow } from "@/components/Page";
-import { Reveal } from "@/components/Reveal";
+import { ArrowLink, Container, PageHero, StatusBadge } from "@/components/Page";
+import { ProductFragment } from "@/components/ProductFragments";
 import { ViewTracker } from "@/components/ViewTracker";
 import { ButtonLink } from "@/components/ui/Button";
-import { BRAND, ROUTES } from "@/lib/brand";
+import { BRAND, CONTACT, ROUTES } from "@/lib/brand";
 import { breadcrumbSchema, faqSchema, HOME_CRUMB } from "@/lib/seo";
 
 export const metadata: Metadata = {
@@ -85,136 +83,104 @@ export default function TillProofPage() {
       <JsonLd data={breadcrumbSchema(breadcrumbs)} />
       <JsonLd data={faqSchema(faqs)} />
       <ViewTracker event="product_page_view" params={{ product_name: "TillProof" }} />
-      <section className="border-b border-border bg-background py-14 sm:py-16 lg:py-20">
-        <Container>
-          <Breadcrumbs items={breadcrumbs} />
-          <div className="grid gap-12 lg:grid-cols-12 lg:items-start lg:gap-16">
-            <div className="lg:col-span-7">
-              <Reveal>
-                <div className="inline-flex rounded-lg border border-border bg-[#F8F7F4] p-5">
-                  <Image
-                    src={tillproofLogo}
-                    alt="TillProof"
-                    priority
-                    sizes="(min-width: 640px) 340px, 260px"
-                    className="h-auto w-[260px] rounded-sm sm:w-[340px]"
-                  />
-                </div>
 
-                <div className="mt-8">
-                  <Eyebrow>Product · Retail technology</Eyebrow>
-                </div>
+      <PageHero
+        eyebrow="Retail technology"
+        title="TillProof"
+        lead="Retail management for electrical shops. TillProof is being built to give owners visibility of stock, prices and cash across locations they cannot stand in every day."
+        breadcrumbs={breadcrumbs}
+      >
+        <div className="mt-8 flex flex-wrap items-center gap-5">
+          <StatusBadge label="In development" tone="muted" />
+          <ButtonLink href={ROUTES.contact}>Register interest</ButtonLink>
+          <ArrowLink href={ROUTES.products}>All products</ArrowLink>
+        </div>
+      </PageHero>
 
-                <h1 className="mt-4 text-4xl font-semibold tracking-tight text-balance sm:text-5xl">
-                  TillProof
-                </h1>
-
-                <p className="mt-5 max-w-xl text-base leading-7 text-foreground-subtle sm:text-lg">
-                  Retail management for electrical shops. TillProof is being built to give owners
-                  visibility of stock, prices and cash across locations they cannot stand in every
-                  day.
-                </p>
-
-                <div className="mt-8 flex flex-wrap items-center gap-4">
-                  <ButtonLink href={ROUTES.products} size="lg">
-                    Back to Products
-                  </ButtonLink>
-                  <ArrowLink href={ROUTES.contact}>Ask about TillProof</ArrowLink>
-                </div>
-              </Reveal>
-            </div>
-
+      <section className="bg-surface py-16 sm:py-20 lg:py-24">
+        <Container width="wide">
+          <div className="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
             <div className="lg:col-span-5">
-              <Reveal delay={0.08}>
-                <div className="rounded-lg border border-border bg-muted p-6 sm:p-8">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="inline-flex rounded-md border border-border bg-[#F8F7F4] p-3">
-                      <Image
-                        src={tillproofMark}
-                        alt="TillProof symbol"
-                        sizes="64px"
-                        className="h-12 w-auto"
-                      />
-                    </div>
-                    <span className="inline-flex items-center gap-1.5 rounded-full border border-border px-2.5 py-0.5 font-mono text-[10px] font-medium tracking-[0.1em] text-foreground-subtle uppercase">
-                      <span aria-hidden="true" className="h-1 w-1 rounded-full bg-accent" />
-                      In development
-                    </span>
-                  </div>
-
-                  <h2 className="mt-6 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
-                    TillProof is currently in development.
-                  </h2>
-                  <p className="mt-3 text-sm leading-6 text-foreground-subtle">
-                    We&apos;re working on bringing TillProof to life. Please check back later for
-                    updates.
-                  </p>
-
-                  <div className="mt-6 border-t border-border pt-4">
-                    <p className="font-mono text-[10px] tracking-[0.12em] text-foreground-faint uppercase">
-                      Availability
-                    </p>
-                    <p className="mt-1.5 text-sm text-foreground">
-                      Not released. There is no public TillProof application to open yet.
-                    </p>
-                  </div>
-                </div>
-              </Reveal>
+              <div className="inline-flex bg-muted p-5">
+                <Image
+                  src={tillproofLogo}
+                  alt="TillProof"
+                  priority
+                  sizes="(min-width: 640px) 320px, 240px"
+                  className="h-auto w-[220px] sm:w-[300px]"
+                />
+              </div>
+              <h2 className="h2 mt-8 max-w-[14ch]">Not released. No date announced.</h2>
+              <p className="mt-5 max-w-[38ch] text-[1rem] leading-7 text-foreground-subtle">
+                TillProof is in development and there is no public application to open. The
+                features described below are the intended capability, not a live deployment.
+              </p>
+            </div>
+            <div className="lg:col-span-7">
+              <ProductFragment kind="tillproof" />
+              <p className="mt-3 text-[0.8125rem] leading-5 text-foreground-faint">
+                Interface concept for a product in development. No shop, staff or stock records are
+                real.
+              </p>
             </div>
           </div>
         </Container>
       </section>
 
-      <section className="border-b border-border bg-muted py-14 sm:py-16">
-        <Container>
-          <div className="max-w-3xl">
-            <Eyebrow>What we are building</Eyebrow>
-            <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-              The problems TillProof is intended to solve
-            </h2>
-            <p className="mt-4 text-base leading-7 text-foreground-subtle">
-              These are the intended capabilities of the product, not a description of a live
-              deployment. No release date has been announced.
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-px overflow-hidden rounded-lg border border-border bg-border sm:grid-cols-3">
-            {intentions.map((item, index) => (
-              <div key={item.title} className="bg-background p-6">
-                <span className="font-mono text-[10px] text-foreground-faint">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <h3 className="mt-3 text-base font-semibold text-foreground">{item.title}</h3>
-                <p className="mt-2 text-sm leading-6 text-foreground-subtle">{item.detail}</p>
-              </div>
-            ))}
-          </div>
-        </Container>
-      </section>
-
-      <section className="border-b border-border bg-muted py-14 sm:py-16">
+      <section className="bg-accent py-16 text-accent-contrast sm:py-20 lg:py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-4">
-              <Eyebrow>Questions</Eyebrow>
-              <h2 className="mt-4 text-2xl font-semibold tracking-tight sm:text-3xl">
-                TillProof, answered plainly
+              <h2 className="h2 max-w-[14ch] text-accent-contrast">
+                The problems TillProof is intended to solve
               </h2>
+              <p className="mt-6 max-w-[32ch] text-[1rem] leading-7 text-accent-contrast/70">
+                Electrical retailers carry high-value, individually identifiable stock. When records
+                live in a notebook, an owner cannot see what left the shelf, at what price, or who
+                handled the cash.
+              </p>
             </div>
             <div className="lg:col-span-8">
-              <div className="divide-y divide-border border-y border-border">
+              <ul className="flex flex-col gap-8">
+                {intentions.map((item) => (
+                  <li key={item.title}>
+                    <h3 className="text-[1.35rem] leading-tight font-semibold text-accent-contrast">
+                      {item.title}
+                    </h3>
+                    <p className="mt-2 max-w-2xl text-[1rem] leading-7 text-accent-contrast/75">
+                      {item.detail}
+                    </p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-background py-16 sm:py-20 lg:py-24">
+        <Container>
+          <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
+            <div className="lg:col-span-4">
+              <h2 className="h2 max-w-[10ch]">Questions</h2>
+              <p className="lead mt-6 max-w-[30ch] text-foreground-subtle">
+                TillProof, answered plainly while it is still being built.
+              </p>
+            </div>
+            <div className="lg:col-span-8">
+              <div>
                 {faqs.map((faq) => (
-                  <details key={faq.question} className="group py-4">
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
+                  <details key={faq.question} className="group py-5">
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4 text-[1.05rem] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground">
                       {faq.question}
                       <span
                         aria-hidden="true"
-                        className="mt-0.5 shrink-0 font-mono text-foreground-faint transition-transform duration-200 group-open:rotate-45"
+                        className="mt-0.5 shrink-0 text-[1.2rem] leading-none text-foreground-faint transition-transform duration-200 group-open:rotate-45"
                       >
                         +
                       </span>
                     </summary>
-                    <p className="mt-3 max-w-3xl text-sm leading-6 text-foreground-subtle">
+                    <p className="mt-3 max-w-3xl text-[0.9375rem] leading-6 text-foreground-subtle">
                       {faq.answer}
                     </p>
                   </details>
@@ -225,26 +191,36 @@ export default function TillProofPage() {
         </Container>
       </section>
 
-      <section className="border-b border-border bg-background py-14 sm:py-16">
+      <section className="bg-gold py-16 text-[#15170f] sm:py-20">
         <Container>
-          <div className="grid gap-8 rounded-lg border border-border p-6 sm:p-8 lg:grid-cols-12 lg:items-center lg:gap-12">
+          <div className="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
             <div className="lg:col-span-8">
-              <p className="font-mono text-[10px] tracking-[0.14em] text-foreground-faint uppercase">
-                Development status
-              </p>
-              <h2 className="mt-3 text-xl font-semibold tracking-tight sm:text-2xl">
-                Built carefully, released when it is ready
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-foreground-subtle">
-                TillProof is not available for public use. We will publish the application here
-                when it is ready, and we are not announcing a date before the work is complete.
+              <h2 className="h2 max-w-[20ch]">Built carefully, released when it is ready</h2>
+              <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-[#15170f]/75">
+                TillProof is not available for public use. We will publish the application here when
+                it is ready, and we are not announcing a date before the work is complete.
               </p>
             </div>
             <div className="lg:col-span-4 lg:text-right">
-              <ButtonLink href={ROUTES.products} variant="outline" size="lg">
-                Back to Products
+              <ButtonLink
+                href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("TillProof interest")}`}
+                size="lg"
+                className="!bg-[#15170f] !text-[#f7f4ec] hover:!bg-[#084235]"
+              >
+                Register interest
               </ButtonLink>
             </div>
+          </div>
+        </Container>
+      </section>
+
+      <section className="bg-background py-16 sm:py-20">
+        <Container>
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="lead max-w-xl text-foreground-subtle">
+              Two other products are available today.
+            </p>
+            <ArrowLink href={ROUTES.products}>Back to products</ArrowLink>
           </div>
         </Container>
       </section>

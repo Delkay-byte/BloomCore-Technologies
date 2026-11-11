@@ -12,54 +12,45 @@ const companyLinks = [
   { label: "Resources", href: ROUTES.resources },
   { label: "Founder", href: ROUTES.founder },
   { label: "Contact", href: ROUTES.contact },
-  { label: "Privacy", href: ROUTES.privacy },
 ];
 
 const productHrefs: Record<string, string> = {
   schemeknit: ROUTES.productsSchemeKnit,
-  "maacash": ROUTES.productsMaacash,
+  maacash: ROUTES.productsMaacash,
   tillproof: ROUTES.productsTillProof,
 };
 
-function Column({ title, children }: { title: string; children: React.ReactNode }) {
+function FooterLink({ href, children }: { href: string; children: React.ReactNode }) {
   return (
-    <div>
-      <h2 className="mb-4 font-mono text-[11px] font-medium tracking-[0.14em] text-foreground-faint uppercase">
-        {title}
-      </h2>
-      <ul className="flex flex-col gap-2.5">{children}</ul>
-    </div>
+    <Link
+      href={href}
+      className="text-[0.9375rem] text-foreground-subtle transition-colors hover:text-foreground"
+    >
+      {children}
+    </Link>
   );
 }
 
 export function Footer() {
-
   return (
-    <footer className="border-t border-border bg-muted">
-      <div className="mx-auto w-full max-w-[1440px] px-4 py-16 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-12 sm:grid-cols-2 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <Link
-              href="/"
-              className="inline-flex items-center rounded-md bg-[#080808] px-2.5 py-1.5"
-              aria-label={BRAND.name}
-            >
-              <Image src={logo} alt={BRAND.name} sizes="140px" className="h-10 w-auto" />
-            </Link>
-            <p className="mt-5 max-w-sm text-sm leading-6 text-foreground-subtle">
-              {BRAND.description}
+    <footer className="bg-background p-1.5 sm:p-3">
+      <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-12">
+        <div className="flex min-h-[190px] flex-col justify-between bg-accent p-5 text-accent-contrast sm:col-span-2 sm:p-7 lg:col-span-5">
+          <Link href="/" aria-label={`${BRAND.name} — home`} className="inline-flex">
+            <Image src={logo} alt={BRAND.name} sizes="260px" className="h-10 w-auto sm:h-12" />
+          </Link>
+          <div className="mt-8">
+            <p className="max-w-md text-[1.35rem] leading-tight font-medium sm:text-[1.6rem]">
+              Software products and engineering, built in Ghana for the work that actually happens.
             </p>
-            <p className="mt-3 max-w-sm text-sm leading-6 text-foreground-faint">
-              {BRAND.tagline}
-            </p>
-            <div className="mt-6 flex gap-5">
+            <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
               {SOCIAL.map((item) => (
                 <a
                   key={item.href}
                   href={item.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-sm text-foreground-subtle underline-offset-4 transition-colors hover:text-foreground hover:underline"
+                  className="text-[0.875rem] text-accent-contrast/80 underline underline-offset-4 transition-colors hover:text-accent-contrast"
                 >
                   {item.label}
                   <span className="sr-only"> (opens in a new tab)</span>
@@ -67,88 +58,123 @@ export function Footer() {
               ))}
             </div>
           </div>
+        </div>
 
-          <div className="lg:col-span-2">
-            <Column title="Products">
-              {PRODUCTS.map((product) => (
-                <li key={product.slug}>
-                  <Link
-                    href={productHrefs[product.slug]}
-                    className="text-sm text-foreground-subtle transition-colors hover:text-foreground"
-                  >
-                    {product.name}
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <Link
-                  href={ROUTES.products}
-                  className="text-sm text-foreground-subtle transition-colors hover:text-foreground"
-                >
-                  All products
-                </Link>
+        <nav
+          aria-label="Footer products"
+          className="flex min-h-[190px] flex-col bg-surface p-5 sm:p-7 lg:col-span-3"
+        >
+          <h2 className="text-[0.9375rem] font-semibold text-foreground">Products</h2>
+          <ul className="mt-4 flex flex-col gap-2.5">
+            {PRODUCTS.map((product) => (
+              <li key={product.slug}>
+                <FooterLink href={productHrefs[product.slug]}>{product.name}</FooterLink>
               </li>
-            </Column>
-          </div>
+            ))}
+            <li>
+              <FooterLink href={ROUTES.products}>All products</FooterLink>
+            </li>
+          </ul>
+        </nav>
 
-          <div className="lg:col-span-2">
-            <Column title="Company">
-              {companyLinks.map((link) => (
-                <li key={link.href}>
-                  <Link
-                    href={link.href}
-                    className="text-sm text-foreground-subtle transition-colors hover:text-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <AnalyticsSettingsButton />
+        <nav
+          aria-label="Footer company"
+          className="flex min-h-[190px] flex-col bg-surface p-5 sm:p-7 lg:col-span-2"
+        >
+          <h2 className="text-[0.9375rem] font-semibold text-foreground">Company</h2>
+          <ul className="mt-4 flex flex-col gap-2.5">
+            {companyLinks.map((link) => (
+              <li key={link.href}>
+                <FooterLink href={link.href}>{link.label}</FooterLink>
               </li>
-            </Column>
-          </div>
+            ))}
+          </ul>
+        </nav>
 
-          <div className="lg:col-span-4">
-            <Column title="Contact">
+        <div className="flex min-h-[190px] flex-col justify-between bg-surface-2 p-5 sm:p-7 lg:col-span-2">
+          <div>
+            <h2 className="text-[0.9375rem] font-semibold text-foreground">Contact</h2>
+            <ul className="mt-4 flex flex-col gap-2.5 text-[0.9375rem] text-foreground-subtle">
               <li>
                 <a
                   href={`mailto:${CONTACT.email}`}
-                  className="text-sm break-words text-foreground-subtle transition-colors hover:text-foreground"
+                  className="break-all transition-colors hover:text-foreground"
                 >
                   {CONTACT.email}
                 </a>
               </li>
-              <li className="text-sm text-foreground-subtle">
+              <li>
                 <a
                   href={`tel:${CONTACT.phoneCallsWhatsapp}`}
                   className="transition-colors hover:text-foreground"
                 >
                   {CONTACT.phoneCallsWhatsapp}
-                </a>{" "}
-                <span className="text-foreground-faint">— calls &amp; WhatsApp</span>
+                </a>
               </li>
-              <li className="text-sm text-foreground-subtle">
+              <li className="text-foreground-faint">Calls and WhatsApp</li>
+              <li>
                 <a
                   href={`tel:${CONTACT.phoneCallsOnly}`}
                   className="transition-colors hover:text-foreground"
                 >
                   {CONTACT.phoneCallsOnly}
-                </a>{" "}
-                <span className="text-foreground-faint">— calls only</span>
+                </a>
               </li>
-            </Column>
+              <li className="text-foreground-faint">Calls only</li>
+            </ul>
           </div>
+          <p className="mt-6 text-[0.8125rem] leading-5 text-foreground-faint">
+            {CONTACT.address}
+          </p>
         </div>
 
-        <div className="mt-14 border-t border-border pt-6">
-          <div className="flex flex-col gap-2 text-xs leading-5 text-foreground-faint sm:flex-row sm:items-start sm:justify-between">
-            <p>
-              © <CurrentYear fallback={2026} /> {BRAND.name}. All rights reserved.
-            </p>
-            <p className="max-w-xl sm:text-right">
-              Business name registration {CONTACT.registration}. {CONTACT.registrationNote}
-            </p>
+        <div className="relative flex min-h-[180px] items-end overflow-hidden bg-accent p-5 sm:col-span-2 sm:p-7 lg:col-span-8">
+          <Link href="/" aria-label={`${BRAND.name} — home`} className="block w-full">
+            <Image
+              src={logo}
+              alt={BRAND.name}
+              sizes="(min-width: 1024px) 70vw, 92vw"
+              className="h-auto w-full max-w-[820px]"
+            />
+          </Link>
+        </div>
+
+        <Link
+          href={ROUTES.contact}
+          className="group flex min-h-[180px] flex-col justify-between bg-gold p-5 text-[#15170f] sm:p-7 lg:col-span-4"
+        >
+          <span className="text-[1.45rem] leading-tight font-semibold uppercase sm:text-[1.8rem]">
+            Start a
+            <br />
+            project
+          </span>
+          <span className="flex items-end justify-between gap-4">
+            <span className="text-[0.9375rem] leading-6">
+              Tell us what the work needs to do.
+            </span>
+            <svg width="38" height="24" viewBox="0 0 38 24" fill="none" aria-hidden="true">
+              <path
+                d="M1 12h34M25 2l10 10-10 10"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="transition-transform duration-200 group-hover:translate-x-1"
+              />
+            </svg>
+          </span>
+        </Link>
+
+        <div className="flex flex-col gap-3 bg-surface p-5 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between sm:p-7 lg:col-span-12">
+          <p className="text-[0.8125rem] leading-5 text-foreground-faint">
+            © <CurrentYear fallback={2026} /> {BRAND.name}. All rights reserved.
+          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-[0.8125rem] text-foreground-faint">
+            <Link href={ROUTES.privacy} className="transition-colors hover:text-foreground">
+              Privacy notice
+            </Link>
+            <AnalyticsSettingsButton />
+            <span>
+              {CONTACT.registration} · Registered in Ghana
+            </span>
           </div>
         </div>
       </div>

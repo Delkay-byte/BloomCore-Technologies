@@ -76,15 +76,12 @@ function buildMailto(values: Values): string {
   return `mailto:${CONTACT.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 }
 
-const fieldClasses =
-  "mt-1.5 w-full rounded-md border border-border bg-background px-3 py-2.5 text-sm text-foreground " +
-  "placeholder:text-foreground-faint focus-visible:border-foreground focus-visible:outline-2 " +
-  "focus-visible:outline-offset-2 focus-visible:outline-foreground";
+const fieldClasses = "field mt-2";
 
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
-    <p id={id} className="mt-1.5 text-xs leading-5 text-foreground">
+    <p id={id} className="mt-1.5 text-[0.8125rem] leading-5 text-foreground">
       <span aria-hidden="true">Error: </span>
       {message}
     </p>
@@ -258,7 +255,7 @@ export function ContactForm() {
       </div>
 
       {attempted && Object.keys(errors).length > 0 && (
-        <p role="alert" className="mt-5 rounded-md border border-border bg-muted px-4 py-3 text-sm text-foreground">
+        <p role="alert" className="mt-5 border-l-4 border-accent bg-muted px-4 py-3 text-sm text-foreground">
           Some details need attention before the email can be prepared. Check the messages above.
         </p>
       )}
@@ -266,14 +263,14 @@ export function ContactForm() {
       <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:items-center">
         <button
           type="submit"
-          className="inline-flex h-11 items-center justify-center rounded-md bg-foreground px-5 text-sm font-medium tracking-tight text-background transition-colors hover:bg-neutral-800 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground dark:hover:bg-neutral-200"
+          className="inline-flex h-12 items-center justify-center bg-accent px-6 text-[0.9375rem] font-medium tracking-tight text-accent-contrast transition-colors hover:bg-accent-strong focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground"
         >
           Prepare email
         </button>
         <button
           type="reset"
           onClick={resetForm}
-          className="inline-flex h-11 items-center justify-center rounded-md px-5 text-sm font-medium tracking-tight text-foreground-subtle transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+          className="inline-flex h-12 items-center justify-center px-6 text-[0.9375rem] font-medium tracking-tight text-foreground-subtle transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-foreground"
         >
           Clear form
         </button>
@@ -287,7 +284,7 @@ export function ContactForm() {
 
       <div aria-live="polite" className="mt-4">
         {preparedHref && (
-          <div className="rounded-md border border-foreground/25 bg-muted px-4 py-4">
+          <div className="border-l-4 border-accent bg-muted px-4 py-4">
             <p className="text-sm font-medium text-foreground">
               Your email application should now be open with the message prepared.
             </p>

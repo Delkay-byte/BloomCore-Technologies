@@ -7,22 +7,23 @@ import logo from "@/assets/brand/bloomcore-logo-white.png";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import { BRAND, NAVIGATION } from "@/lib/brand";
+import { BRAND, NAVIGATION, ROUTES } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 function BrandLockup() {
   return (
     <Link
       href="/"
-      className="inline-flex items-center rounded-md bg-[#080808] px-2.5 py-1.5"
+      className="inline-flex shrink-0 items-center bg-[#08241f] px-2.5 py-1.5"
       aria-label={`${BRAND.name} — home`}
     >
       <Image
         src={logo}
         alt={BRAND.name}
         priority
-        sizes="140px"
-        className="h-9 w-auto sm:h-10"
+        loading="eager"
+        sizes="150px"
+        className="h-8 w-auto sm:h-9"
       />
     </Link>
   );
@@ -30,8 +31,6 @@ function BrandLockup() {
 
 function DesktopNav() {
   const pathname = usePathname();
-  // The open menu is tied to the path it was opened on, so navigating closes it
-  // without an effect that resets state.
   const [openMenu, setOpenMenu] = useState<{ label: string; path: string } | null>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -58,9 +57,9 @@ function DesktopNav() {
   useEffect(() => () => cancelClose(), []);
 
   return (
-    <nav aria-label="Primary" className="hidden md:block">
-      <ul className="flex items-center gap-5 lg:gap-7">
-        {NAVIGATION.map((item) => {
+    <nav aria-label="Primary" className="hidden lg:block">
+      <ul className="flex items-center gap-6 xl:gap-8">
+        {NAVIGATION.filter((item) => item.href !== ROUTES.home).map((item) => {
           const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
           if (item.children) {
@@ -80,8 +79,6 @@ function DesktopNav() {
                   aria-expanded={isOpen}
                   aria-haspopup="true"
                   onClick={(event) => {
-                    // Mouse clicks always open: hover may already have opened it,
-                    // and a click should not immediately close the menu again.
                     const opened = { label: item.label, path: pathname };
                     if (event.detail === 0) {
                       setOpenMenu(isOpen ? null : opened);
@@ -91,10 +88,8 @@ function DesktopNav() {
                   }}
                   onFocus={() => setOpenMenu({ label: item.label, path: pathname })}
                   className={cn(
-                    "flex items-center gap-1.5 py-2 text-sm font-medium tracking-tight transition-colors",
-                    isActive || isOpen
-                      ? "text-foreground"
-                      : "text-foreground-subtle hover:text-foreground",
+                    "flex items-center gap-1.5 py-2 text-[0.9375rem] font-medium tracking-tight transition-colors",
+                    isActive || isOpen ? "text-foreground" : "text-foreground-subtle hover:text-foreground",
                   )}
                 >
                   {item.label}
@@ -116,26 +111,25 @@ function DesktopNav() {
                   </svg>
                 </button>
                 {isOpen && (
-                  <div className="absolute top-full left-0 z-50 w-64 pt-2">
-                    <ul className="overflow-hidden rounded-lg border border-border bg-background p-1.5 shadow-lg">
+                  <div className="absolute top-full left-0 z-50 w-64 pt-3">
+                    <ul className="bg-[#08241f] p-2 shadow-[0_24px_48px_-24px_rgba(0,0,0,0.4)]">
                       <li>
                         <Link
                           href={item.href}
-                          className="block rounded-md px-3 py-2 text-sm font-semibold text-foreground transition-colors hover:bg-muted"
+                          className="block px-3 py-2.5 text-[0.9375rem] font-semibold text-[#f7f4ec] transition-colors hover:bg-white/10"
                         >
                           All products
                         </Link>
                       </li>
-                      <li aria-hidden="true" className="my-1.5 h-px bg-border" />
                       {item.children.map((child) => (
                         <li key={child.href}>
                           <Link
                             href={child.href}
                             className={cn(
-                              "block rounded-md px-3 py-2 text-sm transition-colors",
+                              "block px-3 py-2.5 text-[0.9375rem] transition-colors hover:bg-white/10",
                               pathname === child.href
-                                ? "bg-muted font-medium text-foreground"
-                                : "text-foreground-subtle hover:bg-muted hover:text-foreground",
+                                ? "text-gold"
+                                : "text-[#d6ded4] hover:text-[#f7f4ec]",
                             )}
                           >
                             {child.label}
@@ -155,7 +149,7 @@ function DesktopNav() {
                 href={item.href}
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "py-2 text-sm font-medium tracking-tight transition-colors",
+                  "py-2 text-[0.9375rem] font-medium tracking-tight transition-colors",
                   isActive ? "text-foreground" : "text-foreground-subtle hover:text-foreground",
                 )}
               >
@@ -177,10 +171,8 @@ function MobileNav() {
   const panelRef = useRef<HTMLDivElement | null>(null);
   const toggleRef = useRef<HTMLButtonElement | null>(null);
 
-  // Close the panel when the layout switches to the desktop navigation, so the
-  // body scroll lock cannot outlive the button that opened the panel.
   useEffect(() => {
-    const desktop = window.matchMedia("(min-width: 768px)");
+    const desktop = window.matchMedia("(min-width: 1024px)");
     const onChange = (event: MediaQueryListEvent) => {
       if (event.matches) setOpenPath(null);
     };
@@ -229,7 +221,7 @@ function MobileNav() {
   }, [open]);
 
   return (
-    <div className="md:hidden">
+    <div className="lg:hidden">
       <button
         ref={toggleRef}
         type="button"
@@ -237,9 +229,9 @@ function MobileNav() {
         aria-controls="mobile-navigation"
         aria-label={open ? "Close navigation menu" : "Open navigation menu"}
         onClick={() => setOpenPath(open ? null : pathname)}
-        className="flex h-10 w-10 items-center justify-center rounded-md text-foreground transition-colors hover:bg-muted"
+        className="flex h-11 w-11 items-center justify-center text-foreground transition-colors hover:bg-surface-2"
       >
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 20 20" fill="none" aria-hidden="true">
           {open ? (
             <path
               d="M5 5L15 15M15 5L5 15"
@@ -263,12 +255,12 @@ function MobileNav() {
           initial={reduceMotion ? false : { opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.18, ease: "easeOut" }}
-          className="absolute inset-x-0 top-16 h-[calc(100dvh-4rem)] border-t border-border bg-background"
+          className="fixed inset-x-0 top-[68px] h-[calc(100dvh-68px)] bg-[#08241f] sm:top-[76px] sm:h-[calc(100dvh-76px)]"
         >
           <div
             id="mobile-navigation"
             ref={panelRef}
-            className="h-full overflow-y-auto overscroll-contain px-4 py-6"
+            className="h-full overflow-y-auto overscroll-contain px-5 py-8 sm:px-8"
           >
             <nav aria-label="Mobile">
               <ul className="flex flex-col">
@@ -277,31 +269,33 @@ function MobileNav() {
                     item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
 
                   return (
-                    <li key={item.href} className="border-b border-border/70 last:border-0">
+                    <li key={item.href}>
                       <Link
                         href={item.href}
                         aria-current={isActive ? "page" : undefined}
+                        onClick={() => setOpenPath(null)}
                         className={cn(
-                          "flex items-center justify-between py-3.5 text-lg font-medium tracking-tight transition-colors",
-                          isActive ? "text-foreground" : "text-foreground-subtle",
+                          "flex items-center justify-between py-3 text-[2rem] leading-tight font-semibold tracking-tight uppercase transition-colors",
+                          isActive ? "text-gold" : "text-[#f7f4ec] hover:text-gold",
                         )}
                       >
                         {item.label}
                         {isActive && (
-                          <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-foreground" />
+                          <span aria-hidden="true" className="h-2 w-2 bg-gold" />
                         )}
                       </Link>
                       {item.children && (
-                        <ul className="pb-3 pl-3">
+                        <ul className="flex flex-col gap-1 pb-4 pl-3">
                           {item.children.map((child) => (
                             <li key={child.href}>
                               <Link
                                 href={child.href}
+                                onClick={() => setOpenPath(null)}
                                 className={cn(
-                                  "block py-2 text-sm transition-colors",
+                                  "block py-1.5 text-[1rem] transition-colors",
                                   pathname === child.href
-                                    ? "font-medium text-foreground"
-                                    : "text-foreground-subtle",
+                                    ? "text-gold"
+                                    : "text-[#bfc9bd] hover:text-[#f7f4ec]",
                                 )}
                               >
                                 {child.label}
@@ -315,6 +309,21 @@ function MobileNav() {
                 })}
               </ul>
             </nav>
+            <div className="mt-10 bg-gold p-5 text-[#15170f]">
+              <p className="text-[1.35rem] leading-tight font-semibold uppercase">
+                Have a project in mind?
+              </p>
+              <p className="mt-2 text-[0.9375rem] leading-6">
+                Describe the problem. We will say plainly whether it is work we can take on.
+              </p>
+              <Link
+                href={ROUTES.contact}
+                onClick={() => setOpenPath(null)}
+                className="mt-4 inline-flex h-11 items-center bg-[#08241f] px-5 text-[0.9375rem] font-medium text-[#f7f4ec]"
+              >
+                Contact BloomCore
+              </Link>
+            </div>
           </div>
         </motion.div>
       )}
@@ -324,11 +333,17 @@ function MobileNav() {
 
 export function Header() {
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/90 backdrop-blur-md">
-      <div className="mx-auto flex h-16 w-full max-w-[1440px] items-center justify-between px-4 sm:px-6 lg:px-8">
+    <header className="sticky top-0 z-50 w-full bg-background">
+      <div className="page-frame flex h-[68px] items-center justify-between gap-4 sm:h-[76px]">
         <BrandLockup />
-        <div className="flex items-center gap-2 md:gap-5">
+        <div className="flex items-center gap-3 xl:gap-6">
           <DesktopNav />
+          <Link
+            href={ROUTES.contact}
+            className="hidden h-11 items-center bg-accent px-5 text-[0.9375rem] font-medium text-accent-contrast transition-colors hover:bg-accent-strong xl:inline-flex"
+          >
+            Start a project
+          </Link>
           <ThemeToggle />
           <MobileNav />
         </div>

@@ -35,7 +35,7 @@ export function BackToTop() {
       aria-hidden={!visible}
       tabIndex={visible ? 0 : -1}
       className={cn(
-        "fixed right-4 bottom-6 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full",
+        "fixed right-4 bottom-24 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full",
         "border border-border bg-background/90 text-foreground shadow-[0_12px_30px_-12px_rgba(8,8,8,0.45)]",
         "backdrop-blur-md transition-[opacity,transform,border-color,color] duration-300",
         "hover:border-accent hover:text-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground",
