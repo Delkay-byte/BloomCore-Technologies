@@ -24,6 +24,9 @@
 | `npm run build` | clean, 19 static pages |
 | `npx opennextjs-cloudflare build` | clean, `.open-next/worker.js` written |
 | Netlify fallback (`NETLIFY=true` build after prune) | clean |
+| Production deploy | version `115d04cc-66db-4430-9905-9e7864bc11b7` |
+| Production metadata diff vs baseline | 0 differences |
+| Production monochrome / overflow spot-check | 0 findings; 2 transient navigation timeouts rechecked 200 |
 
 Colour census, before and after:
 
@@ -179,9 +182,24 @@ Rendered checks used the Playwright harness at
 
 ---
 
-## 10. Remaining items
+## 10. Deployment and remaining items
 
-1. Commit and push `feat/monochrome-redesign`, then deploy with `npx wrangler deploy` from the fresh `.open-next` build.
-2. Re-run the audit harness with `BASE=https://bloomcoretech.com` after deploy to confirm production matches the local build, including the two legacy redirects.
-3. Owner-side checks that need an Access session: authenticated `/internal` walkthrough, a test enquiry end to end (D1 row + confirmation email), and GA4 DebugView after consent.
-4. The QA lead created during earlier testing (`BC-2026-000001`) could not be removed from production D1 with this environment's token; it remains owner-side cleanup.
+Deployed to Cloudflare Workers as version `115d04cc-66db-4430-9905-9e7864bc11b7` on 12 November 2026. Worker name, bindings, D1, Access audiences and Resend secrets were unchanged.
+
+Production checks after deploy:
+
+| Check | Result |
+|---|---|
+| `/` and all 15 sitemap routes | 200 |
+| Metadata vs `seo-baseline.json` | identical, 0 failures |
+| `robots.txt`, `sitemap.xml`, favicons, `og-image.png` | 200 with correct content types |
+| `/products/bik-prestige`, `/products/bloomcore-one` | 301 → `/products/maacash` |
+| `/internal/leads`, `/api/internal/notifications` | 302 to Cloudflare Access login |
+| Chat launcher and consent region on `/` | present |
+| Chromatic colours, overflow, console errors (15 routes × 2 viewports) | 0 findings |
+
+Remaining owner-side items:
+
+1. Authenticated `/internal` walkthrough, one end-to-end test enquiry (D1 row plus confirmation email), and GA4 DebugView after consent.
+2. Remove the QA lead `BC-2026-000001` (`bloomcoretechnologies+qa-lead@gmail.com`). This environment's token cannot read or edit production D1 (`code: 7403` / `10000`).
+3. `wrangler deployments list` shows `Source: Unknown (deployment)` for earlier versions, so merging to `main` does not auto-deploy. A deploy must be run explicitly, as it was here.
