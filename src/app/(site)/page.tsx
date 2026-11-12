@@ -88,13 +88,13 @@ const stages = [
     name: "Listen",
     detail:
       "A conversation with the people doing the work. What happens today, including the workarounds, because the workaround is usually the real requirement.",
-    tone: "forest",
+    tone: "ink",
   },
   {
     name: "Scope",
     detail:
       "A written statement of what the first version will do, what it will not do, and what evidence will show it worked. You keep that document.",
-    tone: "brass",
+    tone: "graphite",
   },
   {
     name: "Build",
@@ -110,11 +110,11 @@ const stages = [
   },
 ];
 
-const stageTones: Record<string, string> = {
-  forest: "bg-accent text-accent-contrast",
-  brass: "bg-gold text-gold-contrast",
-  surface: "bg-surface text-foreground",
-  muted: "bg-surface-3 text-foreground",
+const stageTones: Record<string, { card: string; body: string }> = {
+  ink: { card: "bg-accent text-accent-contrast", body: "text-accent-contrast/70" },
+  graphite: { card: "bg-foreground-subtle text-background", body: "text-background/80" },
+  surface: { card: "bg-surface text-foreground", body: "text-foreground-subtle" },
+  muted: { card: "bg-surface-3 text-foreground", body: "text-foreground-subtle" },
 };
 
 export default function HomePage() {
@@ -187,7 +187,7 @@ export default function HomePage() {
                   <span
                     className={
                       product.status === "live"
-                        ? "self-start rounded-full bg-gold px-2 py-0.5 text-[0.6875rem] font-bold text-gold-contrast"
+                        ? "self-start rounded-full bg-foreground px-2 py-0.5 text-[0.6875rem] font-bold text-background"
                         : "self-start rounded-full bg-surface-2 px-2 py-0.5 text-[0.6875rem] font-semibold text-foreground-subtle"
                     }
                   >
@@ -209,7 +209,7 @@ export default function HomePage() {
             ))}
             <Link
               href={ROUTES.contact}
-              className="hero-rise group flex min-h-[132px] flex-col justify-between rounded-[var(--radius)] bg-gold p-5 text-gold-contrast transition-colors hover:bg-gold-strong"
+              className="hero-rise group flex min-h-[132px] flex-col justify-between rounded-[var(--radius)] bg-accent p-5 text-accent-contrast transition-colors hover:bg-accent-strong"
               style={{ animationDelay: "280ms" }}
             >
               <span className="text-[1.05rem] font-bold">Start a project</span>
@@ -260,7 +260,7 @@ export default function HomePage() {
               },
             ].map((item, index) => (
               <Reveal key={item.lead} delay={index * 0.05}>
-                <p className="text-[0.9375rem] leading-6 text-foreground-subtle">
+                <p className="border-t border-line pt-5 text-[0.9375rem] leading-6 text-foreground-subtle">
                   <strong className="font-bold text-foreground">{item.lead}.</strong> {item.body}
                 </p>
               </Reveal>
@@ -336,7 +336,7 @@ export default function HomePage() {
                     <h3 className="font-display text-[2rem] leading-none">
                       MaaCash
                     </h3>
-                    <StatusBadge label="Available" />
+                    <StatusBadge label="Available" tone="invert" />
                   </div>
                   <p className="mt-3 max-w-[46ch] text-[0.9375rem] leading-6 text-accent-contrast/75">
                     Multi-location administration, staff roles, mobile-money operations and susu
@@ -459,16 +459,12 @@ export default function HomePage() {
               {stages.map((stage) => (
                 <div
                   key={stage.name}
-                  className={`flex flex-1 flex-col justify-start rounded-[var(--radius)] p-5 sm:p-6 ${stageTones[stage.tone]}`}
+                  className={`flex flex-1 flex-col justify-start rounded-[var(--radius)] p-5 sm:p-6 ${stageTones[stage.tone].card}`}
                 >
                   <p className="font-display text-[2rem] leading-none">
                     {stage.name}
                   </p>
-                  <p
-                    className={`mt-5 text-[0.9375rem] leading-6 ${
-                      stage.tone === "forest" ? "text-accent-contrast/75" : "opacity-80"
-                    }`}
-                  >
+                  <p className={`mt-5 text-[0.9375rem] leading-6 ${stageTones[stage.tone].body}`}>
                     {stage.detail}
                   </p>
                 </div>
@@ -481,11 +477,11 @@ export default function HomePage() {
       <section className="bg-background section-pad">
         <Container>
           <Reveal>
-            <div className="grid gap-8 overflow-hidden rounded-[var(--radius)] bg-gold p-6 text-gold-contrast sm:p-9 lg:grid-cols-12 lg:items-center lg:gap-14">
+            <div className="grid gap-8 overflow-hidden rounded-[var(--radius)] bg-accent p-6 text-accent-contrast sm:p-9 lg:grid-cols-12 lg:items-center lg:gap-14">
               <div className="lg:col-span-7">
-                <p className="text-[0.8125rem] font-semibold opacity-75">Evidence</p>
-                <h2 className="h2 mt-4 max-w-[20ch]">Two products available. One in development.</h2>
-                <p className="mt-5 max-w-2xl text-[1rem] leading-7 opacity-80">
+                <p className="text-[0.8125rem] font-semibold text-accent-contrast/70">Evidence</p>
+                <h2 className="h2 mt-4 max-w-[20ch] text-accent-contrast">Two products available. One in development.</h2>
+                <p className="mt-5 max-w-2xl text-[1rem] leading-7 text-accent-contrast/75">
                   We do not publish client names, revenue figures, awards or testimonials we cannot
                   evidence. What appears here is software BloomCore Technologies has built,
                   described with its real status.
@@ -493,7 +489,7 @@ export default function HomePage() {
                 <div className="mt-6">
                   <Link
                     href={ROUTES.work}
-                    className="inline-flex items-center gap-3 text-[1rem] font-semibold underline decoration-1 underline-offset-4"
+                    className="inline-flex items-center gap-3 text-[1rem] font-semibold text-accent-contrast underline decoration-1 underline-offset-4"
                   >
                     See the work
                     <span aria-hidden="true">→</span>
@@ -507,8 +503,8 @@ export default function HomePage() {
                     { term: "Available", detail: "2" },
                     { term: "In build", detail: "1" },
                   ].map((item) => (
-                    <div key={item.term} className="rounded-[var(--radius)] bg-gold-contrast/10 p-4">
-                      <dt className="text-[0.8125rem] font-semibold opacity-75">{item.term}</dt>
+                    <div key={item.term} className="rounded-[var(--radius)] bg-accent-contrast/10 p-4">
+                      <dt className="text-[0.8125rem] font-semibold text-accent-contrast/70">{item.term}</dt>
                       <dd className="mt-2 font-display text-[clamp(2.4rem,3.4vw,3.4rem)] leading-none">
                         {item.detail}
                       </dd>
@@ -609,7 +605,7 @@ export default function HomePage() {
       <section className="bg-background pt-2.5 pb-2.5">
         <div className="page-frame">
           <div className="grid gap-2.5 lg:grid-cols-12">
-            <div className="rounded-[var(--radius)] bg-accent p-6 text-accent-contrast sm:p-9 lg:col-span-7 lg:p-10">
+            <div className="min-w-0 rounded-[var(--radius)] bg-accent p-6 text-accent-contrast sm:p-9 lg:col-span-7 lg:p-10">
               <Reveal>
                 <p className="text-[0.8125rem] font-semibold text-accent-contrast/65">
                   Start a project
@@ -625,7 +621,7 @@ export default function HomePage() {
               </Reveal>
             </div>
 
-            <div className="grid gap-2.5 sm:grid-cols-2 lg:col-span-5">
+            <div className="grid min-w-0 gap-2.5 sm:grid-cols-2 lg:col-span-5">
               <div className="rounded-[var(--radius)] bg-surface p-6 sm:col-span-2 sm:p-7">
                 <p className="text-[0.8125rem] font-semibold text-foreground-faint">Email</p>
                 <a

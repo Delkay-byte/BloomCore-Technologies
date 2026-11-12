@@ -507,7 +507,7 @@ export function ContactForm() {
       </div>
 
       {formError && (
-        <p role="alert" className="mt-5 border-l-4 border-gold bg-muted px-4 py-3 text-sm text-foreground">
+        <p role="alert" className="mt-5 border-l-4 border-foreground bg-muted px-4 py-3 text-sm text-foreground">
           {formError}
         </p>
       )}

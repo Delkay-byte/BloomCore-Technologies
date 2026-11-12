@@ -236,12 +236,12 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
       {detail.launch && (
         <section className="bg-background pb-3">
           <div className="page-frame">
-            <div className="grid gap-8 rounded-[var(--radius)] bg-gold p-6 text-gold-contrast sm:p-9 lg:grid-cols-12 lg:items-center lg:gap-12">
+            <div className="grid gap-8 rounded-[var(--radius)] bg-surface p-6 text-foreground ring-1 ring-line sm:p-9 lg:grid-cols-12 lg:items-center lg:gap-12">
               <div className="lg:col-span-8">
                 <h2 className="font-display text-[clamp(2.2rem,3.6vw,3.4rem)] leading-none">
                   {product.name} runs as its own application.
                 </h2>
-                <p className="mt-4 max-w-2xl text-[1rem] leading-7 opacity-80">
+                <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-foreground-subtle">
                   Continue to the live product in a new tab. This page stays open in your current
                   tab, so you can return to the product information at any time.
                 </p>
@@ -253,7 +253,6 @@ export function ProductPageShell({ detail }: { detail: ProductDetail }) {
                   rel="noopener noreferrer"
                   size="lg"
                   aria-label={`${detail.launch.label} (opens in a new tab)`}
-                  className="!bg-accent !text-accent-contrast hover:!bg-accent-strong"
                   data-analytics="product_outbound_click"
                   data-product={product.name}
                   data-location="product_launch"

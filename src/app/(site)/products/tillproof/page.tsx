@@ -316,10 +316,10 @@ export default function TillProofPage() {
 
       <section className="bg-background pb-3">
         <div className="page-frame">
-          <div className="grid gap-8 rounded-[var(--radius)] bg-gold p-6 text-gold-contrast sm:p-9 lg:grid-cols-12 lg:items-center">
+          <div className="grid gap-8 rounded-[var(--radius)] bg-accent p-6 text-accent-contrast sm:p-9 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-8">
-              <h2 className="h2 max-w-[18ch]">Built carefully, released when it is ready.</h2>
-              <p className="mt-4 max-w-2xl text-[1rem] leading-7 opacity-80">
+              <h2 className="h2 max-w-[18ch] text-accent-contrast">Built carefully, released when it is ready.</h2>
+              <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-accent-contrast/75">
                 TillProof is not available for public use. We will publish the application here when
                 it is ready, and we are not announcing a date before the work is complete.
               </p>
@@ -327,8 +327,8 @@ export default function TillProofPage() {
             <div className="lg:col-span-4 lg:text-right">
               <ButtonLink
                 href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("TillProof interest")}`}
+                variant="inverse"
                 size="lg"
-                className="!bg-accent !text-accent-contrast hover:!bg-accent-strong"
               >
                 Register interest
               </ButtonLink>

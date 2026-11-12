@@ -99,7 +99,7 @@ export function QuickEnquiry({ formType, sourcePage }: Props) {
 
   if (status === "success") {
     return (
-      <div className="mt-4 border-l-4 border-gold bg-accent-strong/40 px-4 py-4" role="status">
+      <div className="mt-4 border-l-4 border-foreground bg-accent-strong/40 px-4 py-4" role="status">
         <p className="text-[1rem] font-semibold text-accent-contrast">Enquiry received</p>
         <p className="mt-1.5 text-[0.875rem] leading-6 text-accent-contrast/80">
           {notice} The team has been notified and will reply to {email}.
@@ -171,7 +171,7 @@ export function QuickEnquiry({ formType, sourcePage }: Props) {
           id="quick-enquiry-type"
           value={enquiryType}
           onChange={(event) => setEnquiryType(event.target.value)}
-          className="h-11 border border-accent-contrast/35 bg-accent-strong/35 px-3 text-[0.9375rem] text-accent-contrast focus-visible:border-accent-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-contrast"
+          className="h-11 w-full max-w-full border border-accent-contrast/35 bg-accent-strong/35 px-3 text-[0.9375rem] text-accent-contrast focus-visible:border-accent-contrast focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-contrast sm:w-auto"
         >
           {ENQUIRY_CATEGORIES.map((category) => (
             <option key={category.id} value={category.id} className="text-foreground">

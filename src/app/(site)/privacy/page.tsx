@@ -185,7 +185,7 @@ export default function PrivacyPage() {
             </aside>
 
             <div className="max-w-[70ch] lg:col-span-9">
-              <div className="border-l-4 border-gold bg-muted p-5 sm:p-6">
+              <div className="border-l-4 border-foreground bg-muted p-5 sm:p-6">
                 <p className="text-[0.8125rem] font-semibold text-foreground-faint">
                   Status of this notice
                 </p>

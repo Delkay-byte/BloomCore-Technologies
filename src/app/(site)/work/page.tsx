@@ -244,12 +244,12 @@ export default function WorkPage() {
         </Container>
       </section>
 
-      <section className="bg-gold py-16 text-[#15170f] sm:py-20">
+      <section className="bg-accent py-16 text-accent-contrast sm:py-20">
         <Container>
           <div className="grid gap-8 lg:grid-cols-12 lg:items-center lg:gap-12">
             <div className="lg:col-span-8">
-              <h2 className="h2 max-w-[18ch]">A problem close to one of these?</h2>
-              <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-[#15170f]/75">
+              <h2 className="h2 max-w-[18ch] text-accent-contrast">A problem close to one of these?</h2>
+              <p className="mt-4 max-w-2xl text-[1rem] leading-7 text-accent-contrast/75">
                 Tell us how your organisation handles it today. We will say whether the work is a
                 fit.
               </p>
@@ -257,8 +257,8 @@ export default function WorkPage() {
             <div className="flex flex-col gap-3 lg:col-span-4 lg:items-end">
               <ButtonLink
                 href={`mailto:${CONTACT.email}?subject=${encodeURIComponent("Project enquiry — BloomCore Technologies")}`}
+                variant="inverse"
                 size="lg"
-                className="!bg-[#15170f] !text-[#f7f4ec] hover:!bg-[#084235]"
               >
                 Email BloomCore Technologies
               </ButtonLink>
@@ -266,14 +266,14 @@ export default function WorkPage() {
                 href={ROUTES.contact}
                 variant="outline"
                 size="lg"
-                className="!border-[#15170f] !text-[#15170f] hover:!bg-[#15170f] hover:!text-[#f7f4ec]"
+                className="!border-accent-contrast/40 !text-accent-contrast hover:!bg-accent-contrast/10"
               >
                 Contact details
               </ButtonLink>
             </div>
           </div>
           <div className="mt-8">
-            <ArrowLink href={ROUTES.founder} className="text-[#15170f]">
+            <ArrowLink href={ROUTES.founder} className="text-accent-contrast">
               Who leads the company
             </ArrowLink>
           </div>

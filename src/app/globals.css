@@ -2,32 +2,34 @@
 
 /*
  * BloomCore design tokens.
- * Two chromatic colours only: forest and brass. Everything else is a
- * neutral step. Surfaces are separated by tone; thin lines are reserved for
- * functional controls and the tile board.
+ * Strictly monochrome: black, white and the neutral steps between them.
+ * There is no chromatic accent. Contrast is carried by tonal inversion:
+ * `--accent` is the dark field on a light ground, `--gold` is its inverse.
+ * Surfaces are separated by tone; thin lines are reserved for functional
+ * controls and the tile board.
  */
 :root {
   color-scheme: light;
-  --background: #f4f1e9;
-  --surface: #fffdf8;
-  --surface-2: #ebe6db;
-  --surface-3: #dfd9cc;
-  --foreground: #111512;
-  --foreground-subtle: #4d544d;
-  --foreground-faint: #626960;
-  --line: #d8d2c5;
-  --line-strong: #b9b2a3;
-  --muted: #eee9de;
-  --field: #fffdf8;
-  --accent: #0c3b30;
-  --accent-strong: #08251f;
-  --accent-contrast: #f8f5ec;
-  --accent-soft: #e2ede7;
-  --accent-line: #b7cec3;
-  --gold: #c69a3e;
-  --gold-strong: #a97e27;
-  --gold-soft: #f3e6c6;
-  --gold-contrast: #1a1408;
+  --background: #f1f1f1;
+  --surface: #ffffff;
+  --surface-2: #f7f7f7;
+  --surface-3: #e9e9e9;
+  --foreground: #0a0a0a;
+  --foreground-subtle: #4a4a4a;
+  --foreground-faint: #6e6e6e;
+  --line: #dedede;
+  --line-strong: #bdbdbd;
+  --muted: #ededed;
+  --field: #ffffff;
+  --accent: #0a0a0a;
+  --accent-strong: #2b2b2b;
+  --accent-contrast: #ffffff;
+  --accent-soft: #ededed;
+  --accent-line: #c9c9c9;
+  --gold: #ffffff;
+  --gold-strong: #efefef;
+  --gold-soft: #ededed;
+  --gold-contrast: #0a0a0a;
   --radius: 10px;
   --type-display: var(--font-source-serif), Georgia, "Times New Roman", serif;
   --type-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -36,51 +38,51 @@
 
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --background: #090f0c;
-  --surface: #101712;
-  --surface-2: #161f19;
-  --surface-3: #1e2921;
-  --foreground: #f2eee3;
-  --foreground-subtle: #b8bfb6;
-  --foreground-faint: #949c92;
-  --line: #29352c;
-  --line-strong: #3c4a3f;
-  --muted: #131b16;
-  --field: #101712;
-  --accent: #82d5b5;
-  --accent-strong: #a6e7ca;
-  --accent-contrast: #08241f;
-  --accent-soft: #14271f;
-  --accent-line: #2d4a3d;
-  --gold: #e0b86a;
-  --gold-strong: #efc97f;
-  --gold-soft: #322711;
-  --gold-contrast: #171105;
+  --background: #090909;
+  --surface: #111111;
+  --surface-2: #181818;
+  --surface-3: #222222;
+  --foreground: #f5f5f5;
+  --foreground-subtle: #b4b4b4;
+  --foreground-faint: #8c8c8c;
+  --line: #272727;
+  --line-strong: #3a3a3a;
+  --muted: #151515;
+  --field: #111111;
+  --accent: #f5f5f5;
+  --accent-strong: #ffffff;
+  --accent-contrast: #0a0a0a;
+  --accent-soft: #1e1e1e;
+  --accent-line: #3a3a3a;
+  --gold: #1c1c1c;
+  --gold-strong: #2a2a2a;
+  --gold-soft: #222222;
+  --gold-contrast: #f5f5f5;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --background: #090f0c;
-    --surface: #101712;
-    --surface-2: #161f19;
-    --surface-3: #1e2921;
-    --foreground: #f2eee3;
-    --foreground-subtle: #b8bfb6;
-    --foreground-faint: #949c92;
-    --line: #29352c;
-    --line-strong: #3c4a3f;
-    --muted: #131b16;
-    --field: #101712;
-    --accent: #82d5b5;
-    --accent-strong: #a6e7ca;
-    --accent-contrast: #08241f;
-    --accent-soft: #14271f;
-    --accent-line: #2d4a3d;
-    --gold: #e0b86a;
-    --gold-strong: #efc97f;
-    --gold-soft: #322711;
-    --gold-contrast: #171105;
+    --background: #090909;
+    --surface: #111111;
+    --surface-2: #181818;
+    --surface-3: #222222;
+    --foreground: #f5f5f5;
+    --foreground-subtle: #b4b4b4;
+    --foreground-faint: #8c8c8c;
+    --line: #272727;
+    --line-strong: #3a3a3a;
+    --muted: #151515;
+    --field: #111111;
+    --accent: #f5f5f5;
+    --accent-strong: #ffffff;
+    --accent-contrast: #0a0a0a;
+    --accent-soft: #1e1e1e;
+    --accent-line: #3a3a3a;
+    --gold: #1c1c1c;
+    --gold-strong: #2a2a2a;
+    --gold-soft: #222222;
+    --gold-contrast: #f5f5f5;
   }
 }
 
@@ -134,8 +136,8 @@ body {
 }
 
 ::selection {
-  background: var(--gold);
-  color: var(--gold-contrast);
+  background: var(--foreground);
+  color: var(--background);
 }
 
 :focus-visible {
@@ -152,40 +154,40 @@ body {
 .h1 {
   font-family: var(--type-display);
   font-weight: 400;
-  line-height: 0.9;
+  line-height: 0.98;
   letter-spacing: -0.022em;
   text-wrap: balance;
 }
 
 .display {
-  font-size: clamp(3.2rem, 7.4vw, 7.6rem);
+  font-size: clamp(2.9rem, 5.4vw, 5.4rem);
 }
 
 .h1 {
-  font-size: clamp(2.9rem, 6vw, 6rem);
+  font-size: clamp(2.3rem, 4.4vw, 4.2rem);
 }
 
 .h2 {
   font-family: var(--type-display);
-  font-size: clamp(2.2rem, 4vw, 3.9rem);
+  font-size: clamp(1.75rem, 2.6vw, 2.6rem);
   font-weight: 400;
-  line-height: 0.95;
+  line-height: 1.04;
   letter-spacing: -0.02em;
   text-wrap: balance;
 }
 
 .h3 {
   font-family: var(--type-sans);
-  font-size: clamp(1.2rem, 1.6vw, 1.55rem);
-  font-weight: 700;
-  line-height: 1.2;
-  letter-spacing: -0.02em;
+  font-size: clamp(1.15rem, 1.5vw, 1.4rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
 }
 
 .lead {
-  font-size: clamp(1.1rem, 1.35vw, 1.3rem);
-  line-height: 1.55;
-  letter-spacing: -0.008em;
+  font-size: clamp(1.05rem, 1.25vw, 1.2rem);
+  line-height: 1.6;
+  letter-spacing: -0.006em;
 }
 
 .body-copy {
@@ -196,6 +198,11 @@ body {
 .small-copy {
   font-size: 0.875rem;
   line-height: 1.55;
+}
+
+/* Reading measure. Keeps prose from running the full desktop width. */
+.measure {
+  max-width: 68ch;
 }
 
 .link-quiet {
@@ -224,11 +231,11 @@ body {
 }
 
 .section-pad {
-  padding-block: clamp(80px, 9vw, 132px);
+  padding-block: clamp(72px, 8vw, 120px);
 }
 
 .section-pad-sm {
-  padding-block: clamp(56px, 6vw, 88px);
+  padding-block: clamp(52px, 5.5vw, 80px);
 }
 
 /* Functional field. */
@@ -351,6 +358,70 @@ textarea.field {
   animation: bc-typing 1.1s ease-in-out infinite;
 }
 
+/* Floating assistant mascot — parked bottom-left so the back-to-top control on
+   the right stays reachable. Idle float, hover wiggle, nudge and panel entrances. */
+@keyframes bc-mascot-float {
+  100% {
+    transform: translateY(-3px);
+  }
+}
+
+.bc-mascot-float {
+  animation: bc-mascot-float 3.4s cubic-bezier(0.77, 0, 0.175, 1) infinite alternate;
+}
+
+.bc-mascot-body {
+  transform-origin: 50% 100%;
+}
+
+@keyframes bc-mascot-wiggle {
+  25% {
+    rotate: -6deg;
+  }
+  60% {
+    rotate: 5deg;
+  }
+  85% {
+    rotate: -2deg;
+  }
+}
+
+.bc-fab:hover .bc-mascot-body,
+.bc-fab:focus-visible .bc-mascot-body {
+  animation: bc-mascot-wiggle 0.6s cubic-bezier(0.77, 0, 0.175, 1) 1 normal none;
+}
+
+@keyframes bc-nudge-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.bc-nudge-in {
+  animation: bc-nudge-in 0.35s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@keyframes bc-ping-ring {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  75%,
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}
+
+.bc-ping-ring {
+  animation: bc-ping-ring 1.6s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
 /* Carousel stage. */
 @keyframes carousel-pulse {
   0%,
@@ -382,7 +453,15 @@ textarea.field {
 
   .bc-panel-in,
   .bc-typing-dot,
-  .carousel-skeleton::after {
+  .carousel-skeleton::after,
+  .bc-mascot-float,
+  .bc-nudge-in,
+  .bc-ping-ring {
+    animation: none;
+  }
+
+  .bc-fab:hover .bc-mascot-body,
+  .bc-fab:focus-visible .bc-mascot-body {
     animation: none;
   }
 

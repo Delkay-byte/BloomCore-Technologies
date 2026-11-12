@@ -8,12 +8,12 @@ const variantStyles: Record<ButtonVariant, string> = {
   primary:
     "bg-accent text-accent-contrast hover:bg-accent-strong active:translate-y-px",
   secondary:
-    "bg-gold text-gold-contrast hover:bg-gold-strong active:translate-y-px",
+    "bg-surface-2 text-foreground ring-1 ring-inset ring-line-strong hover:bg-surface-3 active:translate-y-px",
   outline:
     "border border-line-strong bg-transparent text-foreground hover:border-foreground hover:bg-surface-2 active:translate-y-px",
   ghost: "text-foreground hover:bg-surface-2 active:translate-y-px",
   inverse:
-    "bg-accent-contrast text-accent hover:bg-gold hover:text-gold-contrast active:translate-y-px",
+    "bg-accent-contrast text-accent hover:bg-surface-3 active:translate-y-px",
 };
 
 const sizeStyles: Record<ButtonSize, string> = {

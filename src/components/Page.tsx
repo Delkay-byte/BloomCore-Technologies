@@ -29,7 +29,7 @@ export function Container({
 export function Eyebrow({ children }: { children: React.ReactNode }) {
   return (
     <p className="flex items-center gap-2 text-[0.8125rem] leading-5 font-semibold text-foreground-faint">
-      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-gold" />
+      <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-foreground" />
       {children}
     </p>
   );
@@ -179,7 +179,7 @@ export function StatusBadge({
   tone?: "default" | "invert" | "muted";
 }) {
   const tones = {
-    default: "bg-gold text-gold-contrast",
+    default: "bg-foreground text-background",
     invert: "bg-surface text-foreground",
     muted: "bg-transparent text-foreground-subtle ring-1 ring-inset ring-line-strong",
   };

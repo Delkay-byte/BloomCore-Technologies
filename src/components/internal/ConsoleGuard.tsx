@@ -16,7 +16,7 @@ export function ConsoleSignInRequired({ detail }: { detail?: string }) {
           Access.
         </p>
         {detail && (
-          <p className="mt-4 border-l-4 border-gold bg-muted px-4 py-3 text-[0.9375rem] leading-6 text-foreground-subtle">
+          <p className="mt-4 border-l-4 border-foreground bg-muted px-4 py-3 text-[0.9375rem] leading-6 text-foreground-subtle">
             {detail}
           </p>
         )}

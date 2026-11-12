@@ -1,0 +1,1894 @@
+{
+  "capturedFrom": "https://bloomcoretech.com",
+  "capturedAt": "2026-11-12T19:02:51.929Z",
+  "viewport": "1440x900",
+  "routes": {
+    "/": {
+      "url": "https://bloomcoretech.com/",
+      "status": 200,
+      "title": "BloomCore Technologies — Software Development in Ghana",
+      "description": "BloomCore Technologies builds SchemeKnit, MaaCash and TillProof, plus custom software, web applications and data systems for Ghanaian organisations.",
+      "canonical": "https://bloomcoretech.com",
+      "ogTitle": "BloomCore Technologies — Software Development in Ghana",
+      "ogImage": "https://bloomcoretech.com/og-image.png",
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Technology that works."
+      ],
+      "h2": [
+        "A small product company with a long attention span.",
+        "Products, in use.",
+        "When the product is not the answer.",
+        "Four stages. Each leaves you something.",
+        "Two products available. One in development.",
+        "Taught in a classroom before building for one.",
+        "Practical guides from the work.",
+        "Start with the problem.",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Organization",
+        "WebSite"
+      ],
+      "images": 4,
+      "imagesMissingAlt": 0,
+      "links": 54,
+      "emptyLinks": 0,
+      "buttons": 17,
+      "forms": [
+        {
+          "action": null,
+          "fields": 5
+        }
+      ],
+      "docHeight": 8278,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 74,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 23,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 16,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 13,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(243, 230, 198)",
+          "count": 1,
+          "saturation": 0.185
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          224
+        ],
+        [
+          "sourceSerif",
+          22
+        ]
+      ],
+      "sizeCensus": [
+        [
+          107,
+          1
+        ],
+        [
+          58,
+          8
+        ],
+        [
+          49,
+          3
+        ],
+        [
+          38,
+          2
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          32,
+          7
+        ],
+        [
+          23,
+          1
+        ],
+        [
+          19,
+          6
+        ],
+        [
+          18,
+          10
+        ],
+        [
+          17,
+          15
+        ],
+        [
+          16,
+          10
+        ],
+        [
+          15,
+          54
+        ]
+      ]
+    },
+    "/products": {
+      "url": "https://bloomcoretech.com/products",
+      "status": 200,
+      "title": "Software Products for Ghanaian Organisations",
+      "description": "Software products built by BloomCore Technologies: SchemeKnit for lesson planning, MaaCash for business operations, and TillProof for electrical retail.",
+      "canonical": "https://bloomcoretech.com/products",
+      "ogTitle": "Products — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Software built and operated here."
+      ],
+      "h2": [
+        "SchemeKnit",
+        "MaaCash",
+        "TillProof",
+        "What the labels mean.",
+        "Need something outside the catalogue?",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 41,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 4045,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 35,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 14,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 8,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 6,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 2,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          161
+        ],
+        [
+          "sourceSerif",
+          8
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          69,
+          3
+        ],
+        [
+          58,
+          2
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          19,
+          2
+        ],
+        [
+          17,
+          4
+        ],
+        [
+          16,
+          3
+        ],
+        [
+          15,
+          61
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          13,
+          20
+        ],
+        [
+          12,
+          28
+        ]
+      ]
+    },
+    "/products/schemeknit": {
+      "url": "https://bloomcoretech.com/products/schemeknit",
+      "status": 200,
+      "title": "SchemeKnit — Lesson Planning Software for Teachers",
+      "description": "SchemeKnit turns a Ghanaian scheme of learning into structured, indicator-focused lesson plans that teachers can review, edit and export.",
+      "canonical": "https://bloomcoretech.com/products/schemeknit",
+      "ogTitle": "SchemeKnit — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "SchemeKnit"
+      ],
+      "h2": [
+        "What it does.",
+        "Capabilities.",
+        "Who it serves.",
+        "What we do not claim.",
+        "SchemeKnit runs as its own application.",
+        "Questions.",
+        "The other products.",
+        "Ask us whether this fits your situation.",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "BreadcrumbList",
+        "FAQPage",
+        "SoftwareApplication",
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 38,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 5399,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 33,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 11,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 8,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 6,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 1,
+          "saturation": 0.797
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          124
+        ],
+        [
+          "sourceSerif",
+          13
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          58,
+          7
+        ],
+        [
+          52,
+          1
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          32,
+          2
+        ],
+        [
+          19,
+          11
+        ],
+        [
+          17,
+          12
+        ],
+        [
+          16,
+          8
+        ],
+        [
+          15,
+          46
+        ],
+        [
+          14,
+          4
+        ],
+        [
+          13,
+          22
+        ]
+      ]
+    },
+    "/products/maacash": {
+      "url": "https://bloomcoretech.com/products/maacash",
+      "status": 200,
+      "title": "MaaCash — Business Operations Software",
+      "description": "MaaCash supports multi-location organisations with staff administration, role-based access, mobile-money operations and susu collection workflows.",
+      "canonical": "https://bloomcoretech.com/products/maacash",
+      "ogTitle": "MaaCash — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "MaaCash"
+      ],
+      "h2": [
+        "What it does.",
+        "Capabilities.",
+        "Who it serves.",
+        "What we do not claim.",
+        "MaaCash runs as its own application.",
+        "Questions.",
+        "The other products.",
+        "Ask us whether this fits your situation.",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "BreadcrumbList",
+        "FAQPage",
+        "SoftwareApplication",
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 38,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 5588,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 37,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 10,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 8,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 6,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          138
+        ],
+        [
+          "sourceSerif",
+          13
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          58,
+          7
+        ],
+        [
+          52,
+          1
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          32,
+          2
+        ],
+        [
+          19,
+          12
+        ],
+        [
+          17,
+          13
+        ],
+        [
+          16,
+          8
+        ],
+        [
+          15,
+          51
+        ],
+        [
+          14,
+          4
+        ],
+        [
+          13,
+          19
+        ]
+      ]
+    },
+    "/products/tillproof": {
+      "url": "https://bloomcoretech.com/products/tillproof",
+      "status": 200,
+      "title": "TillProof — Retail Software for Electrical Shops",
+      "description": "TillProof is in development: retail management for electrical shops, covering stock traceability, controlled pricing and owner oversight across locations.",
+      "canonical": "https://bloomcoretech.com/products/tillproof",
+      "ogTitle": "TillProof — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "TillProof"
+      ],
+      "h2": [
+        "Not released. No date announced.",
+        "Intended capability.",
+        "Who it is for.",
+        "Questions.",
+        "Built carefully, released when it is ready.",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "BreadcrumbList",
+        "FAQPage",
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 34,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 4270,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 25,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 8,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 8,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 4,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          115
+        ],
+        [
+          "sourceSerif",
+          8
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          58,
+          5
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          20,
+          3
+        ],
+        [
+          19,
+          9
+        ],
+        [
+          17,
+          4
+        ],
+        [
+          16,
+          3
+        ],
+        [
+          15,
+          45
+        ],
+        [
+          14,
+          5
+        ],
+        [
+          13,
+          20
+        ],
+        [
+          12,
+          11
+        ]
+      ]
+    },
+    "/services": {
+      "url": "https://bloomcoretech.com/services",
+      "status": 200,
+      "title": "Software Development Services in Ghana",
+      "description": "Custom software, web applications, process digitisation, data science, AI integration and APIs for Ghanaian organisations.",
+      "canonical": "https://bloomcoretech.com/services",
+      "ogTitle": "Services — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Software, scoped to what we can deliver."
+      ],
+      "h2": [
+        "Seven areas of work",
+        "How an engagement runs",
+        "What we will not do",
+        "What we need to start",
+        "Not sure whether you need custom software?",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 33,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 5017,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 21,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 7,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 7,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 2,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          112
+        ],
+        [
+          "sourceSerif",
+          8
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          58,
+          5
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          21,
+          7
+        ],
+        [
+          19,
+          3
+        ],
+        [
+          17,
+          10
+        ],
+        [
+          16,
+          7
+        ],
+        [
+          15,
+          54
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          28
+        ]
+      ]
+    },
+    "/resources": {
+      "url": "https://bloomcoretech.com/resources",
+      "status": 200,
+      "title": "Resources — Practical Software and Operations Guides",
+      "description": "Practical guides from BloomCore Technologies on lesson planning, mobile money recordkeeping and electrical shop stock control.",
+      "canonical": "https://bloomcoretech.com/resources",
+      "ogTitle": "Resources — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Practical guides from the work."
+      ],
+      "h2": [
+        "All guides.",
+        "Quality before volume.",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "BreadcrumbList",
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 37,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 2536,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 8,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 5,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 3,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 2,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          49
+        ],
+        [
+          "sourceSerif",
+          8
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          58,
+          1
+        ],
+        [
+          49,
+          1
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          37,
+          3
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          19,
+          1
+        ],
+        [
+          17,
+          1
+        ],
+        [
+          16,
+          4
+        ],
+        [
+          15,
+          24
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          16
+        ]
+      ]
+    },
+    "/resources/scheme-of-learning-to-weekly-lesson-plans": {
+      "url": "https://bloomcoretech.com/resources/scheme-of-learning-to-weekly-lesson-plans",
+      "status": 200,
+      "title": "How to turn a scheme of learning into weekly lesson plans — BloomCore Technologies",
+      "description": "A practical, indicator-first method for turning a term scheme of learning into weekly lesson plans that a teacher can actually teach and defend.",
+      "canonical": "https://bloomcoretech.com/resources/scheme-of-learning-to-weekly-lesson-plans",
+      "ogTitle": "How to turn a scheme of learning into weekly lesson plans",
+      "ogImage": "https://bloomcoretech.com/og-image.png",
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "How to turn a scheme of learning into weekly lesson plans"
+      ],
+      "h2": [
+        "1. Read the scheme as a sequence, not a list",
+        "2. Map the weeks to real teaching time",
+        "3. Turn each indicator into one lesson objective",
+        "4. Choose teaching and learning resources that exist",
+        "5. Build the lesson in phases",
+        "6. Review the plan against the indicator",
+        "7. Keep a weekly review loop",
+        "Common mistakes and a better habit",
+        "SchemeKnit",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Article",
+        "BreadcrumbList",
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 43,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 4765,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 18,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 8,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 5,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 2,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          95
+        ],
+        [
+          "sourceSerif",
+          3
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          23,
+          9
+        ],
+        [
+          19,
+          1
+        ],
+        [
+          17,
+          25
+        ],
+        [
+          15,
+          41
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          16
+        ]
+      ]
+    },
+    "/resources/mobile-money-business-recordkeeping": {
+      "url": "https://bloomcoretech.com/resources/mobile-money-business-recordkeeping",
+      "status": 200,
+      "title": "Recordkeeping for a mobile money business: a daily routine that works — BloomCore Technologies",
+      "description": "A daily routine for mobile money agents and multi-location operators: opening position, transaction records, float and reconciliation.",
+      "canonical": "https://bloomcoretech.com/resources/mobile-money-business-recordkeeping",
+      "ogTitle": "Recordkeeping for a mobile money business: a daily routine that works",
+      "ogImage": "https://bloomcoretech.com/og-image.png",
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Recordkeeping for a mobile money business: a daily routine that works"
+      ],
+      "h2": [
+        "Start with an opening position",
+        "Record the transaction, not just the total",
+        "Keep business money separate from personal money",
+        "Reconcile at closing, not at the end of the month",
+        "Handle susu collections as a separate ledger",
+        "Review the week, not only the day",
+        "Common recordkeeping mistakes",
+        "MaaCash",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Article",
+        "BreadcrumbList",
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 42,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 4579,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 17,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 16,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 5,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 2,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          98
+        ],
+        [
+          "sourceSerif",
+          3
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          23,
+          8
+        ],
+        [
+          19,
+          1
+        ],
+        [
+          17,
+          30
+        ],
+        [
+          15,
+          40
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          16
+        ]
+      ]
+    },
+    "/resources/electrical-shop-stock-control": {
+      "url": "https://bloomcoretech.com/resources/electrical-shop-stock-control",
+      "status": 200,
+      "title": "Stock control for electrical shops: item codes, counts and accountability — BloomCore Technologies",
+      "description": "How electrical retailers can organise item codes, receiving, transfers, pricing and cycle counts so that the stock record matches the shelf.",
+      "canonical": "https://bloomcoretech.com/resources/electrical-shop-stock-control",
+      "ogTitle": "Stock control for electrical shops: item codes, counts and accountability",
+      "ogImage": "https://bloomcoretech.com/og-image.png",
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Stock control for electrical shops: item codes, counts and accountability"
+      ],
+      "h2": [
+        "Give every item a stable code",
+        "Record stock at receiving",
+        "Give every location a name",
+        "Update the record at the point of sale",
+        "Control prices from one place",
+        "Make cash accountable by shift",
+        "Count in cycles",
+        "Common stock-control mistakes",
+        "TillProof",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Article",
+        "BreadcrumbList",
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 43,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 4770,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 17,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 13,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 5,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 2,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          97
+        ],
+        [
+          "sourceSerif",
+          3
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          23,
+          9
+        ],
+        [
+          19,
+          1
+        ],
+        [
+          17,
+          28
+        ],
+        [
+          15,
+          40
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          16
+        ]
+      ]
+    },
+    "/work": {
+      "url": "https://bloomcoretech.com/work",
+      "status": 200,
+      "title": "Software Products and Projects — BloomCore Technologies",
+      "description": "Software built by BloomCore Technologies: SchemeKnit, MaaCash and TillProof, with the operating problem each one addresses.",
+      "canonical": "https://bloomcoretech.com/work",
+      "ogTitle": "Work — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Products built and operated here."
+      ],
+      "h2": [
+        "SchemeKnit",
+        "MaaCash",
+        "TillProof",
+        "Built to be maintained after handover",
+        "Why the portfolio looks the way it does",
+        "A problem close to one of these?",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 39,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 3643,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 15,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 6,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 6,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 4,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(21, 23, 15)",
+          "count": 2,
+          "saturation": 0.348
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(21, 23, 15)",
+          "count": 1,
+          "saturation": 0.348
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          78
+        ],
+        [
+          "sourceSerif",
+          12
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          58,
+          6
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          29,
+          3
+        ],
+        [
+          19,
+          2
+        ],
+        [
+          17,
+          7
+        ],
+        [
+          16,
+          11
+        ],
+        [
+          15,
+          33
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          16
+        ],
+        [
+          12,
+          6
+        ]
+      ]
+    },
+    "/about": {
+      "url": "https://bloomcoretech.com/about",
+      "status": 200,
+      "title": "About BloomCore Technologies",
+      "description": "What BloomCore Technologies is, why it exists, and how it approaches software engineering, product development and problem solving in Ghana.",
+      "canonical": "https://bloomcoretech.com/about",
+      "ogTitle": "About — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Built in Ghana, for how work happens here."
+      ],
+      "h2": [
+        "Why the company exists",
+        "Mission and vision",
+        "Values",
+        "How a change reaches production",
+        "We listen before we build",
+        "Where the work is applied",
+        "No history we cannot evidence",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 33,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 5231,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 29,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 6,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 4,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(21, 23, 15)",
+          "count": 2,
+          "saturation": 0.348
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 2,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(21, 23, 15)",
+          "count": 1,
+          "saturation": 0.348
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          91
+        ],
+        [
+          "sourceSerif",
+          10
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          58,
+          7
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          19,
+          7
+        ],
+        [
+          18,
+          10
+        ],
+        [
+          17,
+          17
+        ],
+        [
+          16,
+          7
+        ],
+        [
+          15,
+          40
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          7
+        ]
+      ]
+    },
+    "/founder": {
+      "url": "https://bloomcoretech.com/founder",
+      "status": 200,
+      "title": "Saviour Amegayie — Founder — BloomCore Technologies",
+      "description": "Saviour Amegayie is the founder of BloomCore Technologies: data scientist, IT educator, software developer and applied AI practitioner.",
+      "canonical": "https://bloomcoretech.com/founder",
+      "ogTitle": "Saviour Amegayie — Founder — BloomCore Technologies",
+      "ogImage": "https://bloomcoretech.com/og-image.png",
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Saviour Amegayie"
+      ],
+      "h2": [
+        "Four areas of work",
+        "Products built under BloomCore Technologies",
+        "Analytical work outside the catalogue",
+        "Verify the record directly",
+        "Work with BloomCore Technologies",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Person",
+        "Organization",
+        "WebSite"
+      ],
+      "images": 4,
+      "imagesMissingAlt": 0,
+      "links": 39,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 4496,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 21,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 8,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 3,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 2,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          103
+        ],
+        [
+          "sourceSerif",
+          8
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          58,
+          5
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          19,
+          2
+        ],
+        [
+          18,
+          4
+        ],
+        [
+          17,
+          9
+        ],
+        [
+          16,
+          4
+        ],
+        [
+          15,
+          47
+        ],
+        [
+          14,
+          12
+        ],
+        [
+          13,
+          25
+        ]
+      ]
+    },
+    "/contact": {
+      "url": "https://bloomcoretech.com/contact",
+      "status": 200,
+      "title": "Contact BloomCore Technologies",
+      "description": "Contact BloomCore Technologies by email, telephone or WhatsApp. Registered business name BN428031125, based in Akatsi, Volta Region, Ghana.",
+      "canonical": "https://bloomcoretech.com/contact",
+      "ogTitle": "Contact — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "Tell us what the work needs to do"
+      ],
+      "h2": [
+        "Send a message",
+        "Reach the company",
+        "A real reply, not an auto-response",
+        "Prefer to look around first?",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 38,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [
+        {
+          "action": null,
+          "fields": 13
+        }
+      ],
+      "docHeight": 3590,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 19,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 6,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 6,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 2,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          77
+        ],
+        [
+          "sourceSerif",
+          7
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          58,
+          4
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          19,
+          3
+        ],
+        [
+          17,
+          6
+        ],
+        [
+          16,
+          5
+        ],
+        [
+          15,
+          34
+        ],
+        [
+          14,
+          14
+        ],
+        [
+          13,
+          13
+        ],
+        [
+          12,
+          2
+        ]
+      ]
+    },
+    "/privacy": {
+      "url": "https://bloomcoretech.com/privacy",
+      "status": 200,
+      "title": "Privacy Notice — BloomCore Technologies",
+      "description": "How BloomCore handles personal data.: what this website collects, optional analytics, how email enquiries are used, retention and your rights.",
+      "canonical": "https://bloomcoretech.com/privacy",
+      "ogTitle": "Privacy — BloomCore Technologies",
+      "ogImage": null,
+      "twitterCard": "summary_large_image",
+      "robots": "index, follow",
+      "htmlLang": "en",
+      "h1": [
+        "How BloomCore handles personal data."
+      ],
+      "h2": [
+        "Who is responsible",
+        "What this website collects",
+        "When you contact us",
+        "Basis for processing",
+        "Who else sees it",
+        "How long it is kept",
+        "Storage location and transfers",
+        "Your rights",
+        "Children",
+        "Security",
+        "Changes to this notice",
+        "Ask before you assume",
+        "Products",
+        "Company",
+        "Contact"
+      ],
+      "jsonLdTypes": [
+        "Organization",
+        "WebSite"
+      ],
+      "images": 3,
+      "imagesMissingAlt": 0,
+      "links": 53,
+      "emptyLinks": 0,
+      "buttons": 7,
+      "forms": [],
+      "docHeight": 5278,
+      "horizontalOverflow": false,
+      "saturatedColours": [
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 17,
+          "saturation": 0.19
+        },
+        {
+          "colour": "rgb(12, 59, 48)",
+          "count": 5,
+          "saturation": 0.797
+        },
+        {
+          "colour": "rgb(198, 154, 62)",
+          "count": 2,
+          "saturation": 0.687
+        },
+        {
+          "colour": "rgb(26, 20, 8)",
+          "count": 2,
+          "saturation": 0.692
+        },
+        {
+          "colour": "rgb(17, 21, 18)",
+          "count": 1,
+          "saturation": 0.19
+        }
+      ],
+      "fontCensus": [
+        [
+          "inter",
+          97
+        ],
+        [
+          "sourceSerif",
+          3
+        ]
+      ],
+      "sizeCensus": [
+        [
+          86,
+          1
+        ],
+        [
+          38,
+          1
+        ],
+        [
+          35,
+          1
+        ],
+        [
+          23,
+          12
+        ],
+        [
+          19,
+          1
+        ],
+        [
+          17,
+          1
+        ],
+        [
+          16,
+          30
+        ],
+        [
+          15,
+          40
+        ],
+        [
+          14,
+          3
+        ],
+        [
+          13,
+          10
+        ]
+      ]
+    }
+  }
+}

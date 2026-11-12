@@ -88,9 +88,9 @@ export function ProductTabs() {
                 className={cn(
                   "shrink-0 px-2 py-1 text-[0.75rem] font-medium",
                   selected
-                    ? "bg-gold text-[#15170f]"
+                    ? "bg-background text-foreground"
                     : item.status === "live"
-                      ? "bg-gold-soft text-foreground"
+                      ? "bg-surface-3 text-foreground"
                       : "bg-surface-2 text-foreground-subtle",
                 )}
               >
@@ -108,7 +108,7 @@ export function ProductTabs() {
             <ul className="mt-6 flex flex-col gap-3">
               {info.capabilities.map((capability) => (
                 <li key={capability} className="flex items-start gap-3 text-[1rem] leading-6">
-                  <span aria-hidden="true" className="mt-2.5 h-1.5 w-1.5 shrink-0 bg-gold" />
+                  <span aria-hidden="true" className="mt-2.5 h-1.5 w-1.5 shrink-0 bg-foreground" />
                   <span className="text-foreground-subtle">{capability}</span>
                 </li>
               ))}
@@ -116,7 +116,7 @@ export function ProductTabs() {
             <div className="mt-7 flex flex-wrap items-center gap-x-6 gap-y-3">
               <Link
                 href={info.href}
-                className="inline-flex items-center gap-2 bg-foreground px-5 py-3 text-[0.9375rem] font-medium text-background transition-colors hover:bg-accent"
+                className="inline-flex items-center gap-2 bg-foreground px-5 py-3 text-[0.9375rem] font-medium text-background transition-colors hover:bg-accent-strong"
               >
                 Read the product page
               </Link>
@@ -129,7 +129,7 @@ export function ProductTabs() {
                   data-product={product.name}
                   data-location="homepage_product_tabs"
                   data-destination="product_application"
-                  className="text-[0.9375rem] font-medium text-foreground underline decoration-1 underline-offset-4 transition-colors hover:text-accent"
+                  className="text-[0.9375rem] font-medium text-foreground underline decoration-1 underline-offset-4 transition-colors hover:text-foreground-faint"
                 >
                   {info.appLabel}
                   <span className="sr-only"> (opens in a new tab)</span>

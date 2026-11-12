@@ -38,7 +38,7 @@ export function companySubject(lead: { lead_number: string; enquiry_type: string
 
 function row(label: string, value: string | null | undefined): string {
   if (!value) return "";
-  return `<tr><td style="padding:4px 12px 4px 0;color:#4d544d;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:4px 0">${escapeHtml(value)}</td></tr>`;
+  return `<tr><td style="padding:4px 12px 4px 0;color:#4a4a4a;white-space:nowrap;vertical-align:top">${label}</td><td style="padding:4px 0">${escapeHtml(value)}</td></tr>`;
 }
 
 export function escapeHtml(value: string): string {
@@ -94,7 +94,7 @@ export function companyEmail(
     `Open in the private dashboard: ${dashboardUrl}`,
   ].filter((line) => line !== "");
 
-  const html = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#111512;line-height:1.55">
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#0a0a0a;line-height:1.55">
   <p style="margin:0 0 12px"><strong>New website enquiry</strong> — ${escapeHtml(lead.lead_number)}</p>
   <table style="border-collapse:collapse;font-size:15px">
     ${row("Name", lead.full_name)}
@@ -110,10 +110,10 @@ export function companyEmail(
     ${row("Received", formatTimestamp(lead.created_at))}
     ${row("Page", lead.landing_page)}
   </table>
-  <p style="margin:16px 0 4px;color:#4d544d">Message</p>
+  <p style="margin:16px 0 4px;color:#4a4a4a">Message</p>
   <p style="margin:0;white-space:pre-wrap">${escapeHtml(lead.message)}</p>
-  <p style="margin:20px 0 0"><a href="${escapeHtml(dashboardUrl)}" style="color:#0c3b30">Open this lead in the private dashboard</a></p>
-  <p style="margin:12px 0 0;color:#626960;font-size:13px">The dashboard link requires signing in with the authorised BloomCore account.</p>
+  <p style="margin:20px 0 0"><a href="${escapeHtml(dashboardUrl)}" style="color:#0a0a0a">Open this lead in the private dashboard</a></p>
+  <p style="margin:12px 0 0;color:#6e6e6e;font-size:13px">The dashboard link requires signing in with the authorised BloomCore account.</p>
 </div>`;
 
   return { subject, html, text: lines.join("\n") };
@@ -145,10 +145,10 @@ export function acknowledgementEmail(
     .filter((line) => line !== "")
     .join("\n");
 
-  const html = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#111512;line-height:1.6">
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#0a0a0a;line-height:1.6">
   <p>Hello ${escapeHtml(first)},</p>
   <p>Thank you for contacting BloomCore Technologies. Your enquiry has been received and recorded.</p>
-  <p style="background:#f4f1e9;padding:12px 14px;border-radius:8px">
+  <p style="background:#f5f5f5;padding:12px 14px;border-radius:8px">
     <strong>Reference:</strong> ${escapeHtml(lead.lead_number)}<br />
     <strong>Enquiry type:</strong> ${escapeHtml(categoryLabel(lead.enquiry_type))}${
       lead.product ? `<br /><strong>Product:</strong> ${escapeHtml(productLabel(lead.product))}` : ""
@@ -156,7 +156,7 @@ export function acknowledgementEmail(
   </p>
   <p>A member of the team will review it and reply to this address. We do not send marketing or add you to a mailing list.</p>
   <p>If you need to add anything, reply to this email or write to <a href="mailto:${escapeHtml(contactEmail)}">${escapeHtml(contactEmail)}</a>.</p>
-  <p style="color:#626960;font-size:13px">BloomCore Technologies · Registered in Ghana (BN428031125)</p>
+  <p style="color:#6e6e6e;font-size:13px">BloomCore Technologies · Registered in Ghana (BN428031125)</p>
 </div>`;
 
   return { subject, html, text };

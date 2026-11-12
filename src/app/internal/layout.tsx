@@ -25,11 +25,11 @@ export default async function InternalLayout({ children }: { children: React.Rea
       >
         Skip to content
       </a>
-      <header className="border-b border-line bg-[#0c3b30] text-[#f8f5ec]">
+      <header className="border-b border-line bg-accent text-accent-contrast">
         <div className="mx-auto flex w-full max-w-[1400px] flex-wrap items-center gap-x-6 gap-y-3 px-4 py-3 sm:px-6">
           <Link href="/internal/leads" className="flex items-center gap-3">
             <span className="font-display text-[1.35rem] leading-none">BloomCore</span>
-            <span className="text-[0.8125rem] font-semibold tracking-[0.14em] text-[#f8f5ec]/70 uppercase">
+            <span className="text-[0.8125rem] font-semibold tracking-[0.14em] text-accent-contrast/70 uppercase">
               Lead desk
             </span>
           </Link>
@@ -38,13 +38,13 @@ export default async function InternalLayout({ children }: { children: React.Rea
               <Link
                 key={item.href}
                 href={item.href}
-                className="rounded-[7px] px-3 py-2 text-[0.9375rem] font-semibold text-[#f8f5ec]/85 transition-colors hover:bg-[#f8f5ec]/10 hover:text-[#f8f5ec]"
+                className="rounded-[7px] px-3 py-2 text-[0.9375rem] font-semibold text-accent-contrast/85 transition-colors hover:bg-accent-contrast/10 hover:text-accent-contrast"
               >
                 {item.label}
               </Link>
             ))}
           </nav>
-          <div className="ml-auto flex items-center gap-4 text-[0.8125rem] text-[#f8f5ec]/70">
+          <div className="ml-auto flex items-center gap-4 text-[0.8125rem] text-accent-contrast/70">
             {identity ? (
               <span className="max-w-[240px] truncate" title={identity.email}>
                 {identity.email}
@@ -54,7 +54,7 @@ export default async function InternalLayout({ children }: { children: React.Rea
             )}
             <Link
               href="/"
-              className="hidden underline-offset-4 hover:text-[#f8f5ec] hover:underline sm:inline"
+              className="hidden underline-offset-4 hover:text-accent-contrast hover:underline sm:inline"
             >
               Public site
             </Link>

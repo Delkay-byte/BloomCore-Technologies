@@ -6,7 +6,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, useReducedMotion } from "motion/react";
 import logo from "@/assets/brand/bloomcore-logo-white.png";
-import { AssistantTrigger } from "@/components/AssistantTrigger";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BRAND, NAVIGATION, PRODUCTS, ROUTES } from "@/lib/brand";
 import { cn } from "@/lib/utils";
@@ -20,7 +19,7 @@ function BrandLockup() {
     <Link
       href="/"
       aria-label={`${BRAND.name} — home`}
-      className="inline-flex shrink-0 items-center rounded-[6px] bg-[#0c3b30] px-2.5 py-1.5"
+      className="inline-flex shrink-0 items-center rounded-[6px] bg-[#0a0a0a] px-2.5 py-1.5"
     >
       <Image
         src={logo}
@@ -119,7 +118,7 @@ function DesktopNav() {
                 </button>
                 {isOpen && (
                   <div className="absolute top-full left-0 z-50 w-[19rem] pt-3">
-                    <ul className="overflow-hidden rounded-[var(--radius)] border border-line bg-surface p-2 shadow-[0_24px_48px_-24px_rgba(8,20,15,0.3)]">
+                    <ul className="overflow-hidden rounded-[var(--radius)] border border-line bg-surface p-2 shadow-[0_24px_48px_-24px_rgba(0,0,0,0.28)]">
                       <li>
                         <Link
                           href={item.href}
@@ -174,7 +173,7 @@ function DesktopNav() {
               >
                 {item.label}
                 {isActive && (
-                  <span aria-hidden="true" className="absolute -bottom-0.5 left-0 h-0.5 w-full bg-gold" />
+                  <span aria-hidden="true" className="absolute -bottom-0.5 left-0 h-0.5 w-full bg-foreground" />
                 )}
               </Link>
             </li>
@@ -363,7 +362,6 @@ export function Header() {
           >
             Start a project
           </Link>
-          <AssistantTrigger className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-[7px] text-foreground-subtle transition-colors hover:bg-surface-2 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground" />
           <ThemeToggle />
           <MobileNav />
         </div>

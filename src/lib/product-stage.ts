@@ -31,7 +31,7 @@ export const STAGE_PRODUCTS: ReadonlyArray<StageProduct> = [
     appUrl: "https://schemeknit.bloomcoretech.com/",
     panelTitle: "Lesson planning",
     panelMeta: "Basic 7 · Computing",
-    accent: "#0c3b30",
+    accent: "#0a0a0a",
   },
   {
     slug: "maacash",
@@ -46,7 +46,7 @@ export const STAGE_PRODUCTS: ReadonlyArray<StageProduct> = [
     appUrl: "https://maacash.bloomcoretech.com/",
     panelTitle: "Location overview",
     panelMeta: "Organisation administration",
-    accent: "#c69a3e",
+    accent: "#4a4a4a",
   },
   {
     slug: "tillproof",
@@ -60,6 +60,6 @@ export const STAGE_PRODUCTS: ReadonlyArray<StageProduct> = [
     route: "/products/tillproof",
     panelTitle: "Stock by location",
     panelMeta: "Owner dashboard",
-    accent: "#6b7a72",
+    accent: "#6e6e6e",
   },
 ];

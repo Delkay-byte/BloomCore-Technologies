@@ -89,7 +89,7 @@ function Panel({
         receiveShadow
       >
         <meshStandardMaterial
-          color={active ? "#0b2f27" : "#08251f"}
+          color={active ? "#171717" : "#0b0b0b"}
           roughness={0.42}
           metalness={0.22}
         />
@@ -100,18 +100,18 @@ function Panel({
         {texture ? (
           <meshBasicMaterial
             map={texture}
-            color={active ? "#ffffff" : "#a9b7b0"}
+            color={active ? "#ffffff" : "#8f8f8f"}
             toneMapped={false}
             side={THREE.DoubleSide}
           />
         ) : (
-          <meshBasicMaterial color="#0c3b30" toneMapped={false} side={THREE.DoubleSide} />
+          <meshBasicMaterial color="#141414" toneMapped={false} side={THREE.DoubleSide} />
         )}
       </mesh>
 
       <mesh position={[0, -PANEL_H / 2 - 0.04, 0.085]}>
         <planeGeometry args={[PANEL_W - 0.3, 0.018]} />
-        <meshBasicMaterial color={active ? "#c69a3e" : "#29473c"} toneMapped={false} />
+        <meshBasicMaterial color={active ? "#d4d4d4" : "#4a4a4a"} toneMapped={false} />
       </mesh>
     </group>
   );
@@ -144,8 +144,8 @@ function Rig({
     <>
       <ambientLight intensity={1.15} />
       <directionalLight position={[4, 6, 5]} intensity={1.5} castShadow />
-      <directionalLight position={[-5, 2, -2]} intensity={0.35} color="#c69a3e" />
-      <pointLight position={[0, -2, 4]} intensity={0.3} color="#82d5b5" />
+      <directionalLight position={[-5, 2, -2]} intensity={0.35} color="#d4d4d4" />
+      <pointLight position={[0, -2, 4]} intensity={0.3} color="#ffffff" />
 
       <group position={[0, 0.1, 0]}>
         {STAGE_PRODUCTS.map((product, panelIndex) => (

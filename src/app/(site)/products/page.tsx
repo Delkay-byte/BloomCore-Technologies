@@ -267,26 +267,22 @@ export default function ProductsPage() {
 
       <section className="bg-background pb-3">
         <div className="page-frame">
-          <div className="grid gap-8 rounded-[var(--radius)] bg-gold p-6 text-gold-contrast sm:p-9 lg:grid-cols-12 lg:items-center">
+          <div className="grid gap-8 rounded-[var(--radius)] bg-accent p-6 text-accent-contrast sm:p-9 lg:grid-cols-12 lg:items-center">
             <div className="lg:col-span-8">
-              <h2 className="h2 max-w-[18ch]">Need something outside the catalogue?</h2>
-              <p className="mt-4 max-w-xl text-[1rem] leading-7 opacity-80">
+              <h2 className="h2 max-w-[18ch] text-accent-contrast">Need something outside the catalogue?</h2>
+              <p className="mt-4 max-w-xl text-[1rem] leading-7 text-accent-contrast/75">
                 We also build software to order. Tell us what the workflow needs to do and we will
                 tell you whether it is a good fit.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row lg:col-span-4 lg:justify-end">
-              <ButtonLink
-                href={ROUTES.services}
-                className="!bg-accent !text-accent-contrast hover:!bg-accent-strong"
-                size="lg"
-              >
+              <ButtonLink href={ROUTES.services} variant="inverse" size="lg">
                 View services
               </ButtonLink>
               <ButtonLink
                 href={ROUTES.contact}
                 variant="outline"
-                className="!border-gold-contrast/40 !text-gold-contrast hover:!bg-gold-contrast/10"
+                className="!border-accent-contrast/40 !text-accent-contrast hover:!bg-accent-contrast/10"
                 size="lg"
               >
                 Contact us

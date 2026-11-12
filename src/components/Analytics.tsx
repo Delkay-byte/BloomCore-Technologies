@@ -77,7 +77,7 @@ export function Analytics() {
     <div
       role="region"
       aria-label="Analytics settings"
-      className="bc-panel-in fixed inset-x-3 bottom-3 z-50 mx-auto max-w-[27rem] rounded-[var(--radius)] border border-line bg-surface p-5 shadow-[0_24px_60px_-28px_rgba(8,20,15,0.45)] sm:right-auto sm:left-6 sm:mx-0 sm:p-6"
+      className="bc-panel-in fixed inset-x-3 bottom-3 z-50 mx-auto max-w-[27rem] rounded-[var(--radius)] border border-line bg-surface p-5 shadow-[0_24px_60px_-28px_rgba(0,0,0,0.45)] sm:right-auto sm:left-6 sm:mx-0 sm:p-6"
     >
       <p className="text-[1.05rem] font-bold text-foreground">Optional analytics</p>
       <p className="mt-2 text-[0.875rem] leading-6 text-foreground-subtle">
@@ -122,7 +122,7 @@ export function Analytics() {
           <button
             type="button"
             onClick={() => choose("denied")}
-            className="inline-flex h-11 items-center justify-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground-subtle transition-colors hover:bg-surface-2 hover:text-foreground active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            className="inline-flex h-11 items-center justify-center rounded-[7px] bg-accent px-4 text-[0.875rem] font-semibold text-accent-contrast transition-colors hover:bg-accent-strong active:translate-y-px focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
           >
             Keep off
           </button>

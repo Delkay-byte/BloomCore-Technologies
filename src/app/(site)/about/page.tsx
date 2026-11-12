@@ -307,12 +307,12 @@ export default function AboutPage() {
         </Container>
       </section>
 
-      <section className="bg-gold py-16 text-[#15170f] sm:py-20 lg:py-24">
+      <section className="bg-accent py-16 text-accent-contrast sm:py-20 lg:py-24">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-14">
             <div className="lg:col-span-7">
-              <h2 className="h2 max-w-[20ch]">No history we cannot evidence</h2>
-              <div className="mt-6 flex flex-col gap-4 text-[1rem] leading-7 text-[#15170f]/80">
+              <h2 className="h2 max-w-[20ch] text-accent-contrast">No history we cannot evidence</h2>
+              <div className="mt-6 flex flex-col gap-4 text-[1rem] leading-7 text-accent-contrast/80">
                 <p>
                   BloomCore Technologies is an evolving software and technology business. We have
                   not published a founding date, an office network, staff numbers, awards,
@@ -328,25 +328,21 @@ export default function AboutPage() {
             </div>
             <div className="lg:col-span-5 lg:pl-6">
               <div className="mt-6 flex flex-col items-start gap-3">
-                <ButtonLink
-                  href={ROUTES.contact}
-                  size="lg"
-                  className="!bg-[#15170f] !text-[#f7f4ec] hover:!bg-[#084235]"
-                >
+                <ButtonLink href={ROUTES.contact} variant="inverse" size="lg">
                   Talk to us
                 </ButtonLink>
                 <ButtonLink
                   href={ROUTES.privacy}
                   variant="ghost"
                   size="lg"
-                  className="!text-[#15170f] hover:!bg-[#15170f]/10"
+                  className="!text-accent-contrast hover:!bg-accent-contrast/10"
                 >
                   Privacy notice
                 </ButtonLink>
               </div>
-              <p className="mt-8 text-[0.9375rem] text-[#15170f]/75">
+              <p className="mt-8 text-[0.9375rem] text-accent-contrast/75">
                 Prefer to browse first?{" "}
-                <ArrowLink href={ROUTES.work} className="text-[#15170f]">
+                <ArrowLink href={ROUTES.work} className="text-accent-contrast">
                   Open the portfolio
                 </ArrowLink>
               </p>

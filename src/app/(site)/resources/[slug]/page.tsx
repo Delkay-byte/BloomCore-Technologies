@@ -103,7 +103,7 @@ function Block({ block }: { block: ResourceBlock }) {
       );
     case "note":
       return (
-        <aside className="rounded-[var(--radius)] border-l-4 border-gold bg-muted p-5">
+        <aside className="rounded-[var(--radius)] border-l-4 border-foreground bg-muted p-5">
           <p className="text-[0.9375rem] leading-6 text-foreground-subtle">{block.text}</p>
         </aside>
       );

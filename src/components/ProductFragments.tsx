@@ -54,7 +54,7 @@ function IndicatorRow({
     <div
       className={cn(
         "flex items-center justify-between gap-3 px-3 py-2.5",
-        active ? "bg-[var(--product-accent,#0c3b30)] text-white" : "bg-background text-foreground",
+        active ? "bg-[var(--product-accent,var(--foreground))] text-white" : "bg-background text-foreground",
       )}
     >
       <div className="min-w-0">
@@ -87,7 +87,7 @@ export function SchemeKnitFragment({ className }: { className?: string }) {
         "overflow-hidden border border-border bg-surface",
         className,
       )}
-      style={{ "--product-accent": "#0c3b30" } as React.CSSProperties}
+      style={{ "--product-accent": "#0a0a0a" } as React.CSSProperties}
     >
       <ChromeBar app="SchemeKnit · Lesson planning" meta="Basic 7 · Computing" status="Draft" />
       <div className="p-4">
@@ -98,13 +98,13 @@ export function SchemeKnitFragment({ className }: { className?: string }) {
               36 lesson plans from 12 scheme weeks
             </p>
           </div>
-          <span className="bg-[#e2ede7] px-2 py-1 text-[11px] font-medium text-[#0c3b30]">
+          <span className="bg-surface-2 px-2 py-1 text-[11px] font-medium text-foreground">
             3 of 36 planned
           </span>
         </div>
 
         <div className="mt-3 h-1.5 overflow-hidden bg-muted">
-          <div className="h-full w-[34%] bg-[#0c3b30]" />
+          <div className="h-full w-[34%] bg-foreground" />
         </div>
 
         <div className="mt-4 flex flex-col gap-1">
@@ -153,7 +153,7 @@ export function MaaCashFragment({ className }: { className?: string }) {
     <div
       data-ui
       className={cn("overflow-hidden border border-border bg-surface", className)}
-      style={{ "--product-accent": "#0c3b30" } as React.CSSProperties}
+      style={{ "--product-accent": "#0a0a0a" } as React.CSSProperties}
     >
       <ChromeBar app="MaaCash · Business workspace" meta="Organisation administration" status="Admin" />
       <div className="grid grid-cols-1 sm:grid-cols-[9rem_1fr]">
@@ -165,7 +165,7 @@ export function MaaCashFragment({ className }: { className?: string }) {
                 className={cn(
                   "px-2 py-1.5 text-[12px]",
                   index === 1
-                    ? "bg-[#0c3b30] font-medium text-white"
+                    ? "bg-foreground font-medium text-background"
                     : "text-foreground-subtle",
                 )}
               >
@@ -223,7 +223,7 @@ export function TillProofFragment({ className }: { className?: string }) {
     <div
       data-ui
       className={cn("overflow-hidden border border-border bg-surface", className)}
-      style={{ "--product-accent": "#565d57" } as React.CSSProperties}
+      style={{ "--product-accent": "#6e6e6e" } as React.CSSProperties}
     >
       <ChromeBar app="TillProof · Owner dashboard" meta="Stock by location" status="Concept" />
       <div className="p-4">
@@ -234,7 +234,7 @@ export function TillProofFragment({ className }: { className?: string }) {
               className={cn(
                 "border px-2 py-1 text-[11px]",
                 index === 0
-                  ? "border-[#565d57] bg-[#565d57] text-white"
+                  ? "border-foreground bg-foreground text-background"
                   : "border-border text-foreground-subtle",
               )}
             >

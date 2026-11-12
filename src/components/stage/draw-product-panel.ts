@@ -2,21 +2,22 @@
 
 type Ctx = CanvasRenderingContext2D;
 
+/** Neutral palette. The stage is strictly monochrome; no chromatic accent. */
 const C = {
-  paper: "#fffdf8",
-  paper2: "#f4f1e9",
-  paper3: "#ebe6db",
-  ink: "#111512",
-  soft: "#4d544d",
-  faint: "#626960",
-  line: "#ddd6c8",
-  forest: "#0c3b30",
-  forestDeep: "#08251f",
-  forestMid: "#0a2f27",
-  mint: "#e2ede7",
-  brass: "#c69a3e",
-  brassSoft: "#f3e6c6",
-  ivory: "#f8f5ec",
+  paper: "#ffffff",
+  paper2: "#f5f5f5",
+  paper3: "#e9e9e9",
+  ink: "#0a0a0a",
+  soft: "#4a4a4a",
+  faint: "#6e6e6e",
+  line: "#dedede",
+  field: "#0a0a0a",
+  fieldDeep: "#000000",
+  fieldMid: "#141414",
+  tint: "#ececec",
+  mark: "#d4d4d4",
+  markSoft: "#ececec",
+  onField: "#ffffff",
 };
 
 function roundRect(ctx: Ctx, x: number, y: number, w: number, h: number, r: number) {
@@ -47,19 +48,19 @@ function text(
 
 function drawChrome(ctx: Ctx, product: StageProduct, w: number, s: number, dark = false) {
   const bar = 60 * s;
-  ctx.fillStyle = dark ? C.forestDeep : C.forest;
+  ctx.fillStyle = dark ? C.fieldDeep : C.field;
   ctx.fillRect(0, 0, w, bar);
 
   roundRect(ctx, 26 * s, 18 * s, 24 * s, 24 * s, 5 * s);
-  ctx.strokeStyle = C.brass;
+  ctx.strokeStyle = C.mark;
   ctx.lineWidth = 1.4 * s;
   ctx.stroke();
 
-  text(ctx, product.name, 62 * s, 35 * s, 17 * s, C.ivory, 700);
-  text(ctx, product.panelMeta, 62 * s, 50 * s, 11.5 * s, "rgba(248,245,236,0.62)", 500);
+  text(ctx, product.name, 62 * s, 35 * s, 17 * s, C.onField, 700);
+  text(ctx, product.panelMeta, 62 * s, 50 * s, 11.5 * s, "rgba(255,255,255,0.62)", 500);
 
-  const statusBg = product.status === "live" ? C.brass : "rgba(248,245,236,0.1)";
-  const statusColor = product.status === "live" ? "#1a1408" : C.ivory;
+  const statusBg = product.status === "live" ? C.mark : "rgba(255,255,255,0.1)";
+  const statusColor = product.status === "live" ? "#0a0a0a" : C.onField;
   ctx.font = `600 ${12 * s}px Inter, sans-serif`;
   const label = product.statusLabel;
   const pw = ctx.measureText(label).width + 22 * s;
@@ -67,7 +68,7 @@ function drawChrome(ctx: Ctx, product: StageProduct, w: number, s: number, dark 
   ctx.fillStyle = statusBg;
   ctx.fill();
   if (product.status !== "live") {
-    ctx.strokeStyle = "rgba(248,245,236,0.26)";
+    ctx.strokeStyle = "rgba(255,255,255,0.26)";
     ctx.lineWidth = 1;
     ctx.stroke();
   }
@@ -86,19 +87,19 @@ function drawSidebar(
   dark = false,
 ) {
   const width = 280 * s;
-  ctx.fillStyle = dark ? C.forestMid : C.paper2;
+  ctx.fillStyle = dark ? C.fieldMid : C.paper2;
   ctx.fillRect(0, top, width, h - top);
-  ctx.fillStyle = dark ? "rgba(248,245,236,0.1)" : C.line;
+  ctx.fillStyle = dark ? "rgba(255,255,255,0.1)" : C.line;
   ctx.fillRect(width - 1, top, 1, h - top);
 
-  text(ctx, "Workspace", 28 * s, top + 40 * s, 11.5 * s, dark ? "rgba(248,245,236,0.5)" : C.faint, 600);
+  text(ctx, "Workspace", 28 * s, top + 40 * s, 11.5 * s, dark ? "rgba(255,255,255,0.5)" : C.faint, 600);
 
   let y = top + 54 * s;
   for (const item of nav) {
     const isActive = item === active;
     if (isActive) {
       roundRect(ctx, 14 * s, y, width - 28 * s, 40 * s, 7 * s);
-      ctx.fillStyle = dark ? C.brass : C.forest;
+      ctx.fillStyle = dark ? C.mark : C.field;
       ctx.fill();
     }
     text(
@@ -107,7 +108,7 @@ function drawSidebar(
       (isActive ? 28 : 24) * s,
       y + 26 * s,
       14.5 * s,
-      isActive ? (dark ? "#1a1408" : C.ivory) : dark ? "rgba(248,245,236,0.68)" : C.soft,
+      isActive ? (dark ? "#0a0a0a" : C.onField) : dark ? "rgba(255,255,255,0.68)" : C.soft,
       isActive ? 700 : 500,
     );
     y += 46 * s;
@@ -124,7 +125,7 @@ function drawSidebar(
     24 * s,
     footY + 4 * s,
     11 * s,
-    dark ? "rgba(248,245,236,0.42)" : C.faint,
+    dark ? "rgba(255,255,255,0.42)" : C.faint,
     500,
   );
   text(
@@ -133,7 +134,7 @@ function drawSidebar(
     24 * s,
     footY + 22 * s,
     11 * s,
-    dark ? "rgba(248,245,236,0.42)" : C.faint,
+    dark ? "rgba(255,255,255,0.42)" : C.faint,
     500,
   );
 }
@@ -148,17 +149,17 @@ function drawHeading(
   s: number,
   dark = false,
 ) {
-  text(ctx, title, left, y, 30 * s, dark ? C.ivory : C.ink, 700);
-  text(ctx, meta, left, y + 23 * s, 14 * s, dark ? "rgba(248,245,236,0.6)" : C.faint, 500);
+  text(ctx, title, left, y, 30 * s, dark ? C.onField : C.ink, 700);
+  text(ctx, meta, left, y + 23 * s, 14 * s, dark ? "rgba(255,255,255,0.6)" : C.faint, 500);
 
   ctx.font = `700 ${12.5 * s}px Inter, sans-serif`;
   const tw = ctx.measureText(action).width + 32 * s;
   const bh = 38 * s;
   const bx = 1400 * s - 34 * s - tw;
   roundRect(ctx, bx, y - 20 * s, tw, bh, 7 * s);
-  ctx.fillStyle = dark ? C.brass : C.forest;
+  ctx.fillStyle = dark ? C.mark : C.field;
   ctx.fill();
-  text(ctx, action, bx + 16 * s, y + 4 * s, 12.5 * s, dark ? "#1a1408" : C.ivory, 700);
+  text(ctx, action, bx + 16 * s, y + 4 * s, 12.5 * s, dark ? "#0a0a0a" : C.onField, 700);
 }
 
 function drawMetrics(
@@ -174,10 +175,10 @@ function drawMetrics(
   items.forEach(([label, value], index) => {
     const x = left + index * (width + gap);
     roundRect(ctx, x, y, width, 96 * s, 8 * s);
-    ctx.fillStyle = dark ? "rgba(248,245,236,0.055)" : C.paper2;
+    ctx.fillStyle = dark ? "rgba(255,255,255,0.055)" : C.paper2;
     ctx.fill();
-    text(ctx, label, x + 16 * s, y + 28 * s, 11.5 * s, dark ? "rgba(248,245,236,0.52)" : C.faint, 600);
-    text(ctx, value, x + 16 * s, y + 64 * s, 22 * s, dark ? C.ivory : C.ink, 700);
+    text(ctx, label, x + 16 * s, y + 28 * s, 11.5 * s, dark ? "rgba(255,255,255,0.52)" : C.faint, 600);
+    text(ctx, value, x + 16 * s, y + 64 * s, 22 * s, dark ? C.onField : C.ink, 700);
   });
   return y + 96 * s;
 }
@@ -186,34 +187,34 @@ function drawRows(
   ctx: Ctx,
   left: number,
   y: number,
-  rows: Array<{ title: string; meta: string; tag: string; tagTone?: "gold" | "mint" | "line" }>,
+  rows: Array<{ title: string; meta: string; tag: string; tagTone?: "mark" | "tint" | "line" }>,
   s: number,
   dark = false,
 ) {
   const width = 1060 * s;
   y += 18 * s;
-  ctx.fillStyle = dark ? "rgba(248,245,236,0.09)" : C.line;
+  ctx.fillStyle = dark ? "rgba(255,255,255,0.09)" : C.line;
   ctx.fillRect(left, y, width, 1);
   for (const row of rows) {
     y += 20 * s;
-    text(ctx, row.title, left, y + 18 * s, 15 * s, dark ? C.ivory : C.ink, 600);
-    text(ctx, row.meta, left, y + 37 * s, 11.5 * s, dark ? "rgba(248,245,236,0.46)" : C.faint, 500);
+    text(ctx, row.title, left, y + 18 * s, 15 * s, dark ? C.onField : C.ink, 600);
+    text(ctx, row.meta, left, y + 37 * s, 11.5 * s, dark ? "rgba(255,255,255,0.46)" : C.faint, 500);
 
     const bg =
-      row.tagTone === "gold"
-        ? C.brass
-        : row.tagTone === "mint"
+      row.tagTone === "mark"
+        ? C.mark
+        : row.tagTone === "tint"
           ? dark
-            ? "rgba(130,213,181,0.16)"
-            : C.mint
+            ? "rgba(255,255,255,0.16)"
+            : C.tint
           : dark
-            ? "rgba(248,245,236,0.08)"
+            ? "rgba(255,255,255,0.08)"
             : C.paper3;
     const color =
-      row.tagTone === "gold"
-        ? "#1a1408"
+      row.tagTone === "mark"
+        ? "#0a0a0a"
         : dark
-          ? "rgba(248,245,236,0.78)"
+          ? "rgba(255,255,255,0.78)"
           : C.soft;
     ctx.font = `600 ${11.5 * s}px Inter, sans-serif`;
     const tw = ctx.measureText(row.tag).width + 20 * s;
@@ -223,7 +224,7 @@ function drawRows(
     text(ctx, row.tag, left + width - tw + 10 * s, y + 20 * s, 11.5 * s, color, 600);
 
     y += 54 * s;
-    ctx.fillStyle = dark ? "rgba(248,245,236,0.08)" : C.line;
+    ctx.fillStyle = dark ? "rgba(255,255,255,0.08)" : C.line;
     ctx.fillRect(left, y, width, 1);
   }
   return y;
@@ -272,7 +273,7 @@ function drawSchemeKnit(ctx: Ctx, product: StageProduct, w: number, h: number, s
         title: "Identify computer output devices",
         meta: "B7.2.1.1 · Week 3 · 40 minutes",
         tag: "Planned",
-        tagTone: "mint",
+        tagTone: "tint",
       },
       {
         title: "Compare storage media",
@@ -283,7 +284,7 @@ function drawSchemeKnit(ctx: Ctx, product: StageProduct, w: number, h: number, s
         title: "Explain the data processing cycle",
         meta: "B7.2.2.1 · Week 4 · 40 minutes",
         tag: "Planned",
-        tagTone: "mint",
+        tagTone: "tint",
       },
     ],
     s,
@@ -336,19 +337,19 @@ function drawMaaCash(ctx: Ctx, product: StageProduct, w: number, h: number, s: n
         title: "Administrator · Full configuration",
         meta: "All locations · staff, pricing and records",
         tag: "All",
-        tagTone: "gold",
+        tagTone: "mark",
       },
       {
         title: "Manager · Branch scope",
         meta: "Assigned locations · operations and staff",
         tag: "Scoped",
-        tagTone: "mint",
+        tagTone: "tint",
       },
       {
         title: "Collector · Assigned customers",
         meta: "Susu routes · collection records",
         tag: "Scoped",
-        tagTone: "mint",
+        tagTone: "tint",
       },
     ],
     s,
@@ -356,7 +357,7 @@ function drawMaaCash(ctx: Ctx, product: StageProduct, w: number, h: number, s: n
 }
 
 function drawTillProof(ctx: Ctx, product: StageProduct, w: number, h: number, s: number) {
-  ctx.fillStyle = C.forestDeep;
+  ctx.fillStyle = C.fieldDeep;
   ctx.fillRect(0, 0, w, h);
   const top = drawChrome(ctx, product, w, s, true);
   drawSidebar(
@@ -392,7 +393,7 @@ function drawTillProof(ctx: Ctx, product: StageProduct, w: number, h: number, s:
     s,
     true,
   );
-  text(ctx, "Stock by item", left, top + 244 * s, 13 * s, C.ivory, 700);
+  text(ctx, "Stock by item", left, top + 244 * s, 13 * s, C.onField, 700);
   drawRows(
     ctx,
     left,

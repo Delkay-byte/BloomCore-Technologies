@@ -61,7 +61,7 @@ export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollow
   return (
     <div className="flex flex-col gap-5">
       {error && (
-        <p role="alert" className="border-l-4 border-gold bg-muted px-4 py-3 text-[0.875rem] text-foreground">
+        <p role="alert" className="border-l-4 border-foreground bg-muted px-4 py-3 text-[0.875rem] text-foreground">
           {error}
         </p>
       )}
