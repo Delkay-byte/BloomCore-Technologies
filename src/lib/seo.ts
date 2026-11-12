@@ -12,6 +12,7 @@ export function organizationSchema() {
     "@type": "Organization",
     "@id": ORGANIZATION_ID,
     name: BRAND.name,
+    alternateName: "BloomCore",
     url: SITE_URL,
     description: BRAND.description,
     slogan: BRAND.tagline,
@@ -102,7 +103,8 @@ export function breadcrumbSchema(items: ReadonlyArray<Crumb>) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: `${SITE_URL}${item.href}`,
+      // Keep the homepage breadcrumb URL identical to the homepage canonical.
+      item: item.href === "/" ? SITE_URL : `${SITE_URL}${item.href}`,
     })),
   };
 }

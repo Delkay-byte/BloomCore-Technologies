@@ -50,7 +50,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
   }));
 
   return [...staticRoutes, ...articles].map((entry) => ({
-    url: `${SITE_URL}${entry.path}`,
+    // The homepage canonical is the bare origin (no trailing slash), so the
+    // sitemap must match it. Every other route is origin + path.
+    url: entry.path === "/" ? SITE_URL : `${SITE_URL}${entry.path}`,
     lastModified: entry.lastModified,
     changeFrequency: entry.changeFrequency,
     priority: entry.priority,
