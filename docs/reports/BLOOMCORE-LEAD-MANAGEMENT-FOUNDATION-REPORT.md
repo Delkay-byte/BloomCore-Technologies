@@ -18,9 +18,14 @@
 >
 > **Revision 2 — owner-gated provisioning attempt (12 Nov 2026).** D1 binding, Access
 > audiences and team domain are configured; the `RESEND_API_KEY` secret is confirmed on the
-> Worker. Two items remain and block deployment: the API token cannot apply the D1 migration
-> (missing D1 permission), and Resend domain verification is incomplete (SPF/MX not
-> published). See §6.1, §7 and §9. **Not deployed.**
+> Worker. Two items remained and blocked deployment: the API token could not apply the D1
+> migration, and Resend domain verification appeared incomplete. See §6.1 and §7.
+>
+> **Revision 3 — production deployment and acceptance (12 Nov 2026).** The `/internal` 404
+> was a stale deployment, not an Access fault; the branch is now deployed as Worker version
+> `d478fed5-faa1-49b5-90ba-a3c1e9208e7a`. Production persistence, idempotency, fail-closed
+> auth and the Access redirect are verified. Email delivery, the signed-in dashboard and
+> live GA4 remain owner-verified. Overall **AMBER**. See §6.2 and §9.
 
 ## 1. Objective
 
@@ -320,26 +325,127 @@ Team domain: `https://red-boat-3eb2.cloudflareaccess.com`.
 - `notify.bloomcoretech.com` → **no SPF TXT**, **no MX**.
 - `bloomcoretech.com` → **no SPF TXT** (only `google-site-verification`), **no MX**.
 - `_dmarc.bloomcoretech.com` → `v=DMARC1; p=none;` (present, untouched).
-- `send.bloomcoretech.com` → Cloudflare Email Routing (`send.forge.rmta.net`); not Resend.
+- `send.bloomcoretech.com` → initially read as Cloudflare Email Routing; **corrected in
+  §6.2** — the value is Resend's own sending CNAME.
 
-Domain verification is therefore **incomplete**: the DKIM key exists but the SPF (and the
-feedback MX Resend expects) are missing. No real email was sent, so delivery is **not**
-claimed.
+Domain verification was recorded as **incomplete** at the time because no SPF TXT or MX was
+found in the classic layout. §6.2 corrects this: the domain uses Resend's CNAME sending
+style. No email had been sent at that point, so delivery was **not** claimed.
+
+### 6.2 Production deployment and acceptance — 12 November 2026 (second run)
+
+**Deployment.** Branch `feat/lead-management-foundation` at `3dd4390`, built with
+`npx opennextjs-cloudflare build` and deployed with `npx wrangler deploy` to Worker
+`bloomcore-technologies-page`. New version `d478fed5-faa1-49b5-90ba-a3c1e9208e7a`
+(previous production version `f68822d1-7ce7-49e5-ba88-1577218a8de8`, 11 Nov 2026).
+All bindings resolved, including `LEADS_DB` → `bloomcore-leads-prod`, both Access
+audiences and `EMAIL_FROM`.
+
+**Root cause of the `/internal` 404 (the reported defect).** Not an Access or
+routing-configuration fault. Production was still serving the 11 Nov build, which came
+from `main` (`9f2ce2f`); `main` contains **zero** `/internal` routes
+(`git ls-tree -r main --name-only` → 0 matches; the branch has 12). Cloudflare Access
+intercepted the request first — verified live on the unauthenticated request — and once
+the owner's Access session authenticated, the Worker had no `/internal` route, so Next.js
+rendered the branded 404. Cause: a stale deployment. Fixed by deploying the branch.
+
+**Routing evidence after deployment.**
+
+Authenticated surface (no session, live):
+
+| Request | Result |
+| --- | --- |
+| `https://bloomcoretech.com/internal` | `302` → Access login, `kid=e539cbafaba1…` |
+| `https://bloomcoretech.com/internal/` | `302` → Access login, `kid=e539cbafaba1…` |
+| `https://bloomcoretech.com/internal/leads` | `302` → Access login, `kid=e539cbafaba1…` |
+| `https://bloomcoretech.com/api/internal` | `302` → Access login, `kid=3ce614a6d610…` |
+| `https://bloomcoretech.com/api/internal/leads` | `302` → Access login, `kid=3ce614a6d610…` |
+| `https://bloomcoretech.com/` | `200` |
+| `https://bloomcoretech.com/api/enquiries` (GET) | `405` |
+
+Worker host (Access absent, exercising the app's own fail-closed path):
+
+| Request | Result |
+| --- | --- |
+| `…workers.dev/internal` | `307` → `/internal/leads` (the fix) |
+| `…workers.dev/internal/leads` | `200` sign-in-required page; no lead number and no QA name in the HTML |
+| `…workers.dev/api/internal/leads` | `401` `{"ok":false,"error":"Sign in with the authorised BloomCore account."}` |
+| `…workers.dev/api/internal/metrics`, `/api/internal/export` | `401` |
+
+**Database persistence.** Production `POST /api/enquiries` returned
+`{"ok":true,"duplicate":false,"leadNumber":"BC-2026-000001",…}`; the same
+`Idempotency-Key` returned `duplicate:true`; invalid input returned `422` with per-field
+messages. The `INSERT` ran against the real D1 database, which confirms the migration was
+applied and the schema is present.
+
+**Migration record — not readable from this environment.** `npx wrangler d1 migrations
+list LEADS_DB --remote` fails before the query runs:
+
+```
+/accounts/da77cc158dfdf586558f4f81a059a23d/d1/database/97c348f1-57b6-41cb-8d1c-33ea1b6c4955/query
+The given account is not valid or is not authorized to access this service [code: 7403]
+```
+
+`npx wrangler d1 list` → `Authentication error [code: 10000]`. The token available here
+holds Workers permissions (the deploy succeeded) but not **D1: Read/Edit**. The migration
+was **not** reapplied, and no schema was altered.
+
+**Resend — DNS interpretation corrected.** `send.forge.rmta.net` is Resend's own mail
+infrastructure; `rmta.net` is Resend's mail-server parent domain, so it is **not**
+Cloudflare Email Routing as §6.1 recorded. The records match Resend's CNAME sending style:
+
+| Name | Type | Value |
+| --- | --- | --- |
+| `send.notify.bloomcoretech.com` | CNAME | `send.forge.rmta.net` |
+| `resend._domainkey.notify.bloomcoretech.com` | TXT | DKIM public key (present) |
+| `send.bloomcoretech.com` | CNAME | `send.forge.rmta.net` |
+| `resend._domainkey.bloomcoretech.com` | TXT | DKIM public key (present) |
+
+Resend documents that a CNAME-verified domain can report `partially_verified` and still
+send. Apex MX stays absent, `_dmarc.bloomcoretech.com` stays `v=DMARC1; p=none;`, and the
+apex TXT holds only the Google site-verification token. **Delivery is not claimed:** no
+inbox was reachable from this environment, so the two notification emails are unconfirmed.
+The API key was never retrieved.
+
+**Analytics.** `generate_lead` fires only when the response is OK, `data.ok` is true and
+`data.duplicate` is false (`QuickEnquiry.tsx`, `ContactForm.tsx`). Its payload is
+`form_type`, `enquiry_type`, `product`, `source_page` — no name, email, phone, organisation
+or message. Consent gates `trackEvent` only, so a consent-denied visitor can still submit.
+**Live verification not performed:** the in-app browser has no Access session and GA4
+DebugView needs an authenticated session.
+
+**Netlify fallback regression and fix.** The new route handlers made `NETLIFY=true
+next build` fail with `export const dynamic = "force-dynamic" … cannot be used with
+"output: export"`. The fallback is a static redirect host, so `netlify.toml` now runs
+`node scripts/netlify-prune.mjs` first; that script removes the Cloudflare-only routes
+(`src/app/api`, `src/app/internal`, `src/components/internal`) inside Netlify's ephemeral
+build only. Verified: the pruned static export builds clean (exit 0) and the paths remain
+in the repository for Cloudflare.
+
+**QA record.** One accepted test enquiry, `BC-2026-000001`
+(`bloomcoretechnologies+qa-lead@gmail.com`). It could not be removed from this environment
+because the token lacks D1 access; delete or archive it once D1 permission is granted.
+
+**Status: AMBER.** Routing defect fixed and deployed; security, persistence and public
+submission verified in production. Still unverified: email delivery, the authenticated
+dashboard walkthrough and the live GA4 conversion.
 
 ## 7. Owner action checklist
 
-These are the only remaining steps to go live. The code is complete and committed on
-`feat/lead-management-foundation`; it is **not** deployed.
+The code is complete, committed on `feat/lead-management-foundation` and deployed from
+that branch. The items below are what remains.
 
 ### 7.1 Cloudflare D1
 
 1. ~~Create the database in the dashboard~~ — done (`bloomcore-leads-prod`).
 2. ~~Set the `database_id`~~ — done (`97c348f1-57b6-41cb-8d1c-33ea1b6c4955` in `wrangler.jsonc`).
-3. **Remaining:** grant the API token the **D1: Edit** permission (add **D1: Read** for
-   `d1 list`), then run `npx wrangler d1 migrations apply LEADS_DB --remote`. This currently
-   fails with `code: 7403` / `code: 10000` because the token cannot access D1. The command
-   already resolves to the correct named database, so this is a permission gap only — not
-   bypassed.
+3. ~~Apply the migration remotely~~ — done by the owner; production `INSERT` succeeds
+   (see §6.2), so the schema is live.
+4. **Remaining:** grant the operator token **D1: Read** (and **D1: Edit** for cleanup) so
+   `npx wrangler d1 migrations list LEADS_DB --remote` can confirm the recorded migration and
+   the QA row can be deleted. It currently fails with `code: 7403` / `code: 10000`. The
+   command already resolves to the correct named database, so this is a permission gap only —
+   not bypassed.
 
 ### 7.2 Cloudflare Access
 
@@ -362,46 +468,49 @@ application for the `*.workers.dev` hostname too (defence in depth).
 ### 7.3 Resend (email)
 
 1. ~~Upload the API key~~ — done; `RESEND_API_KEY` is present on `bloomcore-technologies-page`.
-2. **Remaining:** finish domain verification by publishing the exact DNS records Resend shows
-   for the sending domain. DNS currently has the DKIM key but **no SPF TXT and no MX** on
-   `bloomcoretech.com` and on `notify.bloomcoretech.com`. Typical Resend records (use the
-   values in the Resend dashboard):
-   - `notify` (or apex) TXT: `v=spf1 include:amazonses.com ~all`
-   - `notify` (or apex) MX: `feedback-smtp.<region>.amazonses.com` priority 10
-   Do not alter the existing apex MX/SPF/DMARC or the Cloudflare Email Routing records on
-   `send.bloomcoretech.com`.
-3. `EMAIL_FROM` is set to the owner's preferred sender
+2. ~~Publish the sending DNS records~~ — done, in Resend's CNAME style:
+   `send.notify.bloomcoretech.com` → `send.forge.rmta.net` plus the DKIM TXT at
+   `resend._domainkey.notify.bloomcoretech.com` (see §6.2). `rmta.net` is Resend's own mail
+   infrastructure, not Cloudflare Email Routing.
+3. **Remaining:** confirm in the Resend dashboard that `notify.bloomcoretech.com` verified,
+   and confirm the two test emails reached `bloomcoretechnologies@gmail.com`. Delivery is not
+   claimed until that is seen. Apex MX, apex SPF and `_dmarc` were left unchanged.
+4. `EMAIL_FROM` is set to the owner's preferred sender
    `BloomCore Technologies <notifications@notify.bloomcoretech.com>`; `EMAIL_REPLY_TO` and
    `LEAD_NOTIFICATION_EMAIL` remain `bloomcoretechnologies@gmail.com`. Change `EMAIL_FROM` if
    Resend verifies a different domain.
 
 ### 7.4 Deploy
 
-`npx opennextjs-cloudflare build && npx wrangler deploy`. **Blocked, not executed.** Do not
-deploy until 7.1 (production migration) and 7.3 (email verification) are complete: deploying
-now would expose `POST /api/enquiries` against a database with no schema, and email delivery
-would be rejected. All other prerequisites (bindings, Access, secret, build) are in place.
+**Executed.** `npx opennextjs-cloudflare build && npx wrangler deploy` on 12 Nov 2026,
+producing Worker version `d478fed5-faa1-49b5-90ba-a3c1e9208e7a`. `NETLIFY=true` was not
+used for the Cloudflare build. Redeploy only from a green branch state.
 
 ## 8. Netlify caveat
 
 `next.config.ts` switches to `output: "export"` when `NETLIFY=true`. A static export cannot
 contain route handlers, so the lead system cannot run on the Netlify fallback. The lead
 system is **Cloudflare-only**. Never build a production Cloudflare deploy with `NETLIFY=true`.
+`netlify.toml` therefore runs `node scripts/netlify-prune.mjs` before the export build; it
+removes `src/app/api`, `src/app/internal` and `src/components/internal` in Netlify's
+ephemeral build only, keeping the fallback build green.
 
 ## 9. Status
 
 | Area | Status | Note |
 | --- | --- | --- |
-| Code, schema, tests, builds | GREEN | Type, lint, unit (28), Next, OpenNext and `wrangler deploy --dry-run` all pass. |
-| Local end-to-end behaviour | GREEN | Verified against local D1 and the Worker preview, including fail-closed auth. |
-| Production D1 | AMBER | Binding and id configured, migration reviewed; `migrations apply --remote` blocked by missing **D1: Edit** (`code: 7403`). |
-| Cloudflare Access | GREEN | Both apps verified live at the edge with distinct AUDs; team domain set. Owner to confirm policy/MFA (dashboard-side). |
-| Resend email | AMBER | `RESEND_API_KEY` present on the Worker; DKIM published but SPF/MX missing, so domain verification is incomplete. |
-| Public site, SEO, analytics | GREEN | Routes unchanged; GTM/GA4 and consent behaviour untouched. |
+| Code, schema, tests, builds | GREEN | Type, lint, unit (28), Next, OpenNext and `wrangler deploy --dry-run` all pass; Netlify export build re-verified after the prune fix. |
+| Production deployment | GREEN | Worker `bloomcore-technologies-page`, version `d478fed5-faa1-49b5-90ba-a3c1e9208e7a`, 12 Nov 2026. |
+| `/internal` routing | GREEN | Root cause was the stale 11 Nov deployment; `/internal` now `307` → `/internal/leads`, and unauthenticated requests hit Access first. |
+| Cloudflare Access | GREEN | Both apps verified live with distinct AUDs (`…e539cbaf`, `…3ce614a6`); fail-closed `401` on the Worker host. Policy/MFA is dashboard-side. |
+| Production D1 | GREEN (persistence) / AMBER (read) | Real `INSERT` succeeded (`BC-2026-000001`); migration history and QA cleanup need **D1: Read/Edit**. |
+| Resend email | AMBER | Records present in Resend's CNAME style; actual inbox delivery not yet confirmed. |
+| Dashboard, GA4 live checks | AMBER | Need the owner's Access session (in-app browser has none). |
 
-**Overall: AMBER — partially configured.** Not deployed. Remaining owner actions: grant D1
-Edit/Read and run the migration; finish Resend domain verification (SPF + MX). No production
-change has been made. No DNS, subscription or purchase action was taken.
+**Overall: AMBER — deployed and operational, with owner-side verification outstanding.**
+Deployed to production. Remaining owner actions: grant D1 Read/Edit (migration record +
+QA cleanup), confirm Resend verification and inbox delivery, and walk the dashboard and GA4
+DebugView while signed in. No DNS, subscription or purchase action was taken.
 
 ## 10. Files
 
@@ -423,13 +532,15 @@ change has been made. No DNS, subscription or purchase action was taken.
 
 **Added — shell and tests:** `src/components/SiteChrome.tsx`, `src/app/(site)/layout.tsx`,
 `tests/domain.test.ts`, `tests/access-auth.test.ts`, `docs/plans/lead-management-foundation.md`,
-`docs/reports/BLOOMCORE-LEAD-MANAGEMENT-FOUNDATION-REPORT.md`.
+`docs/reports/BLOOMCORE-LEAD-MANAGEMENT-FOUNDATION-REPORT.md`,
+`scripts/netlify-prune.mjs`.
 
 **Moved:** all public pages under `src/app/(site)/` (URLs unchanged).
 
 **Modified:** `src/app/layout.tsx`, `src/app/not-found.tsx`, `src/app/robots.ts`,
 `src/components/ContactForm.tsx`, `src/components/QuickEnquiry.tsx`,
-`src/components/ProductPageShell.tsx`, `wrangler.jsonc`, `package.json`, `tsconfig.json`.
+`src/components/ProductPageShell.tsx`, `wrangler.jsonc`, `netlify.toml`, `package.json`,
+`tsconfig.json`.
 
 **Untouched:** `src/lib/analytics.ts`, all brand/SEO helpers, all public page content except
 the contact and privacy copy that described the old `mailto:` behaviour.

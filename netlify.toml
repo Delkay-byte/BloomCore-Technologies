@@ -5,9 +5,13 @@
 # Netlify builds (it sets NETLIFY=true). Cloudflare Workers builds use OpenNext
 # standalone output instead. Netlify is kept as a fallback, not the live host.
 # See docs/deployment/CLOUDFLARE-NEXTJS-DEPLOYMENT-REPORT.md.
+#
+# The lead-management API routes and the Access-protected dashboard cannot be
+# part of a static export, so scripts/netlify-prune.mjs removes them first.
+# They stay in the repository and are served by Cloudflare Workers.
 
 [build]
-  command = "npm run build"
+  command = "node scripts/netlify-prune.mjs && npm run build"
   publish = "out"
 
 [build.environment]
