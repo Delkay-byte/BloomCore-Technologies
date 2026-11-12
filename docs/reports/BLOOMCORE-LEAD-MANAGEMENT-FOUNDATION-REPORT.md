@@ -7,14 +7,20 @@
 **Production target:** `https://bloomcoretech.com`
 **Worker:** `bloomcore-technologies-page`
 **Private console:** `https://bloomcoretech.com/internal/leads`
-**Date:** 11 November 2026
+**Date:** 11–12 November 2026
 **Stack:** Next.js 16.4.6 App Router, React 19.3.0, Tailwind CSS v4, OpenNext Cloudflare, Cloudflare D1, Cloudflare Access, Resend
 
-> **Revision — Access audience correction.** The original build validated a single
+> **Revision 1 — Access audience correction.** The original build validated a single
 > `CF_ACCESS_AUD` for both surfaces. Two Access applications have two different AUD tags, so
 > this revision splits the configuration into `CF_ACCESS_AUD_INTERNAL` (dashboard) and
 > `CF_ACCESS_AUD_API` (internal API), removes the `INTERNAL_DEV_BYPASS` development bypass
 > entirely, and adds `tests/access-auth.test.ts`. See §4.8, §6 and §7.2.
+>
+> **Revision 2 — owner-gated provisioning attempt (12 Nov 2026).** D1 binding, Access
+> audiences and team domain are configured; the `RESEND_API_KEY` secret is confirmed on the
+> Worker. Two items remain and block deployment: the API token cannot apply the D1 migration
+> (missing D1 permission), and Resend domain verification is incomplete (SPF/MX not
+> published). See §6.1, §7 and §9. **Not deployed.**
 
 ## 1. Objective
 
@@ -247,6 +253,79 @@ verifier) — the 16 required cases:
 Local QA rows (`qa.lead@example.com`, `qa2@example.com` and their notifications, notes,
 activity and rate-limit rows) were deleted from local D1 after testing.
 
+### 6.1 Owner-gated provisioning attempt — 12 November 2026
+
+**D1 binding.** `wrangler.jsonc` now carries the production database:
+
+- `binding` = `LEADS_DB`
+- `database_name` = `bloomcore-leads-prod`
+- `database_id` = `97c348f1-57b6-41cb-8d1c-33ea1b6c4955`
+
+Migration review (`migrations/0001_init.sql`): a single migration, fully idempotent
+(`CREATE TABLE IF NOT EXISTS`, `CREATE INDEX IF NOT EXISTS`, `INSERT OR IGNORE`), no
+`DROP`/`ALTER`/`DELETE`, foreign keys declared with `ON DELETE CASCADE`. Safe to apply.
+
+`npx wrangler deploy --dry-run` resolved every binding correctly, including
+`env.LEADS_DB (bloomcore-leads-prod)`.
+
+**Production migration — BLOCKED.** `npx wrangler d1 migrations apply LEADS_DB --remote`
+(and `list`) fail before touching the schema:
+
+```
+/accounts/da77cc158dfdf586558f4f81a059a23d/d1/database/97c348f1-57b6-41cb-8d1c-33ea1b6c4955/query
+The given account is not valid or is not authorized to access this service [code: 7403]
+```
+
+`npx wrangler d1 list` separately returns `Authentication error [code: 10000]`. The command
+resolves to the correct named database (the failing URL names it), so this is purely a token
+permission gap, not a wrong target. Required permission: **D1 Edit** (add **D1 Read** for
+`d1 list`). Not bypassed.
+
+**Local migration + end-to-end (local D1, this run).** `npx wrangler d1 migrations apply
+LEADS_DB --local` applied `0001_init.sql` (`22 commands executed successfully`). Through the
+OpenNext Worker preview:
+
+| Test | Result |
+| --- | --- |
+| `POST /api/enquiries` (product-specific, valid) | 200 `{"ok":true,"duplicate":false,"leadNumber":"BC-2026-000001",...}` |
+| Same `Idempotency-Key` resubmitted | 200 `duplicate:true` — one lead row |
+| `GET /api/enquiries` | 405 |
+| `GET /api/internal/leads`, `/metrics` | 401 (fail closed) |
+| `GET /internal/leads` (anonymous) | sign-in prompt, `leaksLead=False leaksEmail=False` |
+| `GET /` | 200 |
+
+Persisted rows: 1 lead; 3 notifications (`new_enquiry`/email `pending`, `acknowledgement`/email
+`pending`, `new_enquiry`/dashboard `sent`); 1 `created` activity. Email rows stay `pending`
+locally because no Resend key is configured locally — the lead is never lost. All local QA rows
+were then deleted; local D1 is empty again.
+
+**Cloudflare Access — verified active at the edge.** Requesting the protected paths returns
+`302` to the Access login for the correct application, confirming both applications exist,
+cover the base path and descendants, and use distinct audiences:
+
+| Request | Result | `kid` in login redirect |
+| --- | --- | --- |
+| `GET /internal` | 302 | `e539cbafaba1…` (dashboard AUD) |
+| `GET /internal/leads` | 302 | `e539cbafaba1…` |
+| `GET /api/internal` | 302 | `3ce614a6d610…` (API AUD) |
+| `GET /api/internal/leads` | 302 | `3ce614a6d610…` |
+
+Team domain: `https://red-boat-3eb2.cloudflareaccess.com`.
+
+**Resend.** `npx wrangler secret list --name bloomcore-technologies-page` shows
+`RESEND_API_KEY` (`secret_text`) on the correct Worker. DNS (Cloudflare DoH):
+
+- `resend._domainkey.bloomcoretech.com` → DKIM key present.
+- `resend._domainkey.notify.bloomcoretech.com` → DKIM key present.
+- `notify.bloomcoretech.com` → **no SPF TXT**, **no MX**.
+- `bloomcoretech.com` → **no SPF TXT** (only `google-site-verification`), **no MX**.
+- `_dmarc.bloomcoretech.com` → `v=DMARC1; p=none;` (present, untouched).
+- `send.bloomcoretech.com` → Cloudflare Email Routing (`send.forge.rmta.net`); not Resend.
+
+Domain verification is therefore **incomplete**: the DKIM key exists but the SPF (and the
+feedback MX Resend expects) are missing. No real email was sent, so delivery is **not**
+claimed.
+
 ## 7. Owner action checklist
 
 These are the only remaining steps to go live. The code is complete and committed on
@@ -254,51 +333,54 @@ These are the only remaining steps to go live. The code is complete and committe
 
 ### 7.1 Cloudflare D1
 
-1. Create the database in the dashboard: **Workers & Pages → D1 → Create**, name
-   `bloomcore-leads-prod`.
-2. Copy its `database_id` and replace `REPLACE_WITH_D1_DATABASE_ID` in `wrangler.jsonc`.
-3. Apply the schema: `npx wrangler d1 migrations apply LEADS_DB --remote`.
-4. For this and the steps below the API token needs the **D1** edit permission (currently
-   401) and **DNS** edit for Resend (currently 403).
+1. ~~Create the database in the dashboard~~ — done (`bloomcore-leads-prod`).
+2. ~~Set the `database_id`~~ — done (`97c348f1-57b6-41cb-8d1c-33ea1b6c4955` in `wrangler.jsonc`).
+3. **Remaining:** grant the API token the **D1: Edit** permission (add **D1: Read** for
+   `d1 list`), then run `npx wrangler d1 migrations apply LEADS_DB --remote`. This currently
+   fails with `code: 7403` / `code: 10000` because the token cannot access D1. The command
+   already resolves to the correct named database, so this is a permission gap only — not
+   bypassed.
 
 ### 7.2 Cloudflare Access
 
-1. In **Zero Trust**, note the team domain (`<team>.cloudflareaccess.com`) and, if needed,
-   set up the Cloudflare identity provider. Confirm the owner can sign in with
-   `bloomcoretechnologies@gmail.com` (the Cloudflare account email shown by
-   `wrangler whoami`).
-2. Create **two** self-hosted Access applications on `bloomcoretech.com`. Enter **both** the
-   bare path and the wildcard so the base route and descendants are covered:
-   - Dashboard: domain `bloomcoretech.com`, path `/internal` **and** `/internal/*`
-   - Internal API: domain `bloomcoretech.com`, path `/api/internal` **and** `/api/internal/*`
-3. For each application, add an **Allow** policy for the single owner email
-   (`bloomcoretechnologies@gmail.com`), deny everyone else, set a finite session duration
-   (for example 8–24 h), and require MFA on the owner's Cloudflare identity.
-4. Copy each application's **Application Audience (AUD) tag** and set the Worker vars:
-   - `CF_ACCESS_TEAM_DOMAIN` = the team domain, e.g. `https://<team>.cloudflareaccess.com`
-   - `CF_ACCESS_AUD_INTERNAL` = the **dashboard** application's AUD tag
-   - `CF_ACCESS_AUD_API` = the **internal API** application's AUD tag
-   The two AUD values are different. Do not reuse one value for both.
-5. Optionally disable the `*.workers.dev` route, or add an Access application for it too.
-   (The Worker already returns 401 there without a valid JWT, so this is defence in depth.)
+**Done and verified at the edge.** Two self-hosted applications exist on `bloomcoretech.com`,
+each covering the base path and descendants, with distinct audiences:
 
-`INTERNAL_ALLOWED_EMAILS` is already set to `bloomcoretechnologies@gmail.com`. Add any
-additional staff emails there as a comma-separated list.
+| Surface | Paths | Worker var | AUD |
+| --- | --- | --- | --- |
+| Dashboard | `/internal`, `/internal/*` | `CF_ACCESS_AUD_INTERNAL` | `e539cbafaba15f541c87c642f59101df19ef50b568e85d6b418be6c3f61af72b` |
+| Internal API | `/api/internal`, `/api/internal/*` | `CF_ACCESS_AUD_API` | `3ce614a6d610b892ffc0ff9ccedc07525c12e251c0373d5f9cf2adf917ffd991` |
+
+- `CF_ACCESS_TEAM_DOMAIN` = `https://red-boat-3eb2.cloudflareaccess.com`
+- `INTERNAL_ALLOWED_EMAILS` = `bloomcoretechnologies@gmail.com`
+
+Remaining owner confirmation (cannot be read with the current token — Zero Trust API returns
+403): confirm each application's policy is **Allow → email `bloomcoretechnologies@gmail.com`**,
+deny by default, finite session, and MFA on the owner identity. Optionally add an Access
+application for the `*.workers.dev` hostname too (defence in depth).
 
 ### 7.3 Resend (email)
 
-1. Create a Resend account and add the domain `bloomcoretech.com`.
-2. Add the SPF and DKIM DNS records Resend provides. Send from `enquiries@bloomcoretech.com`.
-3. Create an API key and store it as a Worker secret:
-   `npx wrangler secret put RESEND_API_KEY`
-4. `EMAIL_FROM`, `EMAIL_REPLY_TO` and `LEAD_NOTIFICATION_EMAIL` are already set in
-   `wrangler.jsonc`; adjust if the addresses differ.
+1. ~~Upload the API key~~ — done; `RESEND_API_KEY` is present on `bloomcore-technologies-page`.
+2. **Remaining:** finish domain verification by publishing the exact DNS records Resend shows
+   for the sending domain. DNS currently has the DKIM key but **no SPF TXT and no MX** on
+   `bloomcoretech.com` and on `notify.bloomcoretech.com`. Typical Resend records (use the
+   values in the Resend dashboard):
+   - `notify` (or apex) TXT: `v=spf1 include:amazonses.com ~all`
+   - `notify` (or apex) MX: `feedback-smtp.<region>.amazonses.com` priority 10
+   Do not alter the existing apex MX/SPF/DMARC or the Cloudflare Email Routing records on
+   `send.bloomcoretech.com`.
+3. `EMAIL_FROM` is set to the owner's preferred sender
+   `BloomCore Technologies <notifications@notify.bloomcoretech.com>`; `EMAIL_REPLY_TO` and
+   `LEAD_NOTIFICATION_EMAIL` remain `bloomcoretechnologies@gmail.com`. Change `EMAIL_FROM` if
+   Resend verifies a different domain.
 
 ### 7.4 Deploy
 
-`npx opennextjs-cloudflare build && npx wrangler deploy`. Do **not** deploy before 7.1–7.3
-are complete: with an empty `database_id` the deploy fails, and with no Access config the
-console is unreachable (fail closed) rather than exposed.
+`npx opennextjs-cloudflare build && npx wrangler deploy`. **Blocked, not executed.** Do not
+deploy until 7.1 (production migration) and 7.3 (email verification) are complete: deploying
+now would expose `POST /api/enquiries` against a database with no schema, and email delivery
+would be rejected. All other prerequisites (bindings, Access, secret, build) are in place.
 
 ## 8. Netlify caveat
 
@@ -310,14 +392,16 @@ system is **Cloudflare-only**. Never build a production Cloudflare deploy with `
 
 | Area | Status | Note |
 | --- | --- | --- |
-| Code, schema, tests, builds | GREEN | Type, lint, unit (28), Next and Worker builds all pass. |
+| Code, schema, tests, builds | GREEN | Type, lint, unit (28), Next, OpenNext and `wrangler deploy --dry-run` all pass. |
 | Local end-to-end behaviour | GREEN | Verified against local D1 and the Worker preview, including fail-closed auth. |
-| Production D1 | AMBER | Code complete; owner must create the database and paste the id. |
-| Cloudflare Access | AMBER | Two-audience code complete and fail-closed; owner must create **both** apps, policies and the two AUD vars. |
-| Resend email | AMBER | Code complete and durable; owner must verify the domain, add DNS and set the key. |
+| Production D1 | AMBER | Binding and id configured, migration reviewed; `migrations apply --remote` blocked by missing **D1: Edit** (`code: 7403`). |
+| Cloudflare Access | GREEN | Both apps verified live at the edge with distinct AUDs; team domain set. Owner to confirm policy/MFA (dashboard-side). |
+| Resend email | AMBER | `RESEND_API_KEY` present on the Worker; DKIM published but SPF/MX missing, so domain verification is incomplete. |
 | Public site, SEO, analytics | GREEN | Routes unchanged; GTM/GA4 and consent behaviour untouched. |
 
-No production change has been made. No DNS, subscription or purchase action was taken.
+**Overall: AMBER — partially configured.** Not deployed. Remaining owner actions: grant D1
+Edit/Read and run the migration; finish Resend domain verification (SPF + MX). No production
+change has been made. No DNS, subscription or purchase action was taken.
 
 ## 10. Files
 
@@ -338,7 +422,8 @@ No production change has been made. No DNS, subscription or purchase action was 
 `src/components/internal/LeadActions.tsx`, `src/components/internal/NotificationActions.tsx`.
 
 **Added — shell and tests:** `src/components/SiteChrome.tsx`, `src/app/(site)/layout.tsx`,
-`tests/domain.test.ts`, `tests/access-auth.test.ts`, `docs/plans/lead-management-foundation.md`.
+`tests/domain.test.ts`, `tests/access-auth.test.ts`, `docs/plans/lead-management-foundation.md`,
+`docs/reports/BLOOMCORE-LEAD-MANAGEMENT-FOUNDATION-REPORT.md`.
 
 **Moved:** all public pages under `src/app/(site)/` (URLs unchanged).
 

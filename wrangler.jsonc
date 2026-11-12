@@ -12,9 +12,8 @@
     {
       "binding": "LEADS_DB",
       // Production D1 database, created by the owner in the Cloudflare dashboard.
-      // Replace database_id with the real id from `wrangler d1 list` once it exists.
       "database_name": "bloomcore-leads-prod",
-      "database_id": "REPLACE_WITH_D1_DATABASE_ID",
+      "database_id": "97c348f1-57b6-41cb-8d1c-33ea1b6c4955",
       "migrations_dir": "migrations"
     }
   ],
@@ -22,14 +21,14 @@
     "LEADS_ENVIRONMENT": "production",
     "DASHBOARD_ORIGIN": "https://bloomcoretech.com",
     "LEAD_NOTIFICATION_EMAIL": "bloomcoretechnologies@gmail.com",
-    "EMAIL_FROM": "BloomCore Technologies <enquiries@bloomcoretech.com>",
+    "EMAIL_FROM": "BloomCore Technologies <notifications@notify.bloomcoretech.com>",
     "EMAIL_REPLY_TO": "bloomcoretechnologies@gmail.com",
     "INTERNAL_ALLOWED_EMAILS": "bloomcoretechnologies@gmail.com",
-    // Filled in when the Cloudflare Access applications are created. See the report.
-    // One audience per Access application: dashboard vs internal API.
-    "CF_ACCESS_TEAM_DOMAIN": "",
-    "CF_ACCESS_AUD_INTERNAL": "",
-    "CF_ACCESS_AUD_API": ""
+    // Cloudflare Access. One audience per Access application: dashboard vs internal API.
+    // Team domain discovered from the live Access login redirect.
+    "CF_ACCESS_TEAM_DOMAIN": "https://red-boat-3eb2.cloudflareaccess.com",
+    "CF_ACCESS_AUD_INTERNAL": "e539cbafaba15f541c87c642f59101df19ef50b568e85d6b418be6c3f61af72b",
+    "CF_ACCESS_AUD_API": "3ce614a6d610b892ffc0ff9ccedc07525c12e251c0373d5f9cf2adf917ffd991"
   },
   "services": [
     {
