@@ -33,6 +33,22 @@ export type LeadProductId = (typeof LEAD_PRODUCTS)[number]["id"];
 
 export const LEAD_PRODUCT_IDS = LEAD_PRODUCTS.map((p) => p.id);
 
+/**
+ * Normalise a product selection for storage.
+ *
+ * "Not product-specific" is stored as NULL, never as the literal `"none"`, so
+ * the console filter, the CSV export and the detail view all agree. Unknown
+ * values are rejected by validation before this is called.
+ */
+export function normalizeProductId(value: unknown): LeadProductId | null {
+  if (typeof value !== "string") return null;
+  const id = value.trim().toLowerCase();
+  if (!id || id === "none") return null;
+  return (LEAD_PRODUCT_IDS as ReadonlyArray<string>).includes(id)
+    ? (id as LeadProductId)
+    : null;
+}
+
 export const PREFERRED_CONTACT_METHODS = ["email", "phone", "whatsapp"] as const;
 export type PreferredContactMethod = (typeof PREFERRED_CONTACT_METHODS)[number];
 

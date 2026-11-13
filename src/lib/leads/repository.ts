@@ -3,9 +3,13 @@ import {
   contentDigest,
   formatLeadNumber,
   looksLikeSpam,
+  normalizeProductId,
   type EnquiryInput,
   type PipelineStage,
 } from "./domain";
+import { buildLeadWhere, orderFor, type LeadFilters } from "./filters";
+
+export type { LeadFilters } from "./filters";
 
 export type LeadRow = {
   id: string;
@@ -187,7 +191,7 @@ export async function createLead(
       input.organization || null,
       input.countryOrRegion || null,
       input.enquiryType,
-      input.product || null,
+      normalizeProductId(input.product),
       input.message,
       input.preferredContactMethod || null,
       input.projectTimeline || null,
@@ -230,89 +234,33 @@ export async function createLead(
 
 /* ------------------------------------------------------------------ reading */
 
-export type LeadFilters = {
-  search?: string;
-  product?: string;
-  enquiryType?: string;
-  status?: string;
-  assigned?: string;
-  from?: string;
-  to?: string;
-  followUpDue?: boolean;
-  archived?: boolean;
-  sort?: "newest" | "oldest" | "follow_up";
-  page?: number;
-  pageSize?: number;
-};
-
-function whereFor(filters: LeadFilters): { sql: string; params: unknown[] } {
-  const clauses: string[] = [];
-  const params: unknown[] = [];
-
-  if (filters.archived) {
-    clauses.push("archived_at IS NOT NULL");
-  } else {
-    clauses.push("archived_at IS NULL");
-  }
-
-  if (filters.search) {
-    const like = `%${filters.search.toLowerCase()}%`;
-    clauses.push(
-      "(lower(full_name) LIKE ? OR lower(email) LIKE ? OR lower(coalesce(organization,'')) LIKE ? OR lower(lead_number) LIKE ?)",
-    );
-    params.push(like, like, like, like);
-  }
-  if (filters.product) {
-    clauses.push("product = ?");
-    params.push(filters.product);
-  }
-  if (filters.enquiryType) {
-    clauses.push("enquiry_type = ?");
-    params.push(filters.enquiryType);
-  }
-  if (filters.status) {
-    clauses.push("status = ?");
-    params.push(filters.status);
-  }
-  if (filters.assigned) {
-    clauses.push("assigned_to = ?");
-    params.push(filters.assigned);
-  }
-  if (filters.from) {
-    clauses.push("created_at >= ?");
-    params.push(filters.from);
-  }
-  if (filters.to) {
-    clauses.push("created_at <= ?");
-    params.push(filters.to);
-  }
-  if (filters.followUpDue) {
-    clauses.push("next_follow_up_at IS NOT NULL AND next_follow_up_at <= ?");
-    params.push(new Date().toISOString());
-  }
-
-  return { sql: clauses.join(" AND "), params };
-}
-
-function orderFor(sort: LeadFilters["sort"]): string {
-  switch (sort) {
-    case "oldest":
-      return "created_at ASC";
-    case "follow_up":
-      return "next_follow_up_at IS NULL, next_follow_up_at ASC";
-    default:
-      return "created_at DESC";
-  }
-}
-
 export async function listLeads(
   env: LeadEnv,
   filters: LeadFilters,
-): Promise<{ rows: LeadRow[]; total: number }> {
+): Promise<{ rows: LeadRow[]; total: number; totalUnfiltered: number; dateError?: string }> {
   const database = env.LEADS_DB;
-  const where = whereFor(filters);
-  const page = Math.max(1, filters.page ?? 1);
+  const where = buildLeadWhere(filters);
   const pageSize = Math.min(100, Math.max(5, filters.pageSize ?? 25));
+
+  // Count first so a stale `?page=` beyond the last page shows real rows
+  // instead of an empty table with a "Page 4 of 1" label.
+  const [countRow, scopeRow] = await Promise.all([
+    first<{ total: number }>(
+      database.prepare(`SELECT COUNT(*) AS total FROM leads WHERE ${where.sql}`).bind(...where.params),
+    ),
+    first<{ total: number }>(
+      database
+        .prepare(
+          filters.archived
+            ? "SELECT COUNT(*) AS total FROM leads WHERE archived_at IS NOT NULL"
+            : "SELECT COUNT(*) AS total FROM leads WHERE archived_at IS NULL",
+        ),
+    ),
+  ]);
+
+  const total = countRow?.total ?? 0;
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
+  const page = Math.min(Math.max(1, filters.page ?? 1), totalPages);
   const offset = (page - 1) * pageSize;
 
   const rows = await all<LeadRow>(
@@ -324,11 +272,12 @@ export async function listLeads(
       .bind(...where.params, pageSize, offset),
   );
 
-  const countRow = await first<{ total: number }>(
-    database.prepare(`SELECT COUNT(*) AS total FROM leads WHERE ${where.sql}`).bind(...where.params),
-  );
-
-  return { rows, total: countRow?.total ?? 0 };
+  return {
+    rows,
+    total,
+    totalUnfiltered: scopeRow?.total ?? 0,
+    dateError: where.dateError,
+  };
 }
 
 export type LeadDetail = {
@@ -396,6 +345,24 @@ export async function touchLead(database: D1Database, leadId: string): Promise<v
   );
 }
 
+/** Prepared INSERT for one activity-history row. */
+function activity(
+  database: D1Database,
+  leadId: string,
+  kind: string,
+  summary: string,
+  detail: string | null,
+  actor: string,
+  timestamp: string,
+): D1PreparedStatement {
+  return database
+    .prepare(
+      `INSERT INTO lead_activity (id, lead_id, kind, summary, detail, actor, created_at)
+       VALUES (?,?,?,?,?,?,?)`,
+    )
+    .bind(crypto.randomUUID(), leadId, kind, summary, detail, actor, timestamp);
+}
+
 export type LeadPatch = {
   status?: PipelineStage;
   outcomeReason?: string | null;
@@ -445,72 +412,72 @@ export async function updateLead(
     }
   }
 
+  // Only changed values are written. Re-saving the same owner/follow-up must
+  // not append duplicate activity rows or bump updated_at for nothing.
   if (patch.assignedTo !== undefined) {
-    sets.push("assigned_to = ?");
-    params.push(patch.assignedTo || null);
-    statements.push(
-      database
-        .prepare(
-          `INSERT INTO lead_activity (id, lead_id, kind, summary, detail, actor, created_at)
-           VALUES (?,?,?,?,?,?,?)`,
-        )
-        .bind(
-          crypto.randomUUID(),
-          id,
-          "assigned",
-          patch.assignedTo ? `Assigned to ${patch.assignedTo}` : "Unassigned",
-          null,
-          actor,
-          timestamp,
-        ),
-    );
+    const nextAssignee = patch.assignedTo || null;
+    if (nextAssignee !== current.assigned_to) {
+      sets.push("assigned_to = ?");
+      params.push(nextAssignee);
+      statements.push(activity(
+        database,
+        id,
+        "assigned",
+        nextAssignee ? `Assigned to ${nextAssignee}` : "Unassigned",
+        null,
+        actor,
+        timestamp,
+      ));
+    }
   }
 
   if (patch.nextAction !== undefined) {
-    sets.push("next_action = ?");
-    params.push(patch.nextAction || null);
+    const nextAction = patch.nextAction || null;
+    if (nextAction !== current.next_action) {
+      sets.push("next_action = ?");
+      params.push(nextAction);
+      statements.push(activity(
+        database,
+        id,
+        "updated",
+        nextAction ? "Next action updated" : "Next action cleared",
+        nextAction,
+        actor,
+        timestamp,
+      ));
+    }
   }
   if (patch.nextFollowUpAt !== undefined) {
-    sets.push("next_follow_up_at = ?");
-    params.push(patch.nextFollowUpAt || null);
-    statements.push(
-      database
-        .prepare(
-          `INSERT INTO lead_activity (id, lead_id, kind, summary, detail, actor, created_at)
-           VALUES (?,?,?,?,?,?,?)`,
-        )
-        .bind(
-          crypto.randomUUID(),
-          id,
-          "follow_up_scheduled",
-          patch.nextFollowUpAt
-            ? `Follow-up set for ${patch.nextFollowUpAt}`
-            : "Follow-up cleared",
-          patch.nextAction ? `Next action: ${patch.nextAction}` : null,
-          actor,
-          timestamp,
-        ),
-    );
+    const nextFollowUp = patch.nextFollowUpAt || null;
+    if (nextFollowUp !== current.next_follow_up_at) {
+      sets.push("next_follow_up_at = ?");
+      params.push(nextFollowUp);
+      statements.push(activity(
+        database,
+        id,
+        "follow_up_scheduled",
+        nextFollowUp ? `Follow-up set for ${nextFollowUp}` : "Follow-up cleared",
+        patch.nextAction ? `Next action: ${patch.nextAction}` : null,
+        actor,
+        timestamp,
+      ));
+    }
   }
   if (patch.archived !== undefined) {
-    sets.push("archived_at = ?");
-    params.push(patch.archived ? timestamp : null);
-    statements.push(
-      database
-        .prepare(
-          `INSERT INTO lead_activity (id, lead_id, kind, summary, detail, actor, created_at)
-           VALUES (?,?,?,?,?,?,?)`,
-        )
-        .bind(
-          crypto.randomUUID(),
-          id,
-          patch.archived ? "archived" : "updated",
-          patch.archived ? "Lead archived" : "Lead restored",
-          null,
-          actor,
-          timestamp,
-        ),
-    );
+    const isArchived = Boolean(current.archived_at);
+    if (patch.archived !== isArchived) {
+      sets.push("archived_at = ?");
+      params.push(patch.archived ? timestamp : null);
+      statements.push(activity(
+        database,
+        id,
+        patch.archived ? "archived" : "updated",
+        patch.archived ? "Lead archived" : "Lead restored",
+        null,
+        actor,
+        timestamp,
+      ));
+    }
   }
 
   if (sets.length === 0) return current;
@@ -569,6 +536,7 @@ export type LeadMetrics = {
   lost: number;
   followUpsDue: number;
   unreadNotifications: number;
+  archived: number;
   byStage: Record<string, number>;
 };
 
@@ -577,7 +545,7 @@ export async function getMetrics(env: LeadEnv): Promise<LeadMetrics> {
   const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
   const now = new Date().toISOString();
 
-  const [byStageRows, totalRow, weekRow, followUpRow, unreadRow] = await Promise.all([
+  const [byStageRows, totalRow, weekRow, followUpRow, unreadRow, archivedRow] = await Promise.all([
     all<{ status: string; count: number }>(
       database.prepare("SELECT status, COUNT(*) AS count FROM leads WHERE archived_at IS NULL GROUP BY status"),
     ),
@@ -597,8 +565,13 @@ export async function getMetrics(env: LeadEnv): Promise<LeadMetrics> {
         )
         .bind(now),
     ),
+    // The badge and the notifications page both count every unread row, not a
+    // page-sized slice, so the two surfaces can never disagree.
     first<{ count: number }>(
       database.prepare("SELECT COUNT(*) AS count FROM notifications WHERE read_at IS NULL"),
+    ),
+    first<{ count: number }>(
+      database.prepare("SELECT COUNT(*) AS count FROM leads WHERE archived_at IS NOT NULL"),
     ),
   ]);
 
@@ -619,6 +592,7 @@ export async function getMetrics(env: LeadEnv): Promise<LeadMetrics> {
     lost: count("lost"),
     followUpsDue: followUpRow?.count ?? 0,
     unreadNotifications: unreadRow?.count ?? 0,
+    archived: archivedRow?.count ?? 0,
     byStage,
   };
 }
@@ -639,7 +613,7 @@ export async function getVisibleLeadsForExport(
   filters: LeadFilters,
   max = 2000,
 ): Promise<LeadRow[]> {
-  const where = whereFor(filters);
+  const where = buildLeadWhere(filters);
   return all<LeadRow>(
     env.LEADS_DB.prepare(
       `SELECT * FROM leads WHERE ${where.sql} ORDER BY ${orderFor(filters.sort)} LIMIT ?`,

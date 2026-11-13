@@ -10,6 +10,7 @@ import {
   LIMITS,
   PREFERRED_CONTACT_METHODS,
 } from "@/lib/leads/domain";
+import { generateLeadParams, shouldTrackGenerateLead } from "@/lib/leads/tracking";
 import { cn } from "@/lib/utils";
 
 type FieldName =
@@ -188,6 +189,7 @@ export function ContactForm() {
       const data = (await response.json().catch(() => ({}))) as {
         ok?: boolean;
         duplicate?: boolean;
+        spam?: boolean;
         leadNumber?: string;
         error?: string;
         errors?: Partial<Record<FieldName, string>>;
@@ -197,15 +199,26 @@ export function ContactForm() {
         setLeadNumber(data.leadNumber ?? null);
         setStatus("success");
         idempotencyRef.current = "";
-        // Only a genuinely new lead is a conversion. A recognised repeat
-        // submission is acknowledged but must not inflate generate_lead.
-        if (!data.duplicate) {
-          trackEvent("generate_lead", {
-            form_type: "contact_form",
-            enquiry_type: values.enquiryType,
-            product: values.product || "none",
-            source_page: typeof window !== "undefined" ? window.location.pathname : "/contact",
-          });
+        // Only a genuinely new persisted lead is a conversion. A recognised
+        // repeat submission is acknowledged but must not inflate generate_lead.
+        if (
+          shouldTrackGenerateLead({
+            status: response.status,
+            ok: data.ok,
+            duplicate: data.duplicate,
+            spam: data.spam,
+            leadNumber: data.leadNumber,
+          })
+        ) {
+          trackEvent(
+            "generate_lead",
+            generateLeadParams({
+              formType: "contact_form",
+              enquiryType: values.enquiryType,
+              product: values.product,
+              sourcePage: typeof window !== "undefined" ? window.location.pathname : "/contact",
+            }),
+          );
         }
         return;
       }

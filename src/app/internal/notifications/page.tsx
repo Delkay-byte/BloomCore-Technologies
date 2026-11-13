@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { ConsoleSignInRequired } from "@/components/internal/ConsoleGuard";
 import { NotificationActions } from "@/components/internal/NotificationActions";
-import { listNotifications } from "@/lib/leads/notifications";
+import { NotificationOpen } from "@/components/internal/NotificationOpen";
+import { countUnreadNotifications, listNotifications } from "@/lib/leads/notifications";
 import { currentStaff } from "@/lib/leads/session";
 
 export const dynamic = "force-dynamic";
@@ -30,8 +31,10 @@ export default async function NotificationsPage() {
   const { env, identity } = await currentStaff();
   if (!identity) return <ConsoleSignInRequired />;
 
+  // A COUNT over the whole table, not a count of the 100 rows shown, so this
+  // number always matches the badge on the leads dashboard.
+  const unreadCount = await countUnreadNotifications(env);
   const notifications = await listNotifications(env, { limit: 100 });
-  const unreadCount = notifications.filter((n) => !n.read_at).length;
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6">
@@ -87,14 +90,20 @@ export default async function NotificationsPage() {
                   >
                     {notification.status}
                   </span>
-                  {notification.lead_id && (
-                    <Link
-                      href={`/internal/leads/${notification.lead_id}`}
-                      className="text-[0.875rem] font-semibold text-foreground underline underline-offset-4"
-                    >
-                      Open lead
-                    </Link>
-                  )}
+                  {notification.lead_id &&
+                    (notification.read_at ? (
+                      <Link
+                        href={`/internal/leads/${notification.lead_id}`}
+                        className="text-[0.875rem] font-semibold text-foreground underline underline-offset-4"
+                      >
+                        Open lead
+                      </Link>
+                    ) : (
+                      <NotificationOpen
+                        id={notification.id}
+                        href={`/internal/leads/${notification.lead_id}`}
+                      />
+                    ))}
                 </div>
               </div>
             </li>

@@ -1,6 +1,10 @@
 import { errorResponse } from "@/lib/http";
 import { getLeadEnv, type LeadEnv } from "./db";
-import { getStaffIdentity, type AccessSlot, type StaffIdentity } from "./auth";
+import {
+  getStaffIdentityForSurfaces,
+  type AccessSlot,
+  type StaffIdentity,
+} from "./auth";
 
 export type GuardResult =
   | { ok: true; env: LeadEnv; identity: StaffIdentity }
@@ -11,12 +15,17 @@ export type GuardResult =
  * blocked anonymous traffic at the edge; this re-checks the signed identity
  * server-side so a direct Worker hostname cannot bypass the policy.
  *
- * API routes always validate against the internal API audience, so a token
- * minted for the dashboard cannot be replayed here.
+ * A request may carry a token minted for either BloomCore staff application:
+ * the dashboard (`/internal`) or the internal API (`/api/internal`). Both
+ * surfaces are served from the same hostname and are limited to the same
+ * allowlisted staff, and the console's own requests are answered under
+ * `/internal/api/**`, where the browser holds a dashboard token. A token from
+ * any other Access application, or from an email outside the allowlist, is
+ * still rejected. Callers that must be strict can pass a single slot.
  */
 export async function requireStaff(
   request: Request,
-  slot: AccessSlot = "api",
+  slots: AccessSlot[] = ["internal", "api"],
 ): Promise<GuardResult> {
   let env: LeadEnv;
   try {
@@ -25,7 +34,7 @@ export async function requireStaff(
     return { ok: false, response: errorResponse("Service unavailable.", 503) };
   }
 
-  const identity = await getStaffIdentity(request, env, slot);
+  const identity = await getStaffIdentityForSurfaces(request, env, slots);
   if (!identity) {
     return {
       ok: false,

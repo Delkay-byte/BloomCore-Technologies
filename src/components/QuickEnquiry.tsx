@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { trackEvent } from "@/lib/analytics";
 import { ENQUIRY_CATEGORIES, LIMITS } from "@/lib/leads/domain";
+import { generateLeadParams, shouldTrackGenerateLead } from "@/lib/leads/tracking";
 
 type Props = {
   formType: string;
@@ -64,6 +65,7 @@ export function QuickEnquiry({ formType, sourcePage }: Props) {
       const data = (await response.json().catch(() => ({}))) as {
         ok?: boolean;
         duplicate?: boolean;
+        spam?: boolean;
         leadNumber?: string;
         error?: string;
         errors?: Record<string, string>;
@@ -74,13 +76,24 @@ export function QuickEnquiry({ formType, sourcePage }: Props) {
         setNotice(data.leadNumber ? `Recorded as ${data.leadNumber}.` : "Enquiry received.");
         idempotencyRef.current = "";
         // A recognised repeat is acknowledged but must not inflate generate_lead.
-        if (!data.duplicate) {
-          trackEvent("generate_lead", {
-            form_type: formType,
-            enquiry_type: enquiryType,
-            product: "none",
-            source_page: sourcePage,
-          });
+        if (
+          shouldTrackGenerateLead({
+            status: response.status,
+            ok: data.ok,
+            duplicate: data.duplicate,
+            spam: data.spam,
+            leadNumber: data.leadNumber,
+          })
+        ) {
+          trackEvent(
+            "generate_lead",
+            generateLeadParams({
+              formType,
+              enquiryType,
+              product: "none",
+              sourcePage,
+            }),
+          );
         }
         return;
       }

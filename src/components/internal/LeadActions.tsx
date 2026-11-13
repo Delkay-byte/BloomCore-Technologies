@@ -1,8 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { PIPELINE_STAGES, STAGE_LABELS, STAGES_REQUIRING_REASON, type PipelineStage } from "@/lib/leads/domain";
+import { fromLocalInputValue, toLocalInputValue } from "@/lib/leads/datetime";
+import { staffFetch, type StaffResult } from "@/lib/leads/staff-client";
 
 type Props = {
   leadId: string;
@@ -12,58 +14,102 @@ type Props = {
   nextFollowUpAt: string | null;
 };
 
-async function send(url: string, method: string, body: unknown): Promise<{ ok: boolean; error?: string }> {
-  try {
-    const response = await fetch(url, {
-      method,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    if (response.ok) return { ok: true };
-    const data = (await response.json().catch(() => ({}))) as { error?: string };
-    return { ok: false, error: data.error ?? "The change could not be saved." };
-  } catch {
-    return { ok: false, error: "The change could not be saved. Check your connection and try again." };
-  }
-}
+type SavedLead = {
+  status?: string;
+  assigned_to?: string | null;
+  next_action?: string | null;
+  next_follow_up_at?: string | null;
+};
 
+/**
+ * Console requests go to `/internal/api/**`, the same-origin twin of
+ * `/api/internal/**`. Both are served by the same guarded handlers; the
+ * `/internal` path keeps the request inside the dashboard's Cloudflare Access
+ * application, so a signed-in browser is never re-challenged mid-save.
+ */
 export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollowUpAt }: Props) {
   const router = useRouter();
+  // A ref, not state: two clicks in the same tick both see the old state.
+  const inFlight = useRef(false);
   const [pending, setPending] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [sessionExpired, setSessionExpired] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
 
   const [stage, setStage] = useState(status);
   const [reason, setReason] = useState("");
   const [assignee, setAssignee] = useState(assignedTo ?? "");
   const [action, setAction] = useState(nextAction ?? "");
-  const [followUp, setFollowUp] = useState(
-    nextFollowUpAt ? nextFollowUpAt.slice(0, 16) : "",
-  );
+  const [followUp, setFollowUp] = useState(() => toLocalInputValue(nextFollowUpAt));
   const [note, setNote] = useState("");
 
-  const run = async (key: string, fn: () => Promise<{ ok: boolean; error?: string }>, done: string) => {
+  const applySaved = (lead?: SavedLead) => {
+    if (!lead) return;
+    if (typeof lead.status === "string") setStage(lead.status);
+    setAssignee(lead.assigned_to ?? "");
+    setAction(lead.next_action ?? "");
+    setFollowUp(toLocalInputValue(lead.next_follow_up_at));
+    setReason("");
+  };
+
+  const run = async (
+    key: string,
+    fn: () => Promise<StaffResult<{ lead?: SavedLead }>>,
+    done: string,
+  ) => {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setPending(key);
     setError(null);
+    setSessionExpired(false);
     setNotice(null);
-    const result = await fn();
-    setPending(null);
-    if (result.ok) {
-      setNotice(done);
-      router.refresh();
-    } else {
-      setError(result.error ?? "The change could not be saved.");
+
+    try {
+      const result = await fn();
+      if (result.ok) {
+        applySaved(result.data.lead);
+        setNotice(done);
+        router.refresh();
+        return;
+      }
+      // Input is left exactly as typed so the owner can correct and retry.
+      setError(result.error);
+      setSessionExpired(result.sessionExpired);
+    } catch {
+      setError("The change could not be saved. Please try again.");
+    } finally {
+      inFlight.current = false;
+      setPending(null);
     }
   };
+
+  const patch = (body: unknown): Promise<StaffResult<{ lead?: SavedLead }>> =>
+    staffFetch<{ lead?: SavedLead }>(`/internal/api/leads/${leadId}`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
 
   const needsReason = STAGES_REQUIRING_REASON.includes(stage as PipelineStage);
 
   return (
     <div className="flex flex-col gap-5">
       {error && (
-        <p role="alert" className="border-l-4 border-foreground bg-muted px-4 py-3 text-[0.875rem] text-foreground">
-          {error}
-        </p>
+        <div
+          role="alert"
+          className="border-l-4 border-foreground bg-muted px-4 py-3 text-[0.875rem] text-foreground"
+        >
+          <p>{error}</p>
+          {sessionExpired && (
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+              className="mt-2 font-semibold underline underline-offset-4"
+            >
+              Reload and sign in
+            </button>
+          )}
+        </div>
       )}
       {notice && (
         <p role="status" className="border-l-4 border-accent bg-accent-soft px-4 py-3 text-[0.875rem] text-foreground">
@@ -95,6 +141,7 @@ export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollow
                 type="text"
                 value={reason}
                 onChange={(event) => setReason(event.target.value)}
+                maxLength={300}
                 placeholder="Why the lead is being closed"
                 className="field mt-1.5"
               />
@@ -106,7 +153,7 @@ export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollow
             onClick={() =>
               run(
                 "stage",
-                () => send(`/api/internal/leads/${leadId}`, "PATCH", { status: stage, outcomeReason: reason }),
+                () => patch({ status: stage, outcomeReason: reason }),
                 "Stage updated.",
               )
             }
@@ -126,6 +173,7 @@ export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollow
               type="email"
               value={assignee}
               onChange={(event) => setAssignee(event.target.value)}
+              maxLength={160}
               placeholder="staff@bloomcoretech.com"
               className="field mt-1.5"
             />
@@ -145,11 +193,16 @@ export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollow
               type="text"
               value={action}
               onChange={(event) => setAction(event.target.value)}
+              maxLength={300}
               placeholder="What happens next"
               className="field mt-1.5"
             />
           </label>
         </div>
+        <p className="mt-2 text-[0.75rem] text-foreground-faint">
+          Follow-up times are shown in this browser&apos;s timezone and stored in UTC.
+          Clear a field to remove that value.
+        </p>
         <button
           type="button"
           disabled={pending !== null}
@@ -157,10 +210,10 @@ export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollow
             run(
               "follow",
               () =>
-                send(`/api/internal/leads/${leadId}`, "PATCH", {
+                patch({
                   assignedTo: assignee,
                   nextAction: action,
-                  nextFollowUpAt: followUp ? new Date(followUp).toISOString() : "",
+                  nextFollowUpAt: fromLocalInputValue(followUp) ?? "",
                 }),
               "Owner and follow-up saved.",
             )
@@ -191,7 +244,14 @@ export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollow
             run(
               "note",
               async () => {
-                const result = await send(`/api/internal/leads/${leadId}/notes`, "POST", { body: note });
+                const result = await staffFetch<{ lead?: SavedLead }>(
+                  `/internal/api/leads/${leadId}/notes`,
+                  {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ body: note }),
+                  },
+                );
                 if (result.ok) setNote("");
                 return result;
               },
@@ -213,13 +273,7 @@ export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollow
           <button
             type="button"
             disabled={pending !== null}
-            onClick={() =>
-              run(
-                "archive",
-                () => send(`/api/internal/leads/${leadId}`, "PATCH", { archived: true }),
-                "Lead archived.",
-              )
-            }
+            onClick={() => run("archive", () => patch({ archived: true }), "Lead archived.")}
             className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-5 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2 disabled:opacity-50"
           >
             Archive lead
@@ -227,13 +281,7 @@ export function LeadActions({ leadId, status, assignedTo, nextAction, nextFollow
           <button
             type="button"
             disabled={pending !== null}
-            onClick={() =>
-              run(
-                "archive",
-                () => send(`/api/internal/leads/${leadId}`, "PATCH", { archived: false }),
-                "Lead restored.",
-              )
-            }
+            onClick={() => run("restore", () => patch({ archived: false }), "Lead restored.")}
             className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-5 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2 disabled:opacity-50"
           >
             Restore

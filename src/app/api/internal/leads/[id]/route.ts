@@ -6,6 +6,7 @@ import {
   STAGES_REQUIRING_REASON,
   type PipelineStage,
 } from "@/lib/leads/domain";
+import { parseLeadFields } from "@/lib/leads/patch";
 import { actorLabel, getLeadDetail, updateLead, type LeadPatch } from "@/lib/leads/repository";
 
 export const dynamic = "force-dynamic";
@@ -48,28 +49,15 @@ export async function PATCH(request: Request, context: Context): Promise<Respons
     patch.outcomeReason = reason || null;
   }
 
-  if ("assignedTo" in raw) {
-    patch.assignedTo = typeof raw.assignedTo === "string" ? raw.assignedTo.trim().slice(0, 160) : null;
-  }
-  if ("nextAction" in raw) {
-    patch.nextAction = typeof raw.nextAction === "string" ? raw.nextAction.trim().slice(0, 300) : null;
-  }
-  if ("nextFollowUpAt" in raw) {
-    const value = typeof raw.nextFollowUpAt === "string" ? raw.nextFollowUpAt.trim() : "";
-    if (value && Number.isNaN(Date.parse(value))) {
-      return errorResponse("Enter a valid follow-up date.", 422);
-    }
-    patch.nextFollowUpAt = value || null;
-  }
-  if ("archived" in raw) {
-    patch.archived = raw.archived === true;
-  }
+  const parsed = parseLeadFields(raw, { allowEmpty: Object.keys(patch).length > 0 });
+  if (!parsed.ok) return errorResponse(parsed.message, 422);
+  Object.assign(patch, parsed.patch);
 
   try {
     const lead = await updateLead(guard.env, id, patch, actorLabel(guard.identity.email));
     if (!lead) return errorResponse("That lead was not found.", 404);
     return json({ ok: true, lead });
   } catch {
-    return errorResponse("The change could not be saved.", 500);
+    return errorResponse("The change could not be saved. Please try again.", 500);
   }
 }

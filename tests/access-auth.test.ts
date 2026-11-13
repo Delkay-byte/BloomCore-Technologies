@@ -6,7 +6,9 @@ import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 import {
   accessAudience,
+  accessAudiences,
   getStaffIdentity,
+  getStaffIdentityForSurfaces,
   isAccessConfigured,
   verifyAccessJwt,
 } from "../src/lib/leads/auth.ts";
@@ -266,4 +268,98 @@ test("16. authentication errors expose no lead information", () => {
   // The failure branch must not interpolate identity or lead fields.
   const failBranch = guard.slice(guard.indexOf("if (!identity)"));
   assert.doesNotMatch(failBranch, /identity\.|lead|email|payload/, "auth failure must not leak data");
+});
+
+// --- Same-origin dashboard fetches: both staff applications accepted --------
+//
+// Defect 1: the console is signed in to the dashboard Access application, but
+// its XHRs pointed at `/api/internal`. Access challenged that with the *other*
+// application and answered with a cross-origin redirect, which `fetch` cannot
+// follow — the browser reported "check your connection". Client requests are
+// now served from `/internal/api` (dashboard path) and the guard accepts either
+// BloomCore staff audience. These tests pin that relaxation, and its limits.
+
+test("a dashboard token authorises same-origin client requests", async () => {
+  const token = signToken(claims({ aud: AUD_INTERNAL }));
+  const identity = await getStaffIdentityForSurfaces(requestWith(token), envFor(), [
+    "internal",
+    "api",
+  ], { keys: KEYS });
+  assert.equal(identity?.email, OWNER);
+});
+
+test("an API token also authorises same-origin client requests", async () => {
+  const token = signToken(claims({ aud: AUD_API }));
+  const identity = await getStaffIdentityForSurfaces(requestWith(token), envFor(), [
+    "internal",
+    "api",
+  ], { keys: KEYS });
+  assert.equal(identity?.email, OWNER);
+});
+
+test("the relaxation never accepts an unrelated Access application", async () => {
+  const token = signToken(claims({ aud: "some-other-application" }));
+  assert.equal(
+    await getStaffIdentityForSurfaces(requestWith(token), envFor(), ["internal", "api"], {
+      keys: KEYS,
+    }),
+    null,
+  );
+});
+
+test("the relaxation still rejects an unauthorised email", async () => {
+  const token = signToken(claims({ aud: AUD_INTERNAL, email: "intruder@example.com" }));
+  assert.equal(
+    await getStaffIdentityForSurfaces(requestWith(token), envFor(), ["internal", "api"], {
+      keys: KEYS,
+    }),
+    null,
+  );
+});
+
+test("with no audience configured the relaxed guard still fails closed", async () => {
+  const token = signToken(claims({ aud: AUD_INTERNAL }));
+  const env = envFor({ CF_ACCESS_AUD_INTERNAL: "", CF_ACCESS_AUD_API: "" });
+  assert.equal(
+    await getStaffIdentityForSurfaces(requestWith(token), env, ["internal", "api"], { keys: KEYS }),
+    null,
+  );
+});
+
+test("a token minted for both applications is accepted", async () => {
+  const token = signToken(claims({ aud: [AUD_INTERNAL, AUD_API] }));
+  assert.ok(await getStaffIdentityForSurfaces(requestWith(token), envFor(), ["internal", "api"], { keys: KEYS }));
+});
+
+test("accessAudiences deduplicates identical configuration", () => {
+  const shared = envFor({ CF_ACCESS_AUD_API: AUD_INTERNAL });
+  assert.deepEqual(accessAudiences(shared, ["internal", "api"]), [AUD_INTERNAL]);
+  assert.deepEqual(accessAudiences(envFor(), ["internal", "api"]), [AUD_INTERNAL, AUD_API]);
+  assert.deepEqual(accessAudiences(envFor({ CF_ACCESS_AUD_API: "" }), ["internal", "api"]), [
+    AUD_INTERNAL,
+  ]);
+});
+
+test("the /internal/api routes only re-export guarded handlers", () => {
+  const clientRoot = join(ROOT, "src", "app", "internal", "api");
+  const routes = walk(clientRoot).filter((f) => f.endsWith("route.ts"));
+  assert.ok(routes.length >= 6, "expected the same-origin client routes to exist");
+
+  for (const file of routes) {
+    const source = readFileSync(file, "utf8");
+    const targets = [...source.matchAll(/from "@\/app\/api\/internal\/([^"]+)"/g)].map((m) => m[1]);
+    assert.ok(targets.length > 0, `${file} must re-export a server handler`);
+    assert.match(source, /export const dynamic = "force-dynamic"/, `${file} must stay dynamic`);
+    assert.doesNotMatch(source, /LEADS_DB|requireStaff\(\)/, `${file} must not query D1 directly`);
+
+    for (const target of targets) {
+      const handler = join(ROOT, "src", "app", "api", "internal", `${target}.ts`);
+      assert.ok(existsSync(handler), `${file} points at a missing handler: ${handler}`);
+      assert.match(
+        readFileSync(handler, "utf8"),
+        /requireStaff\(/,
+        `${handler} must enforce Access`,
+      );
+    }
+  }
 });

@@ -1,6 +1,7 @@
 import { errorResponse, json, readJsonBounded } from "@/lib/http";
 import { requireStaff } from "@/lib/leads/guard";
 import {
+  countUnreadNotifications,
   listNotifications,
   markAllNotificationsRead,
   markNotificationRead,
@@ -13,11 +14,14 @@ export async function GET(request: Request): Promise<Response> {
   if (!guard.ok) return guard.response;
 
   const params = new URL(request.url).searchParams;
-  const notifications = await listNotifications(guard.env, {
-    unreadOnly: params.get("unread") === "1",
-    limit: Number(params.get("limit") ?? "50") || 50,
-  });
-  return json({ ok: true, notifications });
+  const [notifications, unread] = await Promise.all([
+    listNotifications(guard.env, {
+      unreadOnly: params.get("unread") === "1",
+      limit: Number(params.get("limit") ?? "50") || 50,
+    }),
+    countUnreadNotifications(guard.env),
+  ]);
+  return json({ ok: true, notifications, unread });
 }
 
 export async function PATCH(request: Request): Promise<Response> {
@@ -29,12 +33,16 @@ export async function PATCH(request: Request): Promise<Response> {
 
   const raw = body.value as Record<string, unknown>;
   if (raw.all === true) {
-    await markAllNotificationsRead(guard.env);
-    return json({ ok: true });
+    const marked = await markAllNotificationsRead(guard.env);
+    // The post-change count is authoritative; the UI never guesses.
+    const unread = await countUnreadNotifications(guard.env);
+    return json({ ok: true, marked, unread });
   }
   if (typeof raw.id === "string" && raw.id) {
-    await markNotificationRead(guard.env, raw.id);
-    return json({ ok: true });
+    const result = await markNotificationRead(guard.env, raw.id);
+    if (result === "not_found") return errorResponse("That notification was not found.", 404);
+    const unread = await countUnreadNotifications(guard.env);
+    return json({ ok: true, result, marked: result === "marked" ? 1 : 0, unread });
   }
   return errorResponse("Nothing to mark as read.", 422);
 }

@@ -111,7 +111,7 @@ async function fetchCertificates(teamDomain: string): Promise<Jwk[]> {
 export async function verifyAccessJwt(
   token: string,
   teamDomain: string,
-  audience: string,
+  audience: string | string[],
   options: AccessVerifyOptions = {},
 ): Promise<AccessPayload | null> {
   const parts = token.split(".");
@@ -169,8 +169,11 @@ export async function verifyAccessJwt(
   const issuer = normalizeTeamDomain(payload.iss);
   if (!issuer || issuer !== teamDomain) return null;
 
+  const expected = Array.isArray(audience) ? audience : [audience];
   const audiences = Array.isArray(payload.aud) ? payload.aud : [payload.aud];
-  if (!audiences.includes(audience)) return null;
+  if (!audiences.some((value) => typeof value === "string" && expected.includes(value))) {
+    return null;
+  }
 
   return payload;
 }
@@ -194,25 +197,18 @@ function allowedEmails(env: LeadEnv): string[] {
     .filter(Boolean);
 }
 
-/**
- * Resolve the signed-in staff member for a surface, or null when the request
- * is not authorised. Fails closed: if Access is not configured for that
- * surface this returns null. There is no development bypass.
- */
-export async function getStaffIdentity(
-  request: HeaderCarrier,
+/** Every configured audience for the supplied surfaces, without duplicates. */
+export function accessAudiences(env: LeadEnv, slots: AccessSlot[]): string[] {
+  const values = slots
+    .map((slot) => accessAudience(env, slot))
+    .filter((value): value is string => Boolean(value));
+  return [...new Set(values)];
+}
+
+function identityFromPayload(
+  payload: AccessPayload | null,
   env: LeadEnv,
-  slot: AccessSlot,
-  options: AccessVerifyOptions = {},
-): Promise<StaffIdentity | null> {
-  const teamDomain = normalizeTeamDomain(env.CF_ACCESS_TEAM_DOMAIN);
-  const audience = accessAudience(env, slot);
-  if (!teamDomain || !audience) return null;
-
-  const token = request.headers.get("cf-access-jwt-assertion");
-  if (!token) return null;
-
-  const payload = await verifyAccessJwt(token, teamDomain, audience, options);
+): StaffIdentity | null {
   if (!payload?.email) return null;
 
   const email = payload.email.toLowerCase();
@@ -220,6 +216,58 @@ export async function getStaffIdentity(
   if (allow.length > 0 && !allow.includes(email)) return null;
 
   return { email, name: payload.name ?? null, source: "access" };
+}
+
+async function resolveIdentity(
+  request: HeaderCarrier,
+  env: LeadEnv,
+  slots: AccessSlot[],
+  options: AccessVerifyOptions,
+): Promise<StaffIdentity | null> {
+  const teamDomain = normalizeTeamDomain(env.CF_ACCESS_TEAM_DOMAIN);
+  const audiences = accessAudiences(env, slots);
+  if (!teamDomain || audiences.length === 0) return null;
+
+  const token = request.headers.get("cf-access-jwt-assertion");
+  if (!token) return null;
+
+  const payload = await verifyAccessJwt(token, teamDomain, audiences, options);
+  return identityFromPayload(payload, env);
+}
+
+/**
+ * Resolve the signed-in staff member for a single surface, or null when the
+ * request is not authorised. Fails closed: if Access is not configured for
+ * that surface this returns null. There is no development bypass.
+ */
+export async function getStaffIdentity(
+  request: HeaderCarrier,
+  env: LeadEnv,
+  slot: AccessSlot,
+  options: AccessVerifyOptions = {},
+): Promise<StaffIdentity | null> {
+  return resolveIdentity(request, env, [slot], options);
+}
+
+/**
+ * Resolve an identity valid for any one of several Access applications.
+ *
+ * The dashboard (`/internal`) and the internal API (`/api/internal`) are two
+ * Access applications with distinct audience tags. A browser that signed in to
+ * the dashboard carries a dashboard-audience token; sending an XHR to the API
+ * application makes Access re-authenticate through a cross-origin redirect,
+ * which `fetch` cannot follow. Routes that are deliberately served to the
+ * signed-in dashboard therefore accept a token from either BloomCore staff
+ * application, while a token minted for any other Access application or any
+ * other email is still rejected.
+ */
+export async function getStaffIdentityForSurfaces(
+  request: HeaderCarrier,
+  env: LeadEnv,
+  slots: AccessSlot[],
+  options: AccessVerifyOptions = {},
+): Promise<StaffIdentity | null> {
+  return resolveIdentity(request, env, slots, options);
 }
 
 /** True when Access is fully configured for the given surface. */

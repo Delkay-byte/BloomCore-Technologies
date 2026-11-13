@@ -97,23 +97,55 @@ export async function listNotifications(
   );
 }
 
-export async function markNotificationRead(env: LeadEnv, id: string): Promise<void> {
-  await run(
-    env.LEADS_DB.prepare("UPDATE notifications SET read_at = ?, updated_at = ? WHERE id = ?").bind(
-      nowIso(),
-      nowIso(),
-      id,
-    ),
+/**
+ * The number of unread notifications across the whole table.
+ *
+ * The console used to derive this by filtering the newest 100 rows, so the
+ * badge and the page could disagree once more than a page of notifications
+ * existed. Both surfaces call a COUNT instead.
+ */
+export async function countUnreadNotifications(env: LeadEnv): Promise<number> {
+  const row = await first<{ count: number }>(
+    env.LEADS_DB.prepare("SELECT COUNT(*) AS count FROM notifications WHERE read_at IS NULL"),
   );
+  return row?.count ?? 0;
 }
 
-export async function markAllNotificationsRead(env: LeadEnv): Promise<void> {
+export type MarkReadResult = "marked" | "already_read" | "not_found";
+
+/**
+ * Mark one notification read. Idempotent: the UPDATE only touches a row whose
+ * `read_at` is still NULL, so a second click (or two tabs) cannot move the
+ * timestamp or decrement twice.
+ */
+export async function markNotificationRead(
+  env: LeadEnv,
+  id: string,
+): Promise<MarkReadResult> {
   const timestamp = nowIso();
-  await run(
-    env.LEADS_DB.prepare(
-      "UPDATE notifications SET read_at = ?, updated_at = ? WHERE read_at IS NULL",
-    ).bind(timestamp, timestamp),
+  const result = await env.LEADS_DB.prepare(
+    "UPDATE notifications SET read_at = ?, updated_at = ? WHERE id = ? AND read_at IS NULL",
+  )
+    .bind(timestamp, timestamp, id)
+    .run();
+
+  if ((result.meta?.changes ?? 0) > 0) return "marked";
+
+  const row = await first<{ id: string }>(
+    env.LEADS_DB.prepare("SELECT id FROM notifications WHERE id = ?").bind(id),
   );
+  return row ? "already_read" : "not_found";
+}
+
+/** Mark every unread notification read. Returns the number that changed. */
+export async function markAllNotificationsRead(env: LeadEnv): Promise<number> {
+  const timestamp = nowIso();
+  const result = await env.LEADS_DB.prepare(
+    "UPDATE notifications SET read_at = ?, updated_at = ? WHERE read_at IS NULL",
+  )
+    .bind(timestamp, timestamp)
+    .run();
+  return result.meta?.changes ?? 0;
 }
 
 /** Move pending, still-retryable email notifications into the sending state. */

@@ -1,5 +1,6 @@
 import { errorResponse } from "@/lib/http";
 import { requireStaff } from "@/lib/leads/guard";
+import { buildLeadWhere } from "@/lib/leads/filters";
 import {
   actorLabel,
   getVisibleLeadsForExport,
@@ -42,12 +43,18 @@ export async function GET(request: Request): Promise<Response> {
     product: params.get("product")?.trim() || undefined,
     enquiryType: params.get("type")?.trim() || undefined,
     status: params.get("status")?.trim() || undefined,
+    assigned: params.get("owner")?.trim() || undefined,
+    from: params.get("from")?.trim() || undefined,
+    to: params.get("to")?.trim() || undefined,
+    followUpDue: params.get("due") === "1",
     archived: params.get("archived") === "1",
     sort: "newest",
     pageSize: 500,
   };
 
   try {
+    const where = buildLeadWhere(filters);
+    if (where.dateError) return errorResponse(where.dateError, 422);
     const rows = await getVisibleLeadsForExport(guard.env, filters, 500);
     const header = COLUMNS.map((column) => csvCell(column.header)).join(",");
     const body = rows.map((row) => COLUMNS.map((column) => csvCell(row[column.key])).join(","));

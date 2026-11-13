@@ -10,6 +10,7 @@ import {
   type PipelineStage,
 } from "@/lib/leads/domain";
 import { getMetrics, listLeads, type LeadFilters } from "@/lib/leads/repository";
+import { hasActiveFilters } from "@/lib/leads/filters";
 import { currentStaff } from "@/lib/leads/session";
 
 export const dynamic = "force-dynamic";
@@ -77,16 +78,18 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
     pageSize: 25,
   };
 
-  const [{ rows, total }, metrics] = await Promise.all([
+  const [{ rows, total, totalUnfiltered, dateError }, metrics] = await Promise.all([
     listLeads(env, filters),
     getMetrics(env),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / 25));
-  const page = filters.page ?? 1;
-  const hasFilters = Boolean(
-    filters.search || filters.product || filters.enquiryType || filters.status || filters.followUpDue,
-  );
+  // `listLeads` clamps an out-of-range page; mirror the same clamp so the
+  // printed page number matches the rows on screen.
+  const page = Math.min(Math.max(1, filters.page ?? 1), totalPages);
+  const hasFilters = hasActiveFilters(filters);
+  const sortActive = (filters.sort ?? "newest") !== "newest";
+  const scopeLabel = filters.archived ? "archived" : "active";
 
   const pageQuery = (target: number): string => {
     const next = new URLSearchParams();
@@ -98,14 +101,27 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
     return `/internal/leads?${next.toString()}`;
   };
 
+  // The export honours the same filters as the list, so the CSV and the table
+  // describe the same set of enquiries.
+  const exportQuery = new URLSearchParams();
+  for (const key of ["q", "status", "product", "type", "from", "to", "due", "archived", "owner"]) {
+    const value = asString(params[key]);
+    if (value) exportQuery.set(key, value);
+  }
+  const exportHref = exportQuery.size
+    ? `/internal/api/export?${exportQuery.toString()}`
+    : "/internal/api/export";
+
+  const summary = hasFilters
+    ? `${total} of ${totalUnfiltered} ${scopeLabel} ${totalUnfiltered === 1 ? "enquiry" : "enquiries"} match the filters.`
+    : `${total} ${total === 1 ? "enquiry" : "enquiries"} ${filters.archived ? "archived" : "recorded"}.`;
+
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1 className="h3 text-[1.7rem] text-foreground">Leads</h1>
-          <p className="mt-1 text-[0.9375rem] text-foreground-subtle">
-            {total} {total === 1 ? "enquiry" : "enquiries"} {hasFilters ? "match the filters" : "recorded"}.
-          </p>
+          <p className="mt-1 text-[0.9375rem] text-foreground-subtle">{summary}</p>
         </div>
         <div className="flex items-center gap-3">
           <Link
@@ -120,7 +136,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
             )}
           </Link>
           <a
-            href="/api/internal/export"
+            href={exportHref}
             className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2"
           >
             Export CSV
@@ -129,13 +145,16 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
       </div>
 
       <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
-        <Metric label="Total" value={metrics.total} />
+        <Metric label="Total (active)" value={metrics.total} />
         <Metric label="New" value={metrics.new} />
         <Metric label="This week" value={metrics.thisWeek} />
-        <Metric label="Qualified" value={metrics.qualified} />
         <Metric label="Follow-ups due" value={metrics.followUpsDue} />
         <Metric label="Unread" value={metrics.unreadNotifications} />
+        <Metric label="Archived" value={metrics.archived} />
       </div>
+      <p className="mt-2 text-[0.75rem] text-foreground-faint">
+        Overview counts describe the whole pipeline, not the filtered list below.
+      </p>
 
       <form
         method="get"
@@ -233,7 +252,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
           >
             Apply filters
           </button>
-          {hasFilters && (
+          {(hasFilters || sortActive) && (
             <Link
               href="/internal/leads"
               className="text-[0.875rem] font-semibold text-foreground-subtle underline underline-offset-4 hover:text-foreground"
@@ -244,7 +263,16 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
         </div>
       </form>
 
-      {rows.length === 0 ? (
+      {dateError && (
+        <p
+          role="alert"
+          className="mt-4 border-l-4 border-foreground bg-muted px-4 py-3 text-[0.875rem] text-foreground"
+        >
+          {dateError} Correct or clear the dates to see the list.
+        </p>
+      )}
+
+      {!dateError && (rows.length === 0 ? (
         <div className="mt-6 rounded-[var(--radius)] bg-surface p-10 text-center">
           <p className="font-display text-[1.6rem] text-foreground">No leads to show</p>
           <p className="mx-auto mt-2 max-w-md text-[0.9375rem] leading-6 text-foreground-subtle">
@@ -306,7 +334,7 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
             </tbody>
           </table>
         </div>
-      )}
+      ))}
 
       {totalPages > 1 && (
         <nav aria-label="Pagination" className="mt-6 flex items-center justify-between">
