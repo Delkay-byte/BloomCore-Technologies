@@ -7,7 +7,7 @@
 **Production target:** `https://bloomcoretech.com`
 **Worker:** `bloomcore-technologies-page`
 **Private console:** `https://bloomcoretech.com/internal/leads`
-**Date:** 11–12 November 2026
+**Date:** 11–13 November 2026
 **Stack:** Next.js 16.4.6 App Router, React 19.3.0, Tailwind CSS v4, OpenNext Cloudflare, Cloudflare D1, Cloudflare Access, Resend
 
 > **Revision 1 — Access audience correction.** The original build validated a single
@@ -26,6 +26,16 @@
 > `d478fed5-faa1-49b5-90ba-a3c1e9208e7a`. Production persistence, idempotency, fail-closed
 > auth and the Access redirect are verified. Email delivery, the signed-in dashboard and
 > live GA4 remain owner-verified. Overall **AMBER**. See §6.2 and §9.
+>
+> **Revision 4 — three defect repairs (13 Nov 2026).** The save failure, the filtering
+> misbehaviour and the frozen unread count were traced to root causes and fixed, not
+> reworded. The console now writes through the dashboard's own Access application, date
+> filters are half-open UTC ranges with a real error for bad input, and unread counts come
+> from `COUNT(*)` with an idempotent mark-read. Deployed as Worker version
+> `9b818757-71fa-4278-afdb-7da7442e618c` from commit `6e31231` on branch
+> `fix/lead-management-defects`; 102 tests pass against the real schema. Two production
+> steps remain unperformed and are named in §6.3.10 and §6.3.13: no authenticated browser
+> session was available, and the D1 token still returns `7403`. Overall **AMBER**. See §6.3.
 
 ## 1. Objective
 
@@ -430,6 +440,369 @@ because the token lacks D1 access; delete or archive it once D1 permission is gr
 submission verified in production. Still unverified: email delivery, the authenticated
 dashboard walkthrough and the live GA4 conversion.
 
+### 6.3 Three production defect repairs — 13 November 2026
+
+The brief asked for the root causes of three separately reported defects, regression tests,
+a production deployment and an acceptance report. Everything below was run on this
+machine unless a sentence says otherwise.
+
+#### 6.3.1 Current production commit and Worker version
+
+| Item | Value |
+| --- | --- |
+| Branch | `fix/lead-management-defects` |
+| Deployed commit | `6e31231a5095931e22c6a6ea38b60ce89961b71f` (`6e31231`) |
+| Parent | `dd403bf` (the deployed 12 Nov baseline) |
+| Worker | `bloomcore-technologies-page` |
+| Version | `9b818757-71fa-4278-afdb-7da7442e618c`, 100% of traffic |
+| Deployed at | 2026-11-13T00:55:29Z |
+| Build | `npx opennextjs-cloudflare build` (exit 0) from the committed tree, then `npx wrangler deploy` (exit 0) |
+| Wrangler / OpenNext | 4.160.0 / 1.20.16 |
+
+The deploy was **not** built with `NETLIFY=true`. A dry run of the same worker reports
+`env.LEADS_DB (bloomcore-leads-prod) D1 Database` as its binding. `main` is unchanged and
+this branch was not force-pushed; it has not been merged or pushed.
+
+#### 6.3.2 Follow-up save failure — root cause
+
+The error message blamed the connection; the request never reached the handler.
+
+Two Cloudflare Access applications sit on the same hostname:
+
+| Surface | Paths | AUD (`kid`) |
+| --- | --- | --- |
+| Dashboard | `/internal`, `/internal/*` | `e539cbafaba15f541c87c642f59101df19ef50b568e85d6b418be6c3f61af72b` |
+| Internal API | `/api/internal`, `/api/internal/*` | `3ce614a6d610b892ffc0ff9ccedc07525c12e251c0373d5f9cf2adf917ffd991` |
+
+The console page is served under the **dashboard** application. Its client code posted to
+`/api/internal/leads/<id>`, which belongs to the **API** application. The browser carried a
+dashboard session cookie, so Access answered the POST with a `302` to the sign-in page of a
+different application. `fetch` followed that redirect in CORS mode and the final response
+was not readable, so the promise rejected with `TypeError: Failed to fetch`. The old
+`send()` helper caught every rejection and printed
+"The change could not be saved. Check your connection and try again."
+
+Production evidence, unauthenticated `curl` against the live host on 13 Nov 2026:
+
+```
+/internal/leads      302 → …/cdn-cgi/access/login/…?kid=e539cbaf…
+/internal/api/leads  302 → …/cdn-cgi/access/login/…?kid=e539cbaf…   ← same app as the page
+/api/internal/leads  302 → …/cdn-cgi/access/login/…?kid=3ce614a6…   ← the old target
+```
+
+The diagnosis is confirmed by the challenge identifier, not inferred from the message.
+
+Three further problems were real and were fixed with it:
+
+- The follow-up input displayed `nextFollowUpAt.slice(0, 16)`, i.e. the UTC wall clock,
+  while the input is a local-time control. A lead at 10:00 local displayed as 10:00 UTC and
+  saving without edits shifted the instant by the UTC offset.
+- The old endpoint silently truncated the owner to 160 characters and the next action to
+  300, and accepted any non-empty owner string, so a typo became an owner nobody could
+  contact.
+- Save buttons were disabled by a shared `pending` state only; two clicks in the same tick
+  both read the old value and could send twice.
+
+#### 6.3.3 Follow-up correction and regression tests
+
+**Correction.**
+
+- `src/app/internal/api/**` now re-exports the same guarded handlers under the dashboard
+  application's path. Every console write goes to `/internal/api/…`; the create-only
+  exported handlers under `/api/internal/**` remain for programmatic use and are still
+  authenticated.
+- `src/lib/leads/staff-client.ts` sends `credentials: "same-origin"`, `redirect: "manual"`,
+  `cache: "no-store"`, and treats `opaqueredirect` and `401/403` as an expired session — the
+  console now says the session expired and offers "Reload and sign in" instead of blaming
+  the network.
+- `src/lib/leads/guard.ts` accepts either staff audience for same-origin console requests,
+  so a token from the dashboard application is valid for the twin routes; unrelated
+  applications are still rejected.
+- `src/lib/leads/datetime.ts` converts between the browser's local wall clock and one
+  canonical UTC instant (`toLocalInputValue` / `fromLocalInputValue`); an empty input sends
+  `""`, which the server stores as `NULL`, so clearing works.
+- `src/lib/leads/patch.ts` validates the body with field-specific messages: invalid owner
+  → "Enter a valid email address for the owner, or clear the field."; over-long owner or
+  action → a message naming the limit; unparseable follow-up → "Enter a valid follow-up date
+  and time, or clear the field."; no recognised field → "There is nothing to save." Owner
+  addresses are trimmed and lower-cased, the action and follow-up are trimmed.
+- `LeadActions.tsx` keeps the typed values on failure, shows server messages verbatim, and
+  guards with a `useRef` in-flight flag plus `try/catch/finally`, so a double click cannot
+  send twice and a thrown promise cannot leave the button disabled.
+
+**Tests.** `tests/patch.test.ts` (13) pins every message, the three-field combined payload,
+clearing, and rejection of empty/unknown bodies. `tests/datetime.test.ts` (4) proves the
+local wall clock round-trips and that clearing yields `null`. `tests/console-routing.test.ts`
+(7) fails if a console component ever calls `/api/internal` directly, if the payload loses a
+field, or if the in-flight guard is removed. `tests/access-auth.test.ts` (26) covers the
+dashboard token on the twin routes, the API token, rejection of an unrelated application and
+of an unauthorised email, and asserts that each `/internal/api` route is a thin re-export of
+a handler that calls `requireStaff`. `tests/d1-repository.test.ts` (15) proves owner-only,
+follow-up-only, action-only and combined saves persist, that clearing stores `NULL`, and
+that re-saving identical values is a no-op (no duplicate activity row).
+
+#### 6.3.4 Filtering failure — root cause
+
+Four independent defects, all in the SQL/parameter layer:
+
+1. **To-date lost its final day.** The date input supplies `YYYY-MM-DD` and the query used
+   `created_at <= ?`. Stored values are `2026-11-19T14:32:00.000Z`, which sorts *after*
+   `2026-11-19` as a string, so every lead received on the selected end date was excluded.
+2. **"Not product-specific" matched nothing.** The option was in the select, but the query
+   used `product = 'none'`; productless leads store `NULL`, so the filter always returned
+   an empty list.
+3. **Invalid and reversed dates failed silently.** An impossible day or `to` before `from`
+   was compared literally and produced an empty list with no explanation, indistinguishable
+   from "no matches".
+4. **The page's own filter state was incomplete.** `hasFilters` ignored the date range and
+   the archived toggle, so "Clear filters" disappeared while filters were active, the empty
+   state said "no enquiries received" instead of "no matches", and an out-of-range `?page=`
+   rendered an empty table instead of the last page.
+
+The pipeline-wide metric tiles were also unlabelled, so 5 total next to a 1-row filtered
+list read as a contradiction.
+
+#### 6.3.5 Filtering correction and tests
+
+**Correction.**
+
+- `normalizeDateRange` (`src/lib/leads/filters.ts`) validates real calendar days, rejects a
+  reversed range with "The From date must be on or before the To date.", and turns the range
+  into a half-open UTC interval: `created_at >= <from>T00:00:00.000Z` and
+  `created_at < <day after to>T00:00:00.000Z`. The selected end date is therefore inclusive
+  to its last millisecond. Malformed input produces the `1 = 0` clause plus a visible
+  `role="alert"` message rather than an unfiltered list.
+- "Not product-specific" compiles to `(product IS NULL OR product = '' OR product = 'none')`;
+  named products remain an exact match.
+- Search is lower-cased across contact name, email, organisation, lead number **and**
+  product, and never touches notes.
+- Owner filtering compares `lower(coalesce(assigned_to,''))` so older rows with mixed case
+  still match.
+- `listLeads` clamps the requested page to the last page and reports `total` (matching rows)
+  and `totalUnfiltered` (matching rows ignoring pagination).
+- `hasActiveFilters` includes search, status, product, type, owner, from, to, due and
+  archived. The Clear link and empty-state copy are driven by it; pagination links rebuild
+  the query string from those keys.
+- Metric tiles now read Total (active), New, This week, Follow-ups due, Unread, Archived,
+  taken from the whole pipeline, with the caption "Overview counts describe the whole
+  pipeline, not the filtered list below." The list header states the filtered total
+  separately. Nothing is hardcoded, and no production row was altered to make the numbers
+  agree.
+
+**Tests.** `tests/filters.test.ts` (14) covers the half-open to-date, a single-day range, a
+to-only range, impossible days, a reversed range, the `1 = 0` fallback, the five search
+parameters, productless matching, parameterised products, owner case-insensitivity,
+follow-up due, archived scoping and the sort strings. `tests/d1-repository.test.ts` (15)
+runs the same SQL against the real `migrations/0001_init.sql` schema in SQLite and proves a
+lead received at 18:00 on the selected end date is included while the next day's midnight is
+not, that `product: "none"` returns only productless leads, that archived leads are excluded
+by default and included with `archived: true`, that an owner matches regardless of case, and
+that `page: 9, pageSize: 5` clamps to the last page without losing `total`.
+
+#### 6.3.6 Notification unread count — root cause
+
+The count was **stale because nothing marked an opened notification read**, and the number
+shown on the notifications page was **derived from a capped list**:
+
+- The "Open lead" affordance was a plain link to the lead. It performed no write, so
+  `read_at` stayed `NULL` forever and the badge kept its value (12) no matter how many
+  notifications the owner opened. The only write path was the separate "Mark all as read"
+  button.
+- The notifications page computed `unreadCount` as
+  `notifications.filter((n) => !n.read_at).length` over
+  `listNotifications(env, { limit: 100 })`. Past 100 rows the page undercounted while the
+  dashboard badge (a `COUNT`) disagreed with it — two sources, two answers.
+- The mark-all client posted to `/api/internal/notifications` (the other Access application)
+  and never inspected `response.ok`. On the same cross-application redirect that broke saves
+  it refreshed the page and left the count unchanged with no error, which is exactly the
+  "stays at 12" symptom.
+
+#### 6.3.7 Notification correction and tests
+
+**Correction.**
+
+- `NotificationOpen.tsx` wraps the link in an intercepted click: it `preventDefault()`s,
+  PATCHes `/internal/api/notifications` with `{ id }`, and navigates only after the server
+  answers.
+- `markNotificationRead` runs
+  `UPDATE notifications SET read_at = ?, updated_at = ? WHERE id = ? AND read_at IS NULL`
+  and classifies the result as `marked`, `already_read` or `not_found` using
+  `meta.changes`. The timestamp never moves on a repeat, so the count cannot decrement
+  twice — from a double click, two tabs, or a retry.
+- `countUnreadNotifications` is a single `SELECT COUNT(*) … WHERE read_at IS NULL` over the
+  whole table. Both the notifications page and the dashboard badge call it, so they cannot
+  disagree.
+- The PATCH response returns `{ ok, marked, unread }`; the client refuses to show a reduced
+  count unless the server confirms the transition. Failures leave the row unread and
+  surface an error.
+- Mark-all uses the same twin path, requires `{ all: true }`, and reports the number
+  actually changed.
+
+**Tests.** `tests/notifications.test.ts` (6) inserts 130 unread rows and proves the count is
+130 while `listNotifications({limit:100})` returns 100; read rows are excluded; a first mark
+returns `marked` and a second returns `already_read` with an unchanged `read_at` and a count
+of 0; an unknown id returns `not_found`; mark-all returns 12 then 0; and `getMetrics`
+agrees with `countUnreadNotifications` before and after a single mark.
+
+#### 6.3.8 GA4 event-count investigation
+
+The owner's evidence showed one `generate_lead` hit reaching the correct property but 18
+hits in the Messages report, which does not distinguish successful conversions from repeats.
+
+Reading the submission path found the guard was too weak:
+
+- The honeypot branch answers `HTTP 200 { ok: true, spam: true }` and persists nothing. Those
+  responses fired `generate_lead` because the client only checked `response.ok` and
+  `data.ok`.
+- A duplicate replay is also `200 { ok: true, duplicate: true }` with no new lead; it was
+  excluded only when the API happened to include the flag.
+- Nothing tied the event to a persisted lead, so an acknowledgement without a lead number —
+  the shape of every spam/duplicate response — still counted.
+
+Live counting was not attempted from this environment: GA4 DebugView needs the owner's
+Google session, and the browser here has no Access session. No claim is made about the 18
+hits in the existing property history; they predate this fix and cannot be reconstructed
+from the client.
+
+#### 6.3.9 Confirmed conversion-event behaviour
+
+`src/lib/leads/tracking.ts` now defines one predicate, and both forms use it:
+
+```ts
+response.ok === true &&
+response.duplicate !== true &&
+response.spam !== true &&
+typeof response.leadNumber === "string" && response.leadNumber.trim().length > 0
+```
+
+Consequences, each pinned by `tests/tracking.test.ts` (7):
+
+- A persisted new enquiry fires `generate_lead` exactly once, after the response.
+- A duplicate replay, a honeypot submission, a response without a lead number, a non-2xx
+  response and a network failure fire nothing.
+- The parameter allowlist is exactly `enquiry_type`, `form_type`, `product`, `source_page`;
+  the serialised payload is asserted to contain no name, email, phone, organisation or
+  message text.
+- Consent still gates `trackEvent` only: a consent-denied visitor can submit, but no event
+  is sent. There is no static GTM snippet and no `<noscript>` in the served HTML; the
+  loader lives in the client bundle and runs only after consent. The existing single
+  outbound-click event is untouched.
+
+#### 6.3.10 QA lead cleanup and record counts
+
+**Not performed — blocked by D1 authorization, and not bypassed.** The authorised command
+
+```
+npx wrangler d1 execute bloomcore-leads-prod --remote \
+  --command "SELECT lead_number, email, created_at FROM leads WHERE id = '4664b654-e2bc-4051-b1c2-57b85a8b1486';"
+```
+
+fails, before any statement runs:
+
+```
+A request to the Cloudflare API (/accounts/da77cc158dfdf586558f4f81a059a23d/d1/database/97c348f1-57b6-41cb-8d1c-33ea1b6c4955/query) failed.
+  The given account is not valid or is not authorized to access this service [code: 7403]
+```
+
+Consequently, in production:
+
+- The QA lead `BC-2026-000001` / `4664b654-e2bc-4051-b1c2-57b85a8b1486` /
+  `bloomcoretechnologies+qa-lead@gmail.com` was **not deleted**, and its disposable
+  dependents (activity rows, notifications) were not touched.
+- No other lead or notification was read, altered or deleted; the lead-number sequence was
+  not reset.
+- Foreign-key integrity and the remaining legitimate lead count could not be verified,
+  because even a read is refused with `7403`. The migration itself declares
+  `PRAGMA foreign_keys = ON` and `ON DELETE CASCADE` for dependents (verified locally in
+  `tests/helpers/d1.ts` and the schema), but that is a schema fact, not a production check.
+- The dashboard's unread badge of 12 was the owner's reported value; this run could not
+  re-read it, so neither the current count nor the effect of the fix on live data is claimed
+  here.
+
+#### 6.3.11 Security regression results
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| No unauthenticated console access | Pass (production) | `/internal/leads` → `302` to Access |
+| Console twin routes stay guarded | Pass (code + tests) | Every `/internal/api/**` route is a re-export; the test asserts the target calls `requireStaff` |
+| Unrelated Access application rejected | Pass (test) | `tests/access-auth.test.ts` |
+| Unauthorised email rejected | Pass (test) | `tests/access-auth.test.ts` |
+| Fail closed with no audience configured | Pass (test) | `tests/access-auth.test.ts` |
+| No development bypass | Pass | `INTERNAL_DEV_BYPASS` remains removed |
+| No PII in analytics | Pass (test) | Serialised parameter payload asserted clean |
+| Honeypot creates no lead and no event | Pass (test) | `tests/tracking.test.ts` |
+| Console never crosses Access applications | Pass (test) | `tests/console-routing.test.ts` |
+
+Access policies, DNS, email routing and the Resend secret were not changed.
+
+#### 6.3.12 Production deployment identifier
+
+Worker `bloomcore-technologies-page`, version
+`9b818757-71fa-4278-afdb-7da7442e618c`, 100% of traffic, created 2026-11-13T00:55:29Z from
+commit `6e31231`, deployed with `npx opennextjs-cloudflare build` followed by
+`npx wrangler deploy`. Post-deploy checks against `https://bloomcoretech.com`:
+
+| Request | Result |
+| --- | --- |
+| `GET /` | `200 text/html; charset=utf-8` |
+| `GET /sitemap.xml` | `200 application/xml` |
+| `GET /robots.txt` | `200 text/plain` |
+| `GET https://www.bloomcoretech.com/` | `301` to the apex |
+| `GET /internal/leads` | `302` to Access, `kid=e539cbaf…` |
+| `GET /internal/api/leads` | `302` to Access, `kid=e539cbaf…` (same application as the page) |
+| `GET /api/internal/leads` | `302` to Access, `kid=3ce614a6…` |
+
+The canonical link and `robots: index, follow` are present in the served HTML. The GA4
+loader is present in the client chunks and absent from the HTML.
+
+#### 6.3.13 Live browser acceptance evidence
+
+**No authenticated browser journey was performed, and none is claimed.** This environment
+has no Cloudflare Access session for `bloomcoretechnologies@gmail.com`, so an attempt to
+open `/internal/leads` is redirected to the Access login page and stops there. Every save,
+filter, pagination, notification and GA4 statement above is therefore backed by one of:
+
+- unit and integration tests against the real migration in embedded SQLite (`npm test`, 102
+  tests);
+- the production edge responses listed in §6.3.12;
+- static inspection of the built bundle.
+
+What was **not** checked in a browser: editing owner/date/action on a real lead, reloading
+to see persistence, applying each filter against the live dataset, opening a notification
+and watching both badges drop, and GA4 DebugView. Those remain owner-side steps in §6.3.14.
+
+Commands and outcomes for the changed tree:
+
+| Command | Outcome |
+| --- | --- |
+| `npx tsc --noEmit` | exit 0 |
+| `npm run lint` | exit 0 |
+| `npm test` | 102 pass, 0 fail (10 domain, 26 auth, 14 filters, 4 datetime, 7 tracking, 13 patch, 7 console routing, 15 repository, 6 notifications) |
+| `npx opennextjs-cloudflare build` | exit 0; worker written to `.open-next/worker.js` |
+| `npx wrangler deploy --dry-run --outdir .open-next/dry-run` | exit 0; `env.LEADS_DB` bound |
+| `npx wrangler deploy` | exit 0; version `9b818757…` at 100% |
+| `npx wrangler d1 execute … --remote` | **failed** with `[code: 7403]` (§6.3.10) |
+
+#### 6.3.14 Remaining owner actions
+
+1. Grant the operator API token **D1: Read** and **D1: Edit**, then delete the authorised QA
+   lead `4664b654-e2bc-4051-b1c2-57b85a8b1486` and its dependents, verify the cascade, and
+   confirm the remaining lead count and the untouched sequence.
+2. While signed in to Access, walk the acceptance path on the deployed version: save owner,
+   follow-up and next action separately and together; reload; confirm persistence and the
+   UTC round-trip; clear a field and confirm it stays cleared; apply every filter and a
+   combined filter; page past the end; open an unread notification and confirm both counts
+   drop by one and stay down after a refresh.
+3. In GA4 DebugView, confirm one `generate_lead` for one real enquiry, none for a repeat
+   submission, and the four allowlisted parameters only.
+4. Confirm Resend inbox delivery, unchanged from Revision 3.
+5. Merge `fix/lead-management-defects` after the above; nothing has been pushed.
+
+**Status for §6.3: AMBER.** The three defects have identified root causes, code fixes and
+regression coverage, and the corrections are live. The remaining gap is verification that
+needs the owner's Access and Google sessions, plus the D1 permission that blocks the
+authorised QA cleanup.
+
 ## 7. Owner action checklist
 
 The code is complete, committed on `feat/lead-management-foundation` and deployed from
@@ -499,18 +872,26 @@ ephemeral build only, keeping the fallback build green.
 
 | Area | Status | Note |
 | --- | --- | --- |
-| Code, schema, tests, builds | GREEN | Type, lint, unit (28), Next, OpenNext and `wrangler deploy --dry-run` all pass; Netlify export build re-verified after the prune fix. |
-| Production deployment | GREEN | Worker `bloomcore-technologies-page`, version `d478fed5-faa1-49b5-90ba-a3c1e9208e7a`, 12 Nov 2026. |
+| Code, schema, tests, builds | GREEN | Type, lint, 102 tests, OpenNext build and `wrangler deploy --dry-run` all pass; Netlify export build re-verified after the prune fix. |
+| Production deployment | GREEN | Worker `bloomcore-technologies-page`, version `9b818757-71fa-4278-afdb-7da7442e618c`, 13 Nov 2026, 100% of traffic, from commit `6e31231`. |
 | `/internal` routing | GREEN | Root cause was the stale 11 Nov deployment; `/internal` now `307` → `/internal/leads`, and unauthenticated requests hit Access first. |
 | Cloudflare Access | GREEN | Both apps verified live with distinct AUDs (`…e539cbaf`, `…3ce614a6`); fail-closed `401` on the Worker host. Policy/MFA is dashboard-side. |
+| Save failure (defect 1) | GREEN (fix) / AMBER (browser proof) | Root cause was the cross-application challenge; console writes now use `/internal/api` (same `kid` as the page). Regression tests cover payload, validation, timezone and double-submit. Signed-in save not walked in a browser. |
+| Filtering (defect 2) | GREEN (fix) / AMBER (browser proof) | To-date is a half-open UTC range, "Not product-specific" matches `NULL`, invalid/reversed dates show an error instead of an empty list, Clear and pagination use all filter keys. Tested against the real schema, not yet clicked through in production. |
+| Notifications (defect 3) | GREEN (fix) / AMBER (browser proof) | Opening a notification marks it read with an idempotent UPDATE; both surfaces use one `COUNT`. 130-row test proves counts no longer cap at 100. Live badge not re-read. |
 | Production D1 | GREEN (persistence) / AMBER (read) | Real `INSERT` succeeded (`BC-2026-000001`); migration history and QA cleanup need **D1: Read/Edit**. |
 | Resend email | AMBER | Records present in Resend's CNAME style; actual inbox delivery not yet confirmed. |
-| Dashboard, GA4 live checks | AMBER | Need the owner's Access session (in-app browser has none). |
+| Dashboard, GA4 live checks | AMBER | Need the owner's Access and Google sessions (in-app browser has neither). |
 
-**Overall: AMBER — deployed and operational, with owner-side verification outstanding.**
-Deployed to production. Remaining owner actions: grant D1 Read/Edit (migration record +
-QA cleanup), confirm Resend verification and inbox delivery, and walk the dashboard and GA4
-DebugView while signed in. No DNS, subscription or purchase action was taken.
+**Overall: AMBER — three defects fixed, tested and deployed; owner-side verification and the
+authorised QA cleanup remain.** The exact limitation: no Cloudflare Access session exists in
+this environment, so no authenticated journey (save, filters, notification counts) was run in
+a real browser, and GA4 DebugView was not opened; separately, the D1 token returns
+`7403`, so the authorised QA lead could not be deleted and remaining production counts could
+not be read. Nothing was bypassed and no production row was altered. Deployed to production.
+Remaining owner actions: grant D1 Read/Edit, delete the QA lead and verify the cascade, walk
+the signed-in acceptance path, confirm GA4 DebugView, and confirm Resend delivery. No DNS,
+subscription or purchase action was taken.
 
 ## 10. Files
 
@@ -528,7 +909,20 @@ DebugView while signed in. No DNS, subscription or purchase action was taken.
 **Added — console:** `src/app/internal/layout.tsx`, `src/app/internal/page.tsx`,
 `src/app/internal/leads/page.tsx`, `src/app/internal/leads/[id]/page.tsx`,
 `src/app/internal/notifications/page.tsx`, `src/components/internal/ConsoleGuard.tsx`,
-`src/components/internal/LeadActions.tsx`, `src/components/internal/NotificationActions.tsx`.
+`src/components/internal/LeadActions.tsx`, `src/components/internal/NotificationActions.tsx`,
+`src/components/internal/NotificationOpen.tsx`.
+
+**Added — revision 4:** console twins `src/app/internal/api/{export,leads,leads/[id],
+leads/[id]/notes,metrics,notifications,notifications/retry}/route.ts`; shared helpers
+`src/lib/leads/{filters,datetime,patch,staff-client,tracking}.ts`; tests
+`tests/{filters,datetime,patch,tracking,console-routing,d1-repository,notifications}.test.ts`
+and the harness `tests/helpers/{d1.ts,register.mjs}`.
+
+**Changed — revision 4:** `src/app/api/internal/{leads/[id],notifications,export}/route.ts`,
+`src/app/internal/{leads,notifications}/page.tsx`,
+`src/components/internal/{LeadActions,NotificationActions}.tsx`,
+`src/components/{ContactForm,QuickEnquiry}.tsx`, `src/lib/leads/{auth,guard,domain,
+repository,notifications}.ts`, `tests/access-auth.test.ts`, `package.json`.
 
 **Added — shell and tests:** `src/components/SiteChrome.tsx`, `src/app/(site)/layout.tsx`,
 `tests/domain.test.ts`, `tests/access-auth.test.ts`, `docs/plans/lead-management-foundation.md`,
