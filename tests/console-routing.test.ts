@@ -82,9 +82,20 @@ test("input survives a failed save and a second click is refused", () => {
     "a double click must not send twice",
   );
   // The failure path must set an error and leave the controlled values intact.
-  const failure = actions.slice(actions.indexOf("setError("));
-  assert.ok(failure.includes("setError("), "failures are surfaced");
-  assert.doesNotMatch(actions, /setAssignee\(""\)\s*;\s*setAction\(""\)/, "input is not reset on error");
+  const failure = actions.slice(
+    actions.indexOf("setError(result.error)"),
+    actions.indexOf("finally"),
+  );
+  assert.ok(failure.includes("setError(result.error)"), "failures are surfaced");
+  assert.doesNotMatch(failure, /setAssignee\(|setAction\(|setFollowUp\(/, "input is not reset on error");
+
+  // Clearing happens only inside the successful follow-up save branch.
+  const success = actions.slice(
+    actions.indexOf('if (key === "follow")'),
+    actions.indexOf("setNotice(done)"),
+  );
+  assert.match(success, /setAssignee\(""\)/);
+  assert.match(success, /setAction\(""\)/);
 });
 
 test("opening an unread notification marks it read before navigating", () => {

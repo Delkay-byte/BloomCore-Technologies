@@ -24,6 +24,8 @@
     "EMAIL_FROM": "BloomCore Technologies <notifications@notify.bloomcoretech.com>",
     "EMAIL_REPLY_TO": "bloomcoretechnologies@gmail.com",
     "INTERNAL_ALLOWED_EMAILS": "bloomcoretechnologies@gmail.com",
+    // The owner role. Add every owner address here; they need no staff row.
+    "LEAD_OWNER_EMAILS": "bloomcoretechnologies@gmail.com",
     // Cloudflare Access. One audience per Access application: dashboard vs internal API.
     // Team domain discovered from the live Access login redirect.
     "CF_ACCESS_TEAM_DOMAIN": "https://red-boat-3eb2.cloudflareaccess.com",

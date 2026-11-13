@@ -48,6 +48,8 @@ export type LeadEnv = {
   /** Audience of the internal API Access application (`/api/internal`). */
   CF_ACCESS_AUD_API?: string;
   INTERNAL_ALLOWED_EMAILS?: string;
+  /** Comma-separated owner addresses; always resolved to the owner role. */
+  LEAD_OWNER_EMAILS?: string;
 };
 
 export async function getLeadEnv(): Promise<LeadEnv> {

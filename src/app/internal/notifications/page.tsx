@@ -3,6 +3,7 @@ import { ConsoleSignInRequired } from "@/components/internal/ConsoleGuard";
 import { NotificationActions } from "@/components/internal/NotificationActions";
 import { NotificationOpen } from "@/components/internal/NotificationOpen";
 import { countUnreadNotifications, listNotifications } from "@/lib/leads/notifications";
+import { can, notificationScopeEmail } from "@/lib/leads/permissions";
 import { currentStaff } from "@/lib/leads/session";
 
 export const dynamic = "force-dynamic";
@@ -28,13 +29,20 @@ const STATUS_TONE: Record<string, string> = {
 };
 
 export default async function NotificationsPage() {
-  const { env, identity } = await currentStaff();
+  const { env, identity, staff } = await currentStaff();
   if (!identity) return <ConsoleSignInRequired />;
+  if (!staff) {
+    return (
+      <ConsoleSignInRequired detail="This account is not registered for the BloomCore Lead Desk. Ask the owner to add it before signing in again." />
+    );
+  }
 
-  // A COUNT over the whole table, not a count of the 100 rows shown, so this
-  // number always matches the badge on the leads dashboard.
-  const unreadCount = await countUnreadNotifications(env);
-  const notifications = await listNotifications(env, { limit: 100 });
+  // Workers see notifications for their own assignments; owners and the
+  // accountant see the whole history. A COUNT over the scoped table, not a
+  // count of the 100 rows shown, keeps every badge in agreement.
+  const scope = notificationScopeEmail(staff.role, staff.email);
+  const unreadCount = await countUnreadNotifications(env, { assignedTo: scope });
+  const notifications = await listNotifications(env, { limit: 100, assignedTo: scope });
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6">
@@ -45,7 +53,11 @@ export default async function NotificationsPage() {
             {unreadCount} unread · showing the most recent {notifications.length}.
           </p>
         </div>
-        <NotificationActions unreadCount={unreadCount} />
+        <NotificationActions
+          unreadCount={unreadCount}
+          canMarkRead={can(staff.role, "notifications.mark_read")}
+          canRetry={can(staff.role, "notifications.retry")}
+        />
       </div>
 
       {notifications.length === 0 ? (

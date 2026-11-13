@@ -1,5 +1,10 @@
 import { sendEmail } from "@/lib/email/resend";
-import { acknowledgementEmail, companyEmail, notificationSummary } from "@/lib/email/templates";
+import {
+  acknowledgementEmail,
+  assignmentEmail,
+  companyEmail,
+  notificationSummary,
+} from "@/lib/email/templates";
 import { all, first, run, type LeadEnv } from "./db";
 import type { LeadRow, NotificationRow } from "./repository";
 
@@ -7,6 +12,18 @@ const MAX_ATTEMPTS = 5;
 const DEFAULT_DASHBOARD_ORIGIN = "https://bloomcoretech.com";
 
 const nowIso = () => new Date().toISOString();
+
+function parsePayload(value: string | null): Record<string, unknown> | null {
+  if (!value) return null;
+  try {
+    const parsed: unknown = JSON.parse(value);
+    return typeof parsed === "object" && parsed !== null
+      ? (parsed as Record<string, unknown>)
+      : null;
+  } catch {
+    return null;
+  }
+}
 
 function dashboardUrl(env: LeadEnv, leadId: string): string {
   const origin = (env.DASHBOARD_ORIGIN || env.SITE_URL || DEFAULT_DASHBOARD_ORIGIN).replace(
@@ -84,16 +101,27 @@ export async function enqueueForLead(
   await database.batch(statements);
 }
 
+/** Restrict notification queries to leads assigned to one worker. */
+const ASSIGNED_EXISTS =
+  "EXISTS (SELECT 1 FROM leads l WHERE l.id = notifications.lead_id AND lower(coalesce(l.assigned_to,'')) = ?)";
+
 export async function listNotifications(
   env: LeadEnv,
-  options: { unreadOnly?: boolean; limit?: number } = {},
+  options: { unreadOnly?: boolean; limit?: number; assignedTo?: string } = {},
 ): Promise<NotificationRow[]> {
   const limit = Math.min(200, Math.max(1, options.limit ?? 50));
-  const where = options.unreadOnly ? "WHERE read_at IS NULL" : "";
+  const clauses: string[] = [];
+  const params: unknown[] = [];
+  if (options.unreadOnly) clauses.push("read_at IS NULL");
+  if (options.assignedTo) {
+    clauses.push(ASSIGNED_EXISTS);
+    params.push(options.assignedTo.toLowerCase());
+  }
+  const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
   return all<NotificationRow>(
     env.LEADS_DB.prepare(
       `SELECT * FROM notifications ${where} ORDER BY created_at DESC LIMIT ?`,
-    ).bind(limit),
+    ).bind(...params, limit),
   );
 }
 
@@ -104,9 +132,16 @@ export async function listNotifications(
  * badge and the page could disagree once more than a page of notifications
  * existed. Both surfaces call a COUNT instead.
  */
-export async function countUnreadNotifications(env: LeadEnv): Promise<number> {
+export async function countUnreadNotifications(
+  env: LeadEnv,
+  options: { assignedTo?: string } = {},
+): Promise<number> {
+  const scope = options.assignedTo ? ` AND ${ASSIGNED_EXISTS}` : "";
+  const params = options.assignedTo ? [options.assignedTo.toLowerCase()] : [];
   const row = await first<{ count: number }>(
-    env.LEADS_DB.prepare("SELECT COUNT(*) AS count FROM notifications WHERE read_at IS NULL"),
+    env.LEADS_DB.prepare(
+      `SELECT COUNT(*) AS count FROM notifications WHERE read_at IS NULL${scope}`,
+    ).bind(...params),
   );
   return row?.count ?? 0;
 }
@@ -121,29 +156,37 @@ export type MarkReadResult = "marked" | "already_read" | "not_found";
 export async function markNotificationRead(
   env: LeadEnv,
   id: string,
+  options: { assignedTo?: string } = {},
 ): Promise<MarkReadResult> {
   const timestamp = nowIso();
+  const scope = options.assignedTo ? ` AND ${ASSIGNED_EXISTS}` : "";
+  const scopeParams = options.assignedTo ? [options.assignedTo.toLowerCase()] : [];
   const result = await env.LEADS_DB.prepare(
-    "UPDATE notifications SET read_at = ?, updated_at = ? WHERE id = ? AND read_at IS NULL",
+    `UPDATE notifications SET read_at = ?, updated_at = ? WHERE id = ? AND read_at IS NULL${scope}`,
   )
-    .bind(timestamp, timestamp, id)
+    .bind(timestamp, timestamp, id, ...scopeParams)
     .run();
 
   if ((result.meta?.changes ?? 0) > 0) return "marked";
 
   const row = await first<{ id: string }>(
-    env.LEADS_DB.prepare("SELECT id FROM notifications WHERE id = ?").bind(id),
+    env.LEADS_DB.prepare(`SELECT id FROM notifications WHERE id = ?${scope}`).bind(id, ...scopeParams),
   );
   return row ? "already_read" : "not_found";
 }
 
-/** Mark every unread notification read. Returns the number that changed. */
-export async function markAllNotificationsRead(env: LeadEnv): Promise<number> {
+/** Mark every unread notification the caller may see. Returns the count. */
+export async function markAllNotificationsRead(
+  env: LeadEnv,
+  options: { assignedTo?: string } = {},
+): Promise<number> {
   const timestamp = nowIso();
+  const scope = options.assignedTo ? ` AND ${ASSIGNED_EXISTS}` : "";
+  const scopeParams = options.assignedTo ? [options.assignedTo.toLowerCase()] : [];
   const result = await env.LEADS_DB.prepare(
-    "UPDATE notifications SET read_at = ?, updated_at = ? WHERE read_at IS NULL",
+    `UPDATE notifications SET read_at = ?, updated_at = ? WHERE read_at IS NULL${scope}`,
   )
-    .bind(timestamp, timestamp)
+    .bind(timestamp, timestamp, ...scopeParams)
     .run();
   return result.meta?.changes ?? 0;
 }
@@ -206,10 +249,21 @@ async function deliverOne(
     return;
   }
 
-  const content =
-    notification.type === "acknowledgement"
-      ? acknowledgementEmail(lead, contactEmail)
-      : companyEmail(lead, dashboardUrl(env, lead.id));
+  let content: { subject: string; html: string; text: string };
+  if (notification.type === "acknowledgement") {
+    content = acknowledgementEmail(lead, contactEmail);
+  } else if (notification.type === "assignment") {
+    const payload = parsePayload(notification.payload);
+    content = assignmentEmail(lead, {
+      assigneeName:
+        typeof payload?.assigneeName === "string" ? payload.assigneeName : notification.recipient,
+      assignerEmail: typeof payload?.assigner === "string" ? payload.assigner : null,
+      reassigned: payload?.reassigned === true,
+      dashboardUrl: dashboardUrl(env, lead.id),
+    });
+  } else {
+    content = companyEmail(lead, dashboardUrl(env, lead.id));
+  }
 
   const result = await sendEmail(env, {
     to: notification.recipient,

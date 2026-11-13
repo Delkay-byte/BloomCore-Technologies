@@ -3,8 +3,10 @@ import { notFound } from "next/navigation";
 import { ConsoleSignInRequired } from "@/components/internal/ConsoleGuard";
 import { LeadActions } from "@/components/internal/LeadActions";
 import { categoryLabel, productLabel, STAGE_LABELS, type PipelineStage } from "@/lib/leads/domain";
+import { canViewLead } from "@/lib/leads/permissions";
 import { getLeadDetail } from "@/lib/leads/repository";
 import { currentStaff } from "@/lib/leads/session";
+import { listAssignableStaff } from "@/lib/leads/staff";
 
 export const dynamic = "force-dynamic";
 
@@ -35,14 +37,25 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 export default async function LeadDetailPage({ params }: Props) {
-  const { env, identity } = await currentStaff();
+  const { env, identity, staff } = await currentStaff();
   if (!identity) return <ConsoleSignInRequired />;
+  if (!staff) {
+    return (
+      <ConsoleSignInRequired detail="This account is not registered for the BloomCore Lead Desk. Ask the owner to add it before signing in again." />
+    );
+  }
 
   const { id } = await params;
   const detail = await getLeadDetail(env, id);
-  if (!detail) notFound();
+  // A worker cannot learn that someone else's lead exists.
+  if (!detail || !canViewLead(staff.role, staff.email, detail.lead)) notFound();
 
   const { lead, activity, notes, notifications } = detail;
+  const assignable = (await listAssignableStaff(env)).map((option) => ({
+    email: option.email,
+    displayName: option.displayName,
+    role: option.role,
+  }));
 
   return (
     <div className="mx-auto w-full max-w-[1400px] px-4 py-8 sm:px-6">
@@ -174,10 +187,12 @@ export default async function LeadDetailPage({ params }: Props) {
         <div className="flex flex-col gap-6">
           <LeadActions
             leadId={lead.id}
+            role={staff.role}
             status={lead.status}
             assignedTo={lead.assigned_to}
             nextAction={lead.next_action}
             nextFollowUpAt={lead.next_follow_up_at}
+            assignable={assignable}
           />
 
           <section className="rounded-[var(--radius)] bg-surface p-5">

@@ -6,7 +6,7 @@
  * handling and idempotent UPDATEs are therefore tested, not mocked.
  */
 import { DatabaseSync } from "node:sqlite";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -84,26 +84,49 @@ export type TestDatabase = {
   exec(sql: string): Promise<{ count: number; duration: number }>;
 };
 
+/**
+ * Every migration, in filename order — the same sequence `wrangler d1
+ * migrations apply` uses. Tests therefore exercise the current schema rather
+ * than only the initial one.
+ */
+export function migrationSql(): string {
+  const directory = join(ROOT, "migrations");
+  return readdirSync(directory)
+    .filter((name) => name.endsWith(".sql"))
+    .sort()
+    .map((name) => readFileSync(join(directory, name), "utf8"))
+    .join("\n");
+}
+
 /** A fresh in-memory database with the production schema applied. */
 export function createTestDatabase(): TestDatabase {
   const database = new DatabaseSync(":memory:");
   database.exec("PRAGMA foreign_keys = ON;");
-  database.exec(readFileSync(join(ROOT, "migrations", "0001_init.sql"), "utf8"));
+  database.exec(migrationSql());
+
+  // D1 serialises batches per database. The in-process shim must do the same
+  // or concurrent callers hit "cannot start a transaction within a transaction".
+  let queue: Promise<unknown> = Promise.resolve();
 
   return {
     database,
     prepare: (sql) => new TestStatement(database, sql),
-    async batch(statements) {
-      const results: Array<{ success: boolean; results?: unknown[]; meta: { changes: number } }> = [];
-      database.exec("BEGIN");
-      try {
-        for (const statement of statements) results.push(await statement.run());
-        database.exec("COMMIT");
-      } catch (error) {
-        database.exec("ROLLBACK");
-        throw error;
-      }
-      return results;
+    batch(statements) {
+      const runBatch = async () => {
+        const results: Array<{ success: boolean; results?: unknown[]; meta: { changes: number } }> = [];
+        database.exec("BEGIN");
+        try {
+          for (const statement of statements) results.push(await statement.run());
+          database.exec("COMMIT");
+        } catch (error) {
+          database.exec("ROLLBACK");
+          throw error;
+        }
+        return results;
+      };
+      const next = queue.then(runBatch, runBatch);
+      queue = next.catch(() => undefined);
+      return next;
     },
     async exec(sql) {
       database.exec(sql);
@@ -122,6 +145,7 @@ type LeadSeed = {
   leadNumber?: string;
   name?: string;
   email?: string;
+  organization?: string | null;
   product?: string | null;
   enquiryType?: string;
   status?: string;
@@ -141,15 +165,16 @@ export async function insertLead(
   const createdAt = seed.createdAt ?? "2026-11-10T09:00:00.000Z";
   await env.LEADS_DB.prepare(
     `INSERT INTO leads (
-       id, lead_number, full_name, email, enquiry_type, product, message, status,
+       id, lead_number, full_name, email, organization, enquiry_type, product, message, status,
        assigned_to, next_action, next_follow_up_at, archived_at, created_at, updated_at
-     ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+     ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
   )
     .bind(
       id,
       seed.leadNumber ?? `BC-2026-${String(Math.floor(Math.random() * 900000) + 100000)}`,
       seed.name ?? "Test Contact",
       seed.email ?? `test-${id.slice(0, 6)}@example.com`,
+      seed.organization ?? null,
       seed.enquiryType ?? "general",
       seed.product === undefined ? "tillproof" : seed.product,
       "A test enquiry message.",

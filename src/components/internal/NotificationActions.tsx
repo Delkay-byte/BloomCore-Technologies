@@ -4,7 +4,15 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { staffFetch } from "@/lib/leads/staff-client";
 
-export function NotificationActions({ unreadCount }: { unreadCount: number }) {
+export function NotificationActions({
+  unreadCount,
+  canMarkRead,
+  canRetry,
+}: {
+  unreadCount: number;
+  canMarkRead: boolean;
+  canRetry: boolean;
+}) {
   const router = useRouter();
   const [pending, setPending] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
@@ -58,24 +66,36 @@ export function NotificationActions({ unreadCount }: { unreadCount: number }) {
     router.refresh();
   };
 
+  if (!canMarkRead && !canRetry) {
+    return (
+      <span className="inline-flex rounded-full bg-surface-2 px-2.5 py-1 text-[0.75rem] font-bold text-foreground ring-1 ring-inset ring-line-strong">
+        Read-only
+      </span>
+    );
+  }
+
   return (
     <div className="flex flex-wrap items-center gap-3">
-      <button
-        type="button"
-        disabled={pending !== null || unreadCount === 0}
-        onClick={markAll}
-        className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2 disabled:opacity-50"
-      >
-        {pending === "read" ? "Marking…" : "Mark all as read"}
-      </button>
-      <button
-        type="button"
-        disabled={pending !== null}
-        onClick={retry}
-        className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2 disabled:opacity-50"
-      >
-        {pending === "retry" ? "Retrying…" : "Retry failed emails"}
-      </button>
+      {canMarkRead && (
+        <button
+          type="button"
+          disabled={pending !== null || unreadCount === 0}
+          onClick={markAll}
+          className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2 disabled:opacity-50"
+        >
+          {pending === "read" ? "Marking…" : "Mark all as read"}
+        </button>
+      )}
+      {canRetry && (
+        <button
+          type="button"
+          disabled={pending !== null}
+          onClick={retry}
+          className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2 disabled:opacity-50"
+        >
+          {pending === "retry" ? "Retrying…" : "Retry failed emails"}
+        </button>
+      )}
       {notice && <span className="text-[0.875rem] text-foreground-subtle">{notice}</span>}
       {error && (
         <span role="alert" className="text-[0.875rem] text-foreground-subtle">

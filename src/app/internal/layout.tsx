@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { can, ROLE_LABELS } from "@/lib/leads/permissions";
 import { currentStaff } from "@/lib/leads/session";
 
 export const metadata: Metadata = {
@@ -9,13 +10,16 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-const NAV = [
-  { href: "/internal/leads", label: "Leads" },
-  { href: "/internal/notifications", label: "Notifications" },
-];
-
 export default async function InternalLayout({ children }: { children: React.ReactNode }) {
-  const { identity } = await currentStaff();
+  const { identity, staff } = await currentStaff();
+  const nav = [
+    { href: "/internal/leads", label: "Leads" },
+    { href: "/internal/notifications", label: "Notifications" },
+  ];
+  // Staff management is owner-only; the page itself re-checks the role.
+  if (staff && can(staff.role, "staff.manage")) {
+    nav.push({ href: "/internal/staff", label: "Staff" });
+  }
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-background">
@@ -34,7 +38,7 @@ export default async function InternalLayout({ children }: { children: React.Rea
             </span>
           </Link>
           <nav aria-label="Internal sections" className="flex items-center gap-1">
-            {NAV.map((item) => (
+            {nav.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -45,9 +49,21 @@ export default async function InternalLayout({ children }: { children: React.Rea
             ))}
           </nav>
           <div className="ml-auto flex items-center gap-4 text-[0.8125rem] text-accent-contrast/70">
-            {identity ? (
+            {staff ? (
+              <span className="flex items-center gap-2">
+                <span
+                  className="inline-flex rounded-full border border-accent-contrast/30 px-2 py-0.5 text-[0.6875rem] font-bold tracking-wide text-accent-contrast uppercase"
+                  title={staff.displayName ?? staff.email}
+                >
+                  {ROLE_LABELS[staff.role]}
+                </span>
+                <span className="max-w-[240px] truncate" title={staff.email}>
+                  {staff.email}
+                </span>
+              </span>
+            ) : identity ? (
               <span className="max-w-[240px] truncate" title={identity.email}>
-                {identity.email}
+                {identity.email} · not registered
               </span>
             ) : (
               <span>Not signed in</span>

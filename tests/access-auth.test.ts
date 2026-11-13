@@ -265,8 +265,9 @@ test("16. authentication errors expose no lead information", () => {
   const guard = readFileSync(join(ROOT, "src", "lib", "leads", "guard.ts"), "utf8");
   const message = "Sign in with the authorised BloomCore account.";
   assert.ok(guard.includes(`errorResponse("${message}", 401)`), "the 401 message must be static");
-  // The failure branch must not interpolate identity or lead fields.
-  const failBranch = guard.slice(guard.indexOf("if (!identity)"));
+  // The failure branch itself must not interpolate identity or lead fields.
+  const start = guard.indexOf("if (!identity)");
+  const failBranch = guard.slice(start, guard.indexOf("let staff", start));
   assert.doesNotMatch(failBranch, /identity\.|lead|email|payload/, "auth failure must not leak data");
 });
 

@@ -162,6 +162,89 @@ export function acknowledgementEmail(
   return { subject, html, text };
 }
 
+function formatDay(iso: string | null): string | null {
+  if (!iso) return null;
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return null;
+  return `${date.getUTCDate()} ${MONTHS[date.getUTCMonth()]} ${date.getUTCFullYear()}`;
+}
+
+/**
+ * Assignment / reassignment email.
+ *
+ * Carries only what the worker needs to act on the lead. Internal notes and the
+ * enquiry message are deliberately excluded; the secure console link requires
+ * an authenticated Access session.
+ */
+export function assignmentEmail(
+  lead: Pick<
+    LeadRow,
+    | "lead_number"
+    | "full_name"
+    | "organization"
+    | "enquiry_type"
+    | "product"
+    | "next_action"
+    | "next_follow_up_at"
+  >,
+  options: {
+    assigneeName: string;
+    assignerEmail: string | null;
+    reassigned: boolean;
+    dashboardUrl: string;
+  },
+): { subject: string; html: string; text: string } {
+  const firstName = options.assigneeName.split(/[\s@]/)[0] || options.assigneeName;
+  const subject = `${options.reassigned ? "Lead reassigned to you" : "New lead assigned to you"} — ${lead.lead_number}`;
+  const followUp = formatDay(lead.next_follow_up_at);
+  const assigner = options.assignerEmail ?? "BloomCore Technologies";
+
+  const lines = [
+    `Hello ${firstName},`,
+    "",
+    options.reassigned
+      ? `A lead has been reassigned to you by ${assigner}.`
+      : `A new lead has been assigned to you by ${assigner}.`,
+    "",
+    `Lead: ${lead.lead_number}`,
+    `Enquiry: ${categoryLabel(lead.enquiry_type)}`,
+    lead.organization ? `Organization: ${lead.organization}` : "",
+    `Prospect: ${lead.full_name}`,
+    lead.product ? `Product: ${productLabel(lead.product)}` : "",
+    lead.next_action ? `Next action: ${lead.next_action}` : "",
+    followUp ? `Follow-up: ${followUp}` : "",
+    "",
+    "Please sign in to the BloomCore Lead Desk to review and manage this opportunity.",
+    "",
+    `Open the assigned lead: ${options.dashboardUrl}`,
+    "",
+    "BloomCore Technologies",
+  ].filter((line) => line !== "");
+
+  const html = `<div style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#0a0a0a;line-height:1.6">
+  <p>Hello ${escapeHtml(firstName)},</p>
+  <p>${
+    options.reassigned
+      ? `A lead has been reassigned to you by ${escapeHtml(assigner)}.`
+      : `A new lead has been assigned to you by ${escapeHtml(assigner)}.`
+  }</p>
+  <table style="border-collapse:collapse;font-size:15px">
+    ${row("Lead", lead.lead_number)}
+    ${row("Enquiry", categoryLabel(lead.enquiry_type))}
+    ${row("Organization", lead.organization)}
+    ${row("Prospect", lead.full_name)}
+    ${row("Product", lead.product ? productLabel(lead.product) : "")}
+    ${row("Next action", lead.next_action)}
+    ${row("Follow-up", followUp)}
+  </table>
+  <p>Please sign in to the BloomCore Lead Desk to review and manage this opportunity.</p>
+  <p><a href="${escapeHtml(options.dashboardUrl)}" style="color:#0a0a0a">Open the assigned lead</a></p>
+  <p style="margin:12px 0 0;color:#6e6e6e;font-size:13px">The link requires signing in with your authorised BloomCore staff account.</p>
+</div>`;
+
+  return { subject, html, text: lines.join("\n") };
+}
+
 /** Plain payload used by the dashboard notification row. */
 export function notificationSummary(lead: Pick<LeadRow, "lead_number" | "full_name" | "enquiry_type">): string {
   return `${lead.lead_number} — ${lead.full_name} — ${categoryLabel(lead.enquiry_type)}`;
