@@ -720,6 +720,12 @@ Consequently, in production:
   re-read it, so neither the current count nor the effect of the fix on live data is claimed
   here.
 
+To make the cleanup a single reviewed step once D1 Edit is granted, the exact statement is
+committed as `scripts/cleanup-qa-lead.sql`. It deletes one row only when id, lead number and
+QA email all match, relies on the declared `ON DELETE CASCADE` for the disposable activity,
+note and notification rows, and leaves the lead-number sequence untouched. The header
+carries the verify-before, delete, and verify-after commands.
+
 #### 6.3.11 Security regression results
 
 | Check | Result | Evidence |
@@ -790,9 +796,11 @@ Commands and outcomes for the changed tree:
 
 #### 6.3.14 Remaining owner actions
 
-1. Grant the operator API token **D1: Read** and **D1: Edit**, then delete the authorised QA
-   lead `4664b654-e2bc-4051-b1c2-57b85a8b1486` and its dependents, verify the cascade, and
-   confirm the remaining lead count and the untouched sequence.
+1. Grant the operator API token **D1: Read** and **D1: Edit**, then run the verify-before,
+   delete and verify-after commands in `scripts/cleanup-qa-lead.sql`. It removes only
+   `4664b654-e2bc-4051-b1c2-57b85a8b1486` / `BC-2026-000001` /
+   `bloomcoretechnologies+qa-lead@gmail.com` and its dependents, then confirms the cascade,
+   the remaining lead count and the untouched sequence.
 2. While signed in to Access, walk the acceptance path on the deployed version: save owner,
    follow-up and next action separately and together; reload; confirm persistence and the
    UTC round-trip; clear a field and confirm it stays cleared; apply every filter and a
@@ -923,7 +931,8 @@ subscription or purchase action was taken.
 leads/[id]/notes,metrics,notifications,notifications/retry}/route.ts`; shared helpers
 `src/lib/leads/{filters,datetime,patch,staff-client,tracking}.ts`; tests
 `tests/{filters,datetime,patch,tracking,console-routing,d1-repository,notifications}.test.ts`
-and the harness `tests/helpers/{d1.ts,register.mjs}`.
+and the harness `tests/helpers/{d1.ts,register.mjs}`; the authorised QA cleanup statement
+`scripts/cleanup-qa-lead.sql`.
 
 **Changed — revision 4:** `src/app/api/internal/{leads/[id],notifications,export}/route.ts`,
 `src/app/internal/{leads,notifications}/page.tsx`,
