@@ -460,8 +460,9 @@ machine unless a sentence says otherwise.
 | Wrangler / OpenNext | 4.160.0 / 1.20.16 |
 
 The deploy was **not** built with `NETLIFY=true`. A dry run of the same worker reports
-`env.LEADS_DB (bloomcore-leads-prod) D1 Database` as its binding. `main` is unchanged and
-this branch was not force-pushed; it has not been merged or pushed.
+`env.LEADS_DB (bloomcore-leads-prod) D1 Database` as its binding. The branch is pushed
+(`origin/fix/lead-management-defects`) and fast-forward merged into `main` at `9e7c4d5`, so
+the production branch contains the deployed commit. Nothing was force-pushed.
 
 #### 6.3.2 Follow-up save failure — root cause
 
@@ -755,6 +756,10 @@ commit `6e31231`, deployed with `npx opennextjs-cloudflare build` followed by
 The canonical link and `robots: index, follow` are present in the served HTML. The GA4
 loader is present in the client chunks and absent from the HTML.
 
+Re-checked after the branch push on 13 November: `wrangler deployments list` still reports
+`9b818757-71fa-4278-afdb-7da7442e618c` at 100% of traffic, and the three Access challenges
+above still carry the same `kid` values, so no redeploy was needed.
+
 #### 6.3.13 Live browser acceptance evidence
 
 **No authenticated browser journey was performed, and none is claimed.** This environment
@@ -796,7 +801,9 @@ Commands and outcomes for the changed tree:
 3. In GA4 DebugView, confirm one `generate_lead` for one real enquiry, none for a repeat
    submission, and the four allowlisted parameters only.
 4. Confirm Resend inbox delivery, unchanged from Revision 3.
-5. Merge `fix/lead-management-defects` after the above; nothing has been pushed.
+
+The branch is already pushed and merged into `main`; no further repository step is required
+from the owner.
 
 **Status for §6.3: AMBER.** The three defects have identified root causes, code fixes and
 regression coverage, and the corrections are live. The remaining gap is verification that
