@@ -1,5 +1,5 @@
 import { errorResponse } from "@/lib/http";
-import { requireStaff } from "@/lib/leads/guard";
+import { denyUnless, requireStaff } from "@/lib/leads/guard";
 import { buildLeadWhere } from "@/lib/leads/filters";
 import {
   actorLabel,
@@ -36,6 +36,13 @@ function csvCell(value: unknown): string {
 export async function GET(request: Request): Promise<Response> {
   const guard = await requireStaff(request);
   if (!guard.ok) return guard.response;
+
+  const denied = denyUnless(
+    guard,
+    "leads.export",
+    "Only the owner can export lead data.",
+  );
+  if (denied) return denied;
 
   const params = new URL(request.url).searchParams;
   const filters: LeadFilters = {

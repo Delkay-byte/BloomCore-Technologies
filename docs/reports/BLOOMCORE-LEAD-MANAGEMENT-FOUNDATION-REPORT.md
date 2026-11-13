@@ -36,6 +36,15 @@
 > `fix/lead-management-defects`; 102 tests pass against the real schema. Two production
 > steps remain unperformed and are named in §6.3.10 and §6.3.13: no authenticated browser
 > session was available, and the D1 token still returns `7403`. Overall **AMBER**. See §6.3.
+>
+> **Revision 5 — multi-user Lead Desk (13 Nov 2026).** Adds server-resolved roles
+> (`owner`, `accountant_read_only`, `staff_member`), owner-only staff management, scoped
+> lists/metrics/notifications, an accountant read-only console, and assignment/reassignment
+> email queued atomically with the assignment. The blocked part is deployment: the remote
+> D1 migration still fails with `7403`, and deploying code that reads the new
+> `staff.active` and `notifications.payload` columns before applying `0002` would break
+> production. The working tree is therefore **not deployed**. 137 tests, typecheck, lint and
+> the OpenNext build all pass locally. Overall **AMBER**. See §6.4.
 
 ## 1. Objective
 
@@ -818,6 +827,162 @@ regression coverage, and the corrections are live. The remaining gap is verifica
 needs the owner's Access and Google sessions, plus the D1 permission that blocks the
 authorised QA cleanup.
 
+### 6.4 Multi-user Lead Desk — 13 November 2026
+
+The brief asked for an accountant read-only account, individual worker accounts,
+server-enforced permissions, assignment emails, correct staff names, verified unique lead
+numbering, and no regression to the existing desk. The code and tests are complete; the
+remote schema step and therefore the deploy are blocked (§6.4.6).
+
+#### 6.4.1 Roles and server enforcement
+
+A role is never read from the browser. `requireStaff` verifies the Access JWT, resolves the
+verified email against `LEAD_OWNER_EMAILS` (falling back to `LEAD_NOTIFICATION_EMAIL`) and
+the trusted `staff` table, then returns a `StaffAccess`. An authenticated email with no
+active staff record gets `403`, not a default role. A role stored under an unknown name also
+resolves to no access; only the legacy `member`/`staff` aliases map to `staff_member` (and
+`accountant`/`read_only` to the accountant). Stray aliases such as `admin` are rejected
+rather than promoted to owner.
+
+| Capability | Owner | Accountant (`accountant_read_only`) | Worker (`staff_member`) |
+| --- | --- | --- | --- |
+| View all leads, notes, activity | yes | yes | assigned leads only |
+| Metrics / notifications | all | all, read-only | own assignments only |
+| Update stage, follow-up, next action | yes | **403** | yes, on assigned leads |
+| Add notes | yes | **403** | yes, on assigned leads |
+| Assign / reassign | yes | **403** | **403** |
+| Archive | yes | **403** | **403** |
+| CSV export | yes | **403** | **403** |
+| Retry delivery | yes | **403** | **403** |
+| Manage staff and roles | yes | **403** | **403** |
+
+The single matrix lives in `src/lib/leads/permissions.ts`; every route calls `denyUnless`,
+and the guard also checks `canViewLead` on lead detail, notes and PATCH. Hiding a control in
+the console is presentation only — a direct request with a valid Access session receives
+`403`. Notification read state is scoped in SQL: owner all, worker only notifications for
+assigned leads, accountant read-only. A worker cannot mark another worker's notification
+read.
+
+Staff management is owner-only at `/internal/staff` (with the `/api/internal/staff` twin).
+The owner can add a name, email and role, change the display name or role, and deactivate or
+reactivate. Validation refuses unknown or inactive assignees; nothing auto-creates a staff
+row from an assignment. Configuration-backed owner accounts are shown but not editable.
+Every staff create/update is written to `staff_audit` with the actor.
+
+#### 6.4.2 Schema — `migrations/0002_staff_and_assignment.sql`
+
+- `staff.active` (default `1`) and `staff.updated_at` (backfilled from `created_at`).
+- `staff_audit (id, staff_id, action, detail, actor, created_at)` with an index on
+  `(staff_id, created_at DESC)` and `ON DELETE CASCADE`.
+- `notifications.payload` for the assignee name, assigner, reassignment flag and previous
+  assignee needed by the assignment email.
+- `idx_leads_assigned` and `idx_notifications_created` for the worker scopes.
+
+The test harness now applies every migration in filename order, so the suite runs against
+the current schema rather than only `0001`.
+
+#### 6.4.3 Assignment email and in-app notification
+
+An assignment change queues two rows in the **same D1 batch** as the `leads` update: one
+`email` row (`pending`) and one `dashboard` row (`sent`). The assignment and its durable
+notification therefore commit together or not at all. Delivery is a later best-effort
+`drainOutbox`; a Resend failure leaves the email `pending`/`failed` for the existing owner
+“Retry failed emails” action and never rolls the assignment back.
+
+- Assigning an unassigned lead sends one email to the new worker.
+- Reassigning sends one email to the **new** worker and none to the previous worker.
+- Re-saving the same assignment (including a different letter case) creates no new email,
+  activity row or notification.
+- A follow-up/next-action-only edit sends no assignment email.
+- The email contains the lead number, prospect name, organisation, product, next action,
+  follow-up date and a direct `/internal/leads/<id>` link. It never includes internal notes.
+- The in-app assignment notification appears in the worker's scoped notification list.
+
+#### 6.4.4 Lead numbering
+
+Numbers still come from the `sequences` table, never `COUNT(*) + 1`, and cleanup never
+resets the sequence. Regression coverage now proves:
+
+- sequence at `6` → next lead `BC-2026-000007` and sequence `7`;
+- a duplicate submission or same idempotency key returns the original lead and consumes no
+  number;
+- deleting the newest lead does not reuse its number (`000001` deleted → next `000002`);
+- a forced insert failure leaves a gap (`000002` is next), so a number is never reused;
+- 12 concurrent submissions receive 12 unique numbers.
+
+The in-memory test harness serialises `batch()` the way D1 serialises batches, which is why
+the concurrent test is meaningful.
+
+#### 6.4.5 Verification run
+
+| Command | Outcome |
+| --- | --- |
+| `npx tsc --noEmit` | exit 0 |
+| `npm run lint` | exit 0 |
+| `npm test` | **137 pass, 0 fail** |
+| `npx opennextjs-cloudflare build` | exit 0; worker written to `.open-next/worker.js`; `/internal/staff` present in the route manifest |
+| `npx wrangler deploy --dry-run --outdir .open-next/dry-run` | exit 0; `LEADS_DB` bound; `LEAD_OWNER_EMAILS`, both Access audiences and both allowlists resolved |
+| `npx wrangler d1 migrations list LEADS_DB --remote` | **failed** with `[code: 7403]` (§6.4.6) |
+| `npx wrangler deploy` | **not run**, because `0002` is not applied remotely |
+
+Test breakdown: 10 domain, 26 Access auth, 14 filters, 4 datetime, 7 tracking, 13 patch,
+7 console routing, 15 repository, 6 notifications, **9 permissions, 8 staff, 7 assignment,
+6 numbering, 5 scoping**. The assignment suite covers one email plus one dashboard row,
+no duplicate on an unchanged save, none on a follow-up-only edit, reassignment to the new
+worker only, a successful Resend call, a transient `500` that stays retryable with the
+assignment intact, and a terminal `422` recorded without rolling back.
+
+No authenticated browser session was available, so the accountant read-only console, the
+worker-scoped list and the staff screen were not clicked through in production. Their
+behaviour is covered by route/guard tests and static console assertions, not by a live
+journey.
+
+#### 6.4.6 Deployment blocked, and the exact owner actions
+
+`npx wrangler d1 migrations list LEADS_DB --remote` still fails before any statement runs:
+
+```
+The given account is not valid or is not authorized to access this service [code: 7403]
+```
+
+The token can deploy Workers but has no **D1: Read/Edit**, so `0002` cannot be applied from
+here. Deploying the new Worker first is unsafe: `staff.active`, `staff.updated_at` and
+`notifications.payload` would be missing and staff resolution, assignment and notification
+queries would fail. Nothing was bypassed and production was not touched.
+
+Owner sequence:
+
+1. Grant the operator token **D1: Read** and **D1: Edit**.
+2. Apply the migration: `npx wrangler d1 migrations apply LEADS_DB --remote` (expect
+   `0002_staff_and_assignment.sql`).
+3. Confirm the live numbering baseline: read the newest `lead_number` and the
+   `lead_number` sequence, then submit or create one lead and confirm it is the next number
+   (`…000006` stored → `…000007` next), with no reset.
+4. Add every staff email (and the accountant's) to **both** Access applications' Allow
+   policies **and** to `INTERNAL_ALLOWED_EMAILS`; otherwise Access returns `401`/`403`
+   before the app sees them.
+5. Deploy: `npx opennextjs-cloudflare build` then `npx wrangler deploy`.
+6. Provision the accountant from `/internal/staff` once the email is known, then sign in as
+   that account and confirm the read-only console and a direct `403` on a mutation.
+7. Sign in as a worker and confirm only assigned leads, permitted edits and no export /
+   assignment / staff controls.
+
+`LEAD_OWNER_EMAILS=bloomcoretechnologies@gmail.com` is set in `wrangler.jsonc` (and
+`.dev.vars` locally); `LEAD_NOTIFICATION_EMAIL` remains the fallback so a deployment that
+omits the new variable cannot lock the owner out. The accountant's address was not supplied
+and no address was invented.
+
+#### 6.4.7 Limits of this revision
+
+- Not committed and not deployed: all changes are working-tree edits on
+  `fix/lead-management-defects`.
+- No production read/write was possible (`7403`), so live sequence state, the real staff
+  table and existing lead assignments were not inspected.
+- Assignment email delivery was verified against a stubbed Resend transport, not a live
+  inbox.
+- Access policy membership cannot be read with the current token; adding staff emails is an
+  owner action.
+
 ## 7. Owner action checklist
 
 The code is complete, committed on `feat/lead-management-foundation` and deployed from
@@ -887,7 +1052,8 @@ ephemeral build only, keeping the fallback build green.
 
 | Area | Status | Note |
 | --- | --- | --- |
-| Code, schema, tests, builds | GREEN | Type, lint, 102 tests, OpenNext build and `wrangler deploy --dry-run` all pass; Netlify export build re-verified after the prune fix. |
+| Code, schema, tests, builds | GREEN | Type, lint, **137 tests**, OpenNext build and `wrangler deploy --dry-run` all pass; Netlify export build re-verified after the prune fix. |
+| Multi-user roles (revision 5) | GREEN (code) / AMBER (deploy) | Owner/accountant/worker enforced by one server-side matrix; owner-only staff management, assignment/reassignment email and scoped notifications are tested. Remote `0002` migration still fails with `7403`, so the revision is undeployed. |
 | Production deployment | GREEN | Worker `bloomcore-technologies-page`, version `9b818757-71fa-4278-afdb-7da7442e618c`, 13 Nov 2026, 100% of traffic, from commit `6e31231`. |
 | `/internal` routing | GREEN | Root cause was the stale 11 Nov deployment; `/internal` now `307` → `/internal/leads`, and unauthenticated requests hit Access first. |
 | Cloudflare Access | GREEN | Both apps verified live with distinct AUDs (`…e539cbaf`, `…3ce614a6`); fail-closed `401` on the Worker host. Policy/MFA is dashboard-side. |
@@ -898,15 +1064,17 @@ ephemeral build only, keeping the fallback build green.
 | Resend email | AMBER | Records present in Resend's CNAME style; actual inbox delivery not yet confirmed. |
 | Dashboard, GA4 live checks | AMBER | Need the owner's Access and Google sessions (in-app browser has neither). |
 
-**Overall: AMBER — three defects fixed, tested and deployed; owner-side verification and the
-authorised QA cleanup remain.** The exact limitation: no Cloudflare Access session exists in
-this environment, so no authenticated journey (save, filters, notification counts) was run in
-a real browser, and GA4 DebugView was not opened; separately, the D1 token returns
-`7403`, so the authorised QA lead could not be deleted and remaining production counts could
-not be read. Nothing was bypassed and no production row was altered. Deployed to production.
-Remaining owner actions: grant D1 Read/Edit, delete the QA lead and verify the cascade, walk
-the signed-in acceptance path, confirm GA4 DebugView, and confirm Resend delivery. No DNS,
-subscription or purchase action was taken.
+**Overall: AMBER.** Revision 4's three defect fixes remain live. Revision 5's multi-user
+Lead Desk is complete and green locally (137 tests, typecheck, lint, OpenNext build) but is
+**not deployed**: the remote D1 migration still returns `7403`, and deploying before
+`0002` would break the new staff/assignment code. No Cloudflare Access session exists in
+this environment, so neither the earlier signed-in acceptance path nor the new accountant
+and worker journeys were run in a real browser; GA4 DebugView was not opened; Resend
+delivery was tested against a stub. Nothing was bypassed and no production row was altered.
+Remaining owner actions: grant D1 Read/Edit, apply `0002` remotely, verify the live numbering
+baseline, add staff/accountant emails to both Access policies and
+`INTERNAL_ALLOWED_EMAILS`, deploy, provision the accountant, and confirm the worker and
+GA4/Resend checks. No DNS, subscription or purchase action was taken.
 
 ## 10. Files
 
@@ -939,6 +1107,20 @@ and the harness `tests/helpers/{d1.ts,register.mjs}`; the authorised QA cleanup 
 `src/components/internal/{LeadActions,NotificationActions}.tsx`,
 `src/components/{ContactForm,QuickEnquiry}.tsx`, `src/lib/leads/{auth,guard,domain,
 repository,notifications}.ts`, `tests/access-auth.test.ts`, `package.json`.
+
+**Added — revision 5:** `migrations/0002_staff_and_assignment.sql`;
+`src/lib/leads/{permissions,staff}.ts`; `src/app/internal/staff/page.tsx`;
+`src/app/internal/api/staff/route.ts` and `src/app/internal/api/staff/[id]/route.ts`;
+`src/app/api/internal/staff/route.ts` and `src/app/api/internal/staff/[id]/route.ts`;
+`src/components/internal/StaffManager.tsx`; tests `tests/{permissions,staff,assignment,
+numbering,scoping}.test.ts`.
+
+**Changed — revision 5:** `src/lib/leads/{guard,session,repository,notifications,db}.ts`,
+`src/lib/email/templates.ts`, every `src/app/api/internal/**` route,
+`src/app/internal/{layout.tsx,leads/page.tsx,leads/[id]/page.tsx,notifications/page.tsx}`,
+`src/components/internal/{LeadActions,NotificationActions}.tsx`, `tests/helpers/d1.ts`,
+`tests/{access-auth,console-routing}.test.ts`, `package.json`, `wrangler.jsonc` (adds
+`LEAD_OWNER_EMAILS`), `.dev.vars` (local only).
 
 **Added — shell and tests:** `src/components/SiteChrome.tsx`, `src/app/(site)/layout.tsx`,
 `tests/domain.test.ts`, `tests/access-auth.test.ts`, `docs/plans/lead-management-foundation.md`,

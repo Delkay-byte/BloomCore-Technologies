@@ -11,6 +11,7 @@ import {
 } from "@/lib/leads/domain";
 import { getMetrics, listLeads, type LeadFilters } from "@/lib/leads/repository";
 import { hasActiveFilters } from "@/lib/leads/filters";
+import { can, leadScopeEmail } from "@/lib/leads/permissions";
 import { currentStaff } from "@/lib/leads/session";
 
 export const dynamic = "force-dynamic";
@@ -55,8 +56,13 @@ function Metric({ label, value }: { label: string; value: number }) {
 }
 
 export default async function LeadsPage({ searchParams }: { searchParams: SearchParams }) {
-  const { env, identity } = await currentStaff();
+  const { env, identity, staff } = await currentStaff();
   if (!identity) return <ConsoleSignInRequired />;
+  if (!staff) {
+    return (
+      <ConsoleSignInRequired detail="This account is not registered for the BloomCore Lead Desk. Ask the owner to add it before signing in again." />
+    );
+  }
 
   const params = await searchParams;
   const filters: LeadFilters = {
@@ -78,9 +84,12 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
     pageSize: 25,
   };
 
+  // Workers only ever see their own assignment, even if the URL names another
+  // owner; owners and the accountant are unrestricted.
+  const scope = leadScopeEmail(staff.role, staff.email);
   const [{ rows, total, totalUnfiltered, dateError }, metrics] = await Promise.all([
-    listLeads(env, filters),
-    getMetrics(env),
+    listLeads(env, filters, { assignedTo: scope }),
+    getMetrics(env, { assignedTo: scope }),
   ]);
 
   const totalPages = Math.max(1, Math.ceil(total / 25));
@@ -135,12 +144,14 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
               </span>
             )}
           </Link>
-          <a
-            href={exportHref}
-            className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2"
-          >
-            Export CSV
-          </a>
+          {can(staff.role, "leads.export") && (
+            <a
+              href={exportHref}
+              className="inline-flex h-10 items-center rounded-[7px] border border-line-strong px-4 text-[0.875rem] font-semibold text-foreground transition-colors hover:bg-surface-2"
+            >
+              Export CSV
+            </a>
+          )}
         </div>
       </div>
 
@@ -153,7 +164,9 @@ export default async function LeadsPage({ searchParams }: { searchParams: Search
         <Metric label="Archived" value={metrics.archived} />
       </div>
       <p className="mt-2 text-[0.75rem] text-foreground-faint">
-        Overview counts describe the whole pipeline, not the filtered list below.
+        {scope
+          ? "Overview counts describe the leads assigned to you, not the filtered list below."
+          : "Overview counts describe the whole pipeline, not the filtered list below."}
       </p>
 
       <form

@@ -1,5 +1,6 @@
 import { errorResponse, json } from "@/lib/http";
 import { requireStaff } from "@/lib/leads/guard";
+import { leadScopeEmail } from "@/lib/leads/permissions";
 import { listLeads, type LeadFilters } from "@/lib/leads/repository";
 
 export const dynamic = "force-dynamic";
@@ -26,7 +27,9 @@ export async function GET(request: Request): Promise<Response> {
   };
 
   try {
-    const { rows, total } = await listLeads(guard.env, filters);
+    const { rows, total } = await listLeads(guard.env, filters, {
+      assignedTo: leadScopeEmail(guard.staff.role, guard.staff.email),
+    });
     return json({ ok: true, leads: rows, total, page: filters.page, pageSize: filters.pageSize });
   } catch {
     return errorResponse("The lead list could not be loaded.", 500);

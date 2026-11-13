@@ -8,6 +8,7 @@ import {
   type PipelineStage,
 } from "./domain";
 import { buildLeadWhere, orderFor, type LeadFilters } from "./filters";
+import { findStaffByEmail } from "./staff";
 
 export type { LeadFilters } from "./filters";
 
@@ -69,6 +70,7 @@ export type NotificationRow = {
   attempt_count: number;
   last_attempt_at: string | null;
   failure_reason: string | null;
+  payload: string | null;
   read_at: string | null;
   created_at: string;
   updated_at: string;
@@ -237,10 +239,16 @@ export async function createLead(
 export async function listLeads(
   env: LeadEnv,
   filters: LeadFilters,
+  options: { assignedTo?: string } = {},
 ): Promise<{ rows: LeadRow[]; total: number; totalUnfiltered: number; dateError?: string }> {
   const database = env.LEADS_DB;
-  const where = buildLeadWhere(filters);
-  const pageSize = Math.min(100, Math.max(5, filters.pageSize ?? 25));
+  // A staff member's scope is applied after their own filter choices, so a
+  // hand-edited `?owner=` URL can never widen it to another worker's leads.
+  const scoped: LeadFilters = options.assignedTo
+    ? { ...filters, assigned: options.assignedTo }
+    : filters;
+  const where = buildLeadWhere(scoped);
+  const pageSize = Math.min(100, Math.max(5, scoped.pageSize ?? 25));
 
   // Count first so a stale `?page=` beyond the last page shows real rows
   // instead of an empty table with a "Page 4 of 1" label.
@@ -251,23 +259,24 @@ export async function listLeads(
     first<{ total: number }>(
       database
         .prepare(
-          filters.archived
-            ? "SELECT COUNT(*) AS total FROM leads WHERE archived_at IS NOT NULL"
-            : "SELECT COUNT(*) AS total FROM leads WHERE archived_at IS NULL",
-        ),
+          scoped.archived
+            ? `SELECT COUNT(*) AS total FROM leads WHERE archived_at IS NOT NULL${options.assignedTo ? " AND lower(coalesce(assigned_to,'')) = ?" : ""}`
+            : `SELECT COUNT(*) AS total FROM leads WHERE archived_at IS NULL${options.assignedTo ? " AND lower(coalesce(assigned_to,'')) = ?" : ""}`,
+        )
+        .bind(...(options.assignedTo ? [options.assignedTo.toLowerCase()] : [])),
     ),
   ]);
 
   const total = countRow?.total ?? 0;
   const totalPages = Math.max(1, Math.ceil(total / pageSize));
-  const page = Math.min(Math.max(1, filters.page ?? 1), totalPages);
+  const page = Math.min(Math.max(1, scoped.page ?? 1), totalPages);
   const offset = (page - 1) * pageSize;
 
   const rows = await all<LeadRow>(
     database
       .prepare(
         `SELECT * FROM leads WHERE ${where.sql}
-         ORDER BY ${orderFor(filters.sort)} LIMIT ? OFFSET ?`,
+         ORDER BY ${orderFor(scoped.sort)} LIMIT ? OFFSET ?`,
       )
       .bind(...where.params, pageSize, offset),
   );
@@ -345,6 +354,38 @@ export async function touchLead(database: D1Database, leadId: string): Promise<v
   );
 }
 
+/** Prepared INSERT for one notification/outbox row. */
+function notification(
+  database: D1Database,
+  input: {
+    leadId: string;
+    type: string;
+    recipient: string;
+    channel: string;
+    subject: string;
+    payload: string | null;
+    timestamp: string;
+  },
+): D1PreparedStatement {
+  return database
+    .prepare(
+      `INSERT INTO notifications (id, lead_id, type, recipient, channel, subject, status, payload, created_at, updated_at)
+       VALUES (?,?,?,?,?,?,?,?,?,?)`,
+    )
+    .bind(
+      crypto.randomUUID(),
+      input.leadId,
+      input.type,
+      input.recipient,
+      input.channel,
+      input.subject,
+      input.channel === "dashboard" ? "sent" : "pending",
+      input.payload,
+      input.timestamp,
+      input.timestamp,
+    );
+}
+
 /** Prepared INSERT for one activity-history row. */
 function activity(
   database: D1Database,
@@ -415,19 +456,56 @@ export async function updateLead(
   // Only changed values are written. Re-saving the same owner/follow-up must
   // not append duplicate activity rows or bump updated_at for nothing.
   if (patch.assignedTo !== undefined) {
-    const nextAssignee = patch.assignedTo || null;
-    if (nextAssignee !== current.assigned_to) {
+    const nextAssignee = patch.assignedTo ? patch.assignedTo.trim().toLowerCase() : null;
+    if (nextAssignee !== (current.assigned_to ? current.assigned_to.toLowerCase() : null)) {
       sets.push("assigned_to = ?");
       params.push(nextAssignee);
+
+      const assignee = nextAssignee ? await findStaffByEmail(database, nextAssignee) : null;
+      const assigneeName = assignee?.display_name ?? nextAssignee;
       statements.push(activity(
         database,
         id,
         "assigned",
-        nextAssignee ? `Assigned to ${nextAssignee}` : "Unassigned",
-        null,
+        nextAssignee ? `Assigned to ${assigneeName}` : "Unassigned",
+        nextAssignee ? `Worker account: ${nextAssignee}` : null,
         actor,
         timestamp,
       ));
+
+      // The email and the in-app entry are queued in the same batch as the
+      // assignment itself. Either the assignment and its notification both
+      // commit, or neither does — an assignment is never treated as notified
+      // when no durable record exists. Delivery happens later and can be
+      // retried, so a Resend outage never rolls the assignment back.
+      if (nextAssignee) {
+        const payload = JSON.stringify({
+          assigneeName: assignee?.display_name ?? null,
+          assigner: actor,
+          reassigned: Boolean(current.assigned_to),
+          previousAssignee: current.assigned_to,
+        });
+        statements.push(
+          notification(database, {
+            leadId: id,
+            type: "assignment",
+            recipient: nextAssignee,
+            channel: "email",
+            subject: `${current.assigned_to ? "Lead reassigned" : "New lead assigned"} — ${current.lead_number}`,
+            payload,
+            timestamp,
+          }),
+          notification(database, {
+            leadId: id,
+            type: "assignment",
+            recipient: "dashboard",
+            channel: "dashboard",
+            subject: `${current.lead_number} assigned to ${assigneeName}`,
+            payload,
+            timestamp,
+          }),
+        );
+      }
     }
   }
 
@@ -540,38 +618,48 @@ export type LeadMetrics = {
   byStage: Record<string, number>;
 };
 
-export async function getMetrics(env: LeadEnv): Promise<LeadMetrics> {
+export async function getMetrics(
+  env: LeadEnv,
+  options: { assignedTo?: string } = {},
+): Promise<LeadMetrics> {
   const database = env.LEADS_DB;
   const weekAgo = new Date(Date.now() - 7 * 86_400_000).toISOString();
   const now = new Date().toISOString();
 
+  // A worker's dashboard describes their own workload, not the company's.
+  const scopeClause = options.assignedTo ? " AND lower(coalesce(assigned_to,'')) = ?" : "";
+  const scopeParams = options.assignedTo ? [options.assignedTo.toLowerCase()] : [];
+  const unreadScope = options.assignedTo
+    ? " AND EXISTS (SELECT 1 FROM leads l WHERE l.id = notifications.lead_id AND lower(coalesce(l.assigned_to,'')) = ?)"
+    : "";
+
   const [byStageRows, totalRow, weekRow, followUpRow, unreadRow, archivedRow] = await Promise.all([
     all<{ status: string; count: number }>(
-      database.prepare("SELECT status, COUNT(*) AS count FROM leads WHERE archived_at IS NULL GROUP BY status"),
+      database.prepare(`SELECT status, COUNT(*) AS count FROM leads WHERE archived_at IS NULL${scopeClause} GROUP BY status`).bind(...scopeParams),
     ),
     first<{ total: number }>(
-      database.prepare("SELECT COUNT(*) AS total FROM leads WHERE archived_at IS NULL"),
+      database.prepare(`SELECT COUNT(*) AS total FROM leads WHERE archived_at IS NULL${scopeClause}`).bind(...scopeParams),
     ),
     first<{ count: number }>(
       database
-        .prepare("SELECT COUNT(*) AS count FROM leads WHERE archived_at IS NULL AND created_at >= ?")
-        .bind(weekAgo),
+        .prepare(`SELECT COUNT(*) AS count FROM leads WHERE archived_at IS NULL AND created_at >= ?${scopeClause}`)
+        .bind(weekAgo, ...scopeParams),
     ),
     first<{ count: number }>(
       database
         .prepare(
           `SELECT COUNT(*) AS count FROM leads
-           WHERE archived_at IS NULL AND next_follow_up_at IS NOT NULL AND next_follow_up_at <= ?`,
+           WHERE archived_at IS NULL AND next_follow_up_at IS NOT NULL AND next_follow_up_at <= ?${scopeClause}`,
         )
-        .bind(now),
+        .bind(now, ...scopeParams),
     ),
     // The badge and the notifications page both count every unread row, not a
     // page-sized slice, so the two surfaces can never disagree.
     first<{ count: number }>(
-      database.prepare("SELECT COUNT(*) AS count FROM notifications WHERE read_at IS NULL"),
+      database.prepare(`SELECT COUNT(*) AS count FROM notifications WHERE read_at IS NULL${unreadScope}`).bind(...scopeParams),
     ),
     first<{ count: number }>(
-      database.prepare("SELECT COUNT(*) AS count FROM leads WHERE archived_at IS NOT NULL"),
+      database.prepare(`SELECT COUNT(*) AS count FROM leads WHERE archived_at IS NOT NULL${scopeClause}`).bind(...scopeParams),
     ),
   ]);
 

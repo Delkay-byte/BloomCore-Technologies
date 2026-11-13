@@ -40,6 +40,13 @@ export function clientIp(request: Request): string {
   );
 }
 
+/** Treat any JSON value that is not an object as an empty body. */
+export function asRecord(value: unknown): Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
 export async function readJsonBounded(
   request: Request,
   maxBytes: number,
