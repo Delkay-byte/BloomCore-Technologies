@@ -41,6 +41,7 @@ export default async function NotificationsPage() {
   // accountant see the whole history. A COUNT over the scoped table, not a
   // count of the 100 rows shown, keeps every badge in agreement.
   const scope = notificationScopeEmail(staff.role, staff.email);
+  const canMarkRead = can(staff.role, "notifications.mark_read");
   const unreadCount = await countUnreadNotifications(env, { assignedTo: scope });
   const notifications = await listNotifications(env, { limit: 100, assignedTo: scope });
 
@@ -55,7 +56,7 @@ export default async function NotificationsPage() {
         </div>
         <NotificationActions
           unreadCount={unreadCount}
-          canMarkRead={can(staff.role, "notifications.mark_read")}
+          canMarkRead={canMarkRead}
           canRetry={can(staff.role, "notifications.retry")}
         />
       </div>
@@ -103,7 +104,9 @@ export default async function NotificationsPage() {
                     {notification.status}
                   </span>
                   {notification.lead_id &&
-                    (notification.read_at ? (
+                    (notification.read_at || !canMarkRead ? (
+                      // A read-only accountant may not mark notifications read,
+                      // but must still be able to open the lead they describe.
                       <Link
                         href={`/internal/leads/${notification.lead_id}`}
                         className="text-[0.875rem] font-semibold text-foreground underline underline-offset-4"

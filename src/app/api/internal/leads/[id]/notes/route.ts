@@ -1,4 +1,4 @@
-import { errorResponse, json, readJsonBounded } from "@/lib/http";
+import { asRecord, errorResponse, json, readJsonBounded } from "@/lib/http";
 import { denyUnless, requireStaff } from "@/lib/leads/guard";
 import { canViewLead } from "@/lib/leads/permissions";
 import { addNote, actorLabel, getLeadDetail } from "@/lib/leads/repository";
@@ -23,7 +23,7 @@ export async function POST(request: Request, context: Context): Promise<Response
   const body = await readJsonBounded(request, 16 * 1024);
   if (!body.ok) return errorResponse("The note could not be read.", 400);
 
-  const raw = body.value as Record<string, unknown>;
+  const raw = asRecord(body.value);
   const text = typeof raw.body === "string" ? raw.body.trim() : "";
   if (text.length < 2) return errorResponse("Write something before saving the note.", 422);
   if (text.length > LIMITS.noteMax) {

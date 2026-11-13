@@ -1,4 +1,4 @@
-import { errorResponse, json, readJsonBounded } from "@/lib/http";
+import { asRecord, errorResponse, json, readJsonBounded } from "@/lib/http";
 import { denyUnless, requireStaff } from "@/lib/leads/guard";
 import { notificationScopeEmail } from "@/lib/leads/permissions";
 import {
@@ -15,16 +15,22 @@ export async function GET(request: Request): Promise<Response> {
   if (!guard.ok) return guard.response;
 
   const params = new URL(request.url).searchParams;
+  const requestedLimit = Number(params.get("limit") ?? "50");
+  const limit = Number.isFinite(requestedLimit) ? requestedLimit : 50;
   const assignedTo = notificationScopeEmail(guard.staff.role, guard.staff.email);
-  const [notifications, unread] = await Promise.all([
-    listNotifications(guard.env, {
-      unreadOnly: params.get("unread") === "1",
-      limit: Number(params.get("limit") ?? "50") || 50,
-      assignedTo,
-    }),
-    countUnreadNotifications(guard.env, { assignedTo }),
-  ]);
-  return json({ ok: true, notifications, unread });
+  try {
+    const [notifications, unread] = await Promise.all([
+      listNotifications(guard.env, {
+        unreadOnly: params.get("unread") === "1",
+        limit,
+        assignedTo,
+      }),
+      countUnreadNotifications(guard.env, { assignedTo }),
+    ]);
+    return json({ ok: true, notifications, unread });
+  } catch {
+    return errorResponse("Notifications could not be loaded.", 500);
+  }
 }
 
 export async function PATCH(request: Request): Promise<Response> {
@@ -43,7 +49,7 @@ export async function PATCH(request: Request): Promise<Response> {
   if (!body.ok) return errorResponse("The change could not be read.", 400);
 
   const assignedTo = notificationScopeEmail(guard.staff.role, guard.staff.email);
-  const raw = body.value as Record<string, unknown>;
+  const raw = asRecord(body.value);
   if (raw.all === true) {
     const marked = await markAllNotificationsRead(guard.env, { assignedTo });
     // The post-change count is authoritative; the UI never guesses.

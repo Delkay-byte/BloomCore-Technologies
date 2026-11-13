@@ -155,7 +155,9 @@ export function resolveStaffAccess(
   if (!record) return null;
   if (record.active === 0 || record.active === false) return null;
   const role = normalizeRole(record.role);
-  if (!role) return null;
+  // Owner is configuration-only. A staff row that somehow contains the owner
+  // role must never promote an address that is absent from the allowlist.
+  if (!role || role === "owner") return null;
 
   return {
     staffId: record.id,

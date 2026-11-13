@@ -62,6 +62,16 @@ test("an inactive or unknown staff record resolves to no access", () => {
     null,
     "an unrecognised stored role is never granted a default role",
   );
+  assert.equal(
+    resolveStaffAccess(
+      "stranger@example.com",
+      [OWNER],
+      { id: "s3", display_name: "Stranger", role: "owner", active: 1 },
+      null,
+    ),
+    null,
+    "owner is configuration-only; a staff row cannot promote an address",
+  );
 });
 
 test("the accountant can read everything but mutate nothing", () => {

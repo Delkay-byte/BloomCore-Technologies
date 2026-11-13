@@ -1,4 +1,4 @@
-import { errorResponse, json, readJsonBounded } from "@/lib/http";
+import { asRecord, errorResponse, json, readJsonBounded } from "@/lib/http";
 import { denyUnless, requireStaff } from "@/lib/leads/guard";
 import { actorLabel } from "@/lib/leads/repository";
 import { createStaff, listStaff, listStaffAudit } from "@/lib/leads/staff";
@@ -42,7 +42,7 @@ export async function POST(request: Request): Promise<Response> {
   const body = await readJsonBounded(request, 8 * 1024);
   if (!body.ok) return errorResponse("The staff details could not be read.", 400);
 
-  const raw = body.value as Record<string, unknown>;
+  const raw = asRecord(body.value);
   try {
     const result = await createStaff(
       guard.env,

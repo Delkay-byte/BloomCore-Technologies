@@ -98,6 +98,28 @@ test("input survives a failed save and a second click is refused", () => {
   assert.match(success, /setAction\(""\)/);
 });
 
+test("a read-only accountant can open an unread notification without marking it", () => {
+  const page = source("src/app/internal/notifications/page.tsx");
+  assert.match(page, /notification\.read_at \|\| !canMarkRead/);
+  assert.match(page, /const canMarkRead = can\(staff\.role, "notifications\.mark_read"\)/);
+});
+
+test("an unchanged assignment does not block a follow-up edit", () => {
+  const route = source("src/app/api/internal/leads/[id]/route.ts");
+  assert.match(
+    route,
+    /const currentAssignee = \(current\.lead\.assigned_to \?\? ""\)\.trim\(\)\.toLowerCase\(\)/,
+  );
+  assert.match(route, /patch\.assignedTo && patch\.assignedTo !== currentAssignee/);
+});
+
+test("the retired staff URL redirects to the canonical staff page", () => {
+  const alias = source("src/app/internal/leads/staff/page.tsx");
+  assert.match(alias, /redirect\("\/internal\/staff"\)/);
+  assert.match(alias, /export const dynamic = "force-dynamic"/);
+  assert.doesNotMatch(alias, /notFound\(\)/, "the alias must never render the public 404");
+});
+
 test("opening an unread notification marks it read before navigating", () => {
   const open = source("src/components/internal/NotificationOpen.tsx");
   assert.match(open, /preventDefault\(\)/);

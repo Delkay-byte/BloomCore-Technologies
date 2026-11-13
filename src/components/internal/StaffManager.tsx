@@ -39,8 +39,8 @@ export function StaffManager({ staff }: { staff: StaffRecord[] }) {
     key: string,
     action: () => Promise<Awaited<ReturnType<typeof staffFetch>>>,
     done: string,
-  ) => {
-    if (pending) return;
+  ): Promise<boolean> => {
+    if (pending) return false;
     setPending(key);
     setError(null);
     setNotice(null);
@@ -48,12 +48,14 @@ export function StaffManager({ staff }: { staff: StaffRecord[] }) {
       const result = await action();
       if (!result.ok) {
         setError(result.error);
-        return;
+        return false;
       }
       setNotice(done);
       router.refresh();
+      return true;
     } catch {
       setError("The change could not be saved. Please try again.");
+      return false;
     } finally {
       setPending(null);
     }
@@ -70,7 +72,10 @@ export function StaffManager({ staff }: { staff: StaffRecord[] }) {
           body: JSON.stringify({ email, displayName, role }),
         }),
       "Staff account created. Add the same email to both Cloudflare Access policies before they sign in.",
-    ).then(() => {
+    ).then((created) => {
+      // Keep the typed values when creation fails so the owner can correct
+      // the address or name and retry without retyping the form.
+      if (!created) return;
       setEmail("");
       setDisplayName("");
       setRole("staff_member");
@@ -197,6 +202,18 @@ export function StaffManager({ staff }: { staff: StaffRecord[] }) {
             </tr>
           </thead>
           <tbody>
+            {staff.length === 0 && (
+              <tr>
+                <td colSpan={4} className="px-4 py-10 text-center">
+                  <p className="font-display text-[1.4rem] text-foreground">No staff accounts yet</p>
+                  <p className="mx-auto mt-2 max-w-lg text-[0.9375rem] leading-6 text-foreground-subtle">
+                    The owner can use the form above to add the first staff member or read-only
+                    accountant. Add the same email to both Cloudflare Access applications before
+                    that person signs in.
+                  </p>
+                </td>
+              </tr>
+            )}
             {staff.map((row) => (
               <tr key={row.id} className="border-b border-line last:border-0 align-top">
                 <td className="px-4 py-4">

@@ -1,4 +1,4 @@
-import { errorResponse, json, readJsonBounded } from "@/lib/http";
+import { asRecord, errorResponse, json, readJsonBounded } from "@/lib/http";
 import { denyUnless, requireStaff } from "@/lib/leads/guard";
 import { actorLabel } from "@/lib/leads/repository";
 import { updateStaff } from "@/lib/leads/staff";
@@ -22,7 +22,7 @@ export async function PATCH(request: Request, context: Context): Promise<Respons
   const body = await readJsonBounded(request, 8 * 1024);
   if (!body.ok) return errorResponse("The staff change could not be read.", 400);
 
-  const raw = body.value as Record<string, unknown>;
+  const raw = asRecord(body.value);
   const input: { displayName?: string; role?: string; active?: boolean } = {};
   if (typeof raw.displayName === "string") input.displayName = raw.displayName;
   if (typeof raw.role === "string") input.role = raw.role;

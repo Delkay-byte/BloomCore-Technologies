@@ -1,5 +1,5 @@
 import { CONTACT } from "@/lib/brand";
-import { errorResponse, json, readJsonBounded } from "@/lib/http";
+import { asRecord, errorResponse, json, readJsonBounded } from "@/lib/http";
 import { denyUnless, forbiddenResponse, requireStaff } from "@/lib/leads/guard";
 import {
   isStage,
@@ -48,7 +48,7 @@ export async function PATCH(request: Request, context: Context): Promise<Respons
   const body = await readJsonBounded(request, 16 * 1024);
   if (!body.ok) return errorResponse("The change could not be read.", 400);
 
-  const raw = body.value as Record<string, unknown>;
+  const raw = asRecord(body.value);
   if ("assignedTo" in raw && !can(guard.staff.role, "leads.assign")) {
     return forbiddenResponse("Only the owner can assign or reassign a lead.");
   }
@@ -83,8 +83,11 @@ export async function PATCH(request: Request, context: Context): Promise<Respons
 
   // An assignment must point at a registered, active Lead Desk worker. The
   // assignment control offers only these, but the server never trusts what a
-  // form sent.
-  if (patch.assignedTo) {
+  // form sent. An unchanged assignment to a now-inactive worker is allowed
+  // through so an owner can still edit that lead's follow-up fields; the
+  // inactive account itself remains unable to sign in.
+  const currentAssignee = (current.lead.assigned_to ?? "").trim().toLowerCase();
+  if (patch.assignedTo && patch.assignedTo !== currentAssignee) {
     const target = await resolveAssignableStaff(guard.env, patch.assignedTo);
     if (!target) {
       return errorResponse(
